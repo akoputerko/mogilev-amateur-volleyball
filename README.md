@@ -35,10 +35,16 @@ npm run test      # запуск тестов
 
 ## Стек
 
-- React 18 + TypeScript
-- Vite + SWC
-- shadcn/ui + Tailwind CSS
-- React Router v6
+| Категория | Технологии |
+|---|---|
+| UI | React 18, TypeScript |
+| Сборка | Vite 5, SWC |
+| Стили | Tailwind CSS 3, shadcn/ui, Radix UI |
+| Роутинг | React Router v6 |
+| Состояние | TanStack React Query 5 |
+| Формы | React Hook Form, Zod |
+| Тесты | Vitest, jsdom |
+| Деплой | GitHub Pages |
 
 ## Обновление данных
 
