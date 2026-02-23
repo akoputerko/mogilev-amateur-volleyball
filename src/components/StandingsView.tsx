@@ -126,7 +126,7 @@ function TeamStatsPanel({ standing: s, onClose }: { standing: TeamStanding; onCl
                 return (
                   <div key={m.id} className="flex items-center gap-3 text-sm bg-secondary/50 rounded-md px-3 py-2">
                     <span className="text-xs text-muted-foreground w-14">
-                      {new Date(m.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short" })}
+                      Тур {m.gameweek}
                     </span>
                     <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${isHome ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
                       {isHome ? "Д" : "Г"}
@@ -165,7 +165,7 @@ function HistoryRow({ match: m, teamId }: { match: Match; teamId: number }) {
     <div className="flex items-center gap-3 text-sm bg-secondary/30 rounded-md px-3 py-2">
       <span className={`w-2 h-2 rounded-full flex-shrink-0 ${won ? "bg-sport-win" : "bg-sport-loss"}`} />
       <span className="text-xs text-muted-foreground w-14">
-        {new Date(m.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short" })}
+        Тур {m.gameweek}
       </span>
       <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${isHome ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
         {isHome ? "Д" : "Г"}
