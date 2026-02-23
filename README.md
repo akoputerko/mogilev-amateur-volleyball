@@ -1,73 +1,62 @@
-# Welcome to your Lovable project
+# Могилёвская Любительская Лига — Волейбол
 
-## Project info
+Веб-приложение для отслеживания расписания, результатов и турнирной таблицы Могилёвской любительской волейбольной лиги.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+**Сезон 2025/26** · 8 команд · 14 туров · Два круга · Фев 2026 – Май 2026
 
-## How can I edit this code?
+## Возможности
 
-There are several ways of editing your application.
+- **Туры** — расписание матчей по турам с датами проведения, залами и временем
+- **Команды** — информация о командах, залы и ближайшие матчи
+- **Таблица** — турнирная таблица с очками, соотношением партий и очков
 
-**Use Lovable**
+## Команды
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+| Команда | Зал |
+|---|---|
+| Макиато | ФОК Орловского |
+| Серволюкс | МГУ Кулешова |
+| Могилевгражданпроект | Зал МГП |
+| Могилевгипрозем | ФОК Орловского |
+| Отцы и дети | Школа 22 |
+| 33 | Зал МГУП |
+| Сетка 37 | ФОК Могилёвоблдорстрой |
+| Dream Team | Спутник |
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+## Разработка
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+npm install
+npm run dev       # dev-сервер на порту 8080
+npm run build     # production-сборка
+npm run lint      # ESLint
+npm run test      # запуск тестов
 ```
 
-**Edit a file directly in GitHub**
+## Стек
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- React 18 + TypeScript
+- Vite + SWC
+- shadcn/ui + Tailwind CSS
+- React Router v6
 
-**Use GitHub Codespaces**
+## Обновление данных
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Все данные хранятся в `src/data/league.ts`. Расписание задаётся в `rawSchedule` — каждый матч содержит явную дату в формате `DD.MM.YYYY`.
 
-## What technologies are used for this project?
+**Добавить результат матча:** найти нужный матч в функции `buildMatches`, установить `played: true` и добавить поле `result`:
 
-This project is built with:
+```ts
+result: {
+  setsHome: 3,
+  setsAway: 1,
+  setScores: [
+    { home: 25, away: 20 },
+    { home: 25, away: 18 },
+    { home: 20, away: 25 },
+    { home: 25, away: 22 },
+  ],
+}
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+**Система начисления очков:** победа 3:0 или 3:1 — 3 очка; победа 3:2 — 2 очка, проигравший получает 1 очко.
