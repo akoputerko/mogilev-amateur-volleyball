@@ -68,7 +68,7 @@ const MatchCard = ({ match }: MatchCardProps) => {
       <div className="px-4 py-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <Calendar className="w-3 h-3" />
-          {new Date(match.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short" })}
+          {match.day}
         </span>
         <span className="inline-flex items-center gap-1">
           <Clock className="w-3 h-3" />
