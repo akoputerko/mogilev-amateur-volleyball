@@ -28,6 +28,7 @@ export interface Match {
   venue: string;
   address: string;
   day: string;
+  date: string; // YYYY-MM-DD
   time: string;
   played: boolean;
   result?: MatchResult;
@@ -138,6 +139,29 @@ const rawSchedule: { gameweek: number; matches: { home: string; away: string; ha
   ]},
 ];
 
+const dayOffsets: Record<string, number> = {
+  "Воскресенье": 0,
+  "Понедельник": 1,
+  "Вторник": 2,
+  "Среда": 3,
+  "Четверг": 4,
+  "Пятница": 5,
+  "Суббота": 6,
+};
+
+function getMatchDate(gameweek: number, day: string): string {
+  // GW1 starts Sunday Feb 23 2025
+  const gw1Start = new Date(2025, 1, 23); // Feb 23
+  const weekOffset = (gameweek - 1) * 7;
+  const dayOffset = dayOffsets[day] ?? 0;
+  const d = new Date(gw1Start);
+  d.setDate(d.getDate() + weekOffset + dayOffset);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 function buildMatches(): Match[] {
   const result: Match[] = [];
   let id = 0;
@@ -153,6 +177,7 @@ function buildMatches(): Match[] {
         venue: m.hall,
         address: m.address,
         day: m.day,
+        date: getMatchDate(gw.gameweek, m.day),
         time: m.time,
         played: false,
       });
