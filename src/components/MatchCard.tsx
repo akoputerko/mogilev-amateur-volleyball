@@ -11,61 +11,66 @@ const MatchCard = ({ match }: MatchCardProps) => {
   const r = match.result;
 
   return (
-    <div className="bg-card rounded-lg border border-border overflow-hidden animate-fade-in">
-      {/* Score header */}
-      <div className="sport-gradient px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2 flex-1 min-w-0">
+    <div className="group bg-card rounded-xl border border-border overflow-hidden animate-fade-in hover:border-accent/30 transition-all hover:shadow-lg hover:shadow-accent/5">
+      {/* Teams & Score */}
+      <div className="p-4 space-y-3">
+        {/* Home team row */}
+        <div className="flex items-center gap-3">
           <span
-            className="w-3 h-3 rounded-full flex-shrink-0"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-primary-foreground flex-shrink-0"
             style={{ backgroundColor: `hsl(${home.color})` }}
-          />
-          <span className="text-primary-foreground font-semibold text-sm truncate">
-            {home.name}
+          >
+            {home.name.slice(0, 2).toUpperCase()}
           </span>
-        </div>
-
-        {match.played && r ? (
-          <div className="flex items-center gap-2 px-3">
-            <span className={`font-display text-2xl font-bold ${r.setsHome > r.setsAway ? "text-accent" : "text-primary-foreground/60"}`}>
+          <span className="font-semibold text-sm flex-1 truncate">{home.name}</span>
+          {match.played && r && (
+            <span className={`font-display text-xl font-bold min-w-[1.5rem] text-right ${r.setsHome > r.setsAway ? "text-sport-win" : "text-muted-foreground"}`}>
               {r.setsHome}
             </span>
-            <span className="text-primary-foreground/40 text-sm">:</span>
-            <span className={`font-display text-2xl font-bold ${r.setsAway > r.setsHome ? "text-accent" : "text-primary-foreground/60"}`}>
+          )}
+        </div>
+
+        {/* Away team row */}
+        <div className="flex items-center gap-3">
+          <span
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-primary-foreground flex-shrink-0"
+            style={{ backgroundColor: `hsl(${away.color})` }}
+          >
+            {away.name.slice(0, 2).toUpperCase()}
+          </span>
+          <span className="font-semibold text-sm flex-1 truncate">{away.name}</span>
+          {match.played && r && (
+            <span className={`font-display text-xl font-bold min-w-[1.5rem] text-right ${r.setsAway > r.setsHome ? "text-sport-win" : "text-muted-foreground"}`}>
               {r.setsAway}
             </span>
+          )}
+        </div>
+
+        {/* VS badge for unplayed */}
+        {!match.played && (
+          <div className="flex justify-center">
+            <span className="px-4 py-1 rounded-full accent-gradient text-accent-foreground text-xs font-bold tracking-widest shadow-sm">
+              VS
+            </span>
           </div>
-        ) : (
-          <span className="px-3 py-0.5 rounded bg-accent/20 text-accent text-xs font-semibold tracking-wider">
-            VS
-          </span>
         )}
 
-        <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
-          <span className="text-primary-foreground font-semibold text-sm truncate text-right">
-            {away.name}
-          </span>
-          <span
-            className="w-3 h-3 rounded-full flex-shrink-0"
-            style={{ backgroundColor: `hsl(${away.color})` }}
-          />
-        </div>
+        {/* Set scores for played */}
+        {match.played && r && (
+          <div className="flex justify-center gap-2 pt-1">
+            {r.setScores.map((s, i) => (
+              <span key={i} className="bg-secondary rounded-md px-2.5 py-1 text-xs font-mono">
+                <span className={s.home > s.away ? "text-sport-win font-bold" : "text-muted-foreground"}>{s.home}</span>
+                <span className="text-muted-foreground/50 mx-0.5">:</span>
+                <span className={s.away > s.home ? "text-sport-win font-bold" : "text-muted-foreground"}>{s.away}</span>
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Set scores */}
-      {match.played && r && (
-        <div className="flex justify-center gap-3 px-4 py-2 bg-secondary/50">
-          {r.setScores.map((s, i) => (
-            <span key={i} className="text-xs font-mono text-muted-foreground">
-              <span className={s.home > s.away ? "text-foreground font-bold" : ""}>{s.home}</span>
-              -
-              <span className={s.away > s.home ? "text-foreground font-bold" : ""}>{s.away}</span>
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Meta info */}
-      <div className="px-4 py-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+      {/* Meta footer */}
+      <div className="px-4 py-2.5 bg-secondary/40 border-t border-border flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <Calendar className="w-3 h-3" />
           {new Date(match.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short", weekday: "short" })}
