@@ -40,7 +40,7 @@ Static React/TypeScript SPA for the Mogilev Amateur Volleyball League. No backen
 
 `buildMatches()` in `league.ts` looks up each match by key in `matchResults`; presence of an entry sets `played: true` and populates `result`. `seasonStart`/`seasonEnd` are computed from match dates (`seasonEnd` = last match + 7 days for playoffs). `src/lib/standings.ts` derives standings via `calcStandings()`.
 
-**Adding match results:** Edit `src/data/results.ts` only. Add a key `"GW{n}: {home} - {away}"` with `{ setsHome, setsAway, setScores }` (exactly 3 set score entries). Standings recalculate automatically.
+**Adding match results:** Edit `src/data/results.ts` only. Add an entry keyed by the numeric match `id` from `schedule.ts` with `{ setsHome, setsAway, setScores }` (exactly 3 set score entries). Standings recalculate automatically.
 
 **Match format:** Always exactly 3 sets per match. Valid results: 3-0 or 2-1 (and mirrored 0-3 / 1-2). No best-of-5 logic.
 

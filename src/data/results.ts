@@ -1,8 +1,7 @@
 // Match results for the 2025/26 season.
 //
-// After each game, add an entry here using the key format:
-//   "GW{gameweek}: {home} - {away}"
-// where home/away are exactly as written in schedule.ts.
+// After each game, add an entry here using the match id from schedule.ts:
+//   [id]: { setsHome, setsAway, setScores }
 //
 // Always 3 sets per match.
 // setsHome / setsAway: sets won by each side — either 3-0 or 2-1 (and mirrored 0-3 / 1-2)
@@ -15,27 +14,10 @@ type ResultEntry = {
   setScores: [SetScore, SetScore, SetScore]; // always 3 sets
 };
 
-// Key: "GW{n}: {home} - {away}"
-export const matchResults: Record<string, ResultEntry> = {
+export const matchResults: Record<number, ResultEntry> = {
 
   // --- Тур 1 ---
-  "GW1: Серволюкс - Сетка 37": {
-    setsHome: 3, setsAway: 0,
-    setScores: [
-      { home: 25, away: 17 },
-      { home: 25, away: 20 },
-      { home: 25, away: 15 },
-    ],
-  },
-  "GW1: Могилевгражданпроект - Отцы и дети": {
-    setsHome: 2, setsAway: 1,
-    setScores: [
-      { home: 25, away: 22 },
-      { home: 18, away: 25 },
-      { home: 25, away: 19 },
-    ],
-  },
-  "GW1: Макиато - Dream team": {
+  1: { // Макиато - Dream team
     setsHome: 2, setsAway: 1,
     setScores: [
       { home: 25, away: 18 },
@@ -43,7 +25,23 @@ export const matchResults: Record<string, ResultEntry> = {
       { home: 25, away: 20 },
     ],
   },
-  "GW1: Могилевгипрозем - 33": {
+  2: { // Серволюкс - Сетка 37
+    setsHome: 3, setsAway: 0,
+    setScores: [
+      { home: 25, away: 17 },
+      { home: 25, away: 20 },
+      { home: 25, away: 15 },
+    ],
+  },
+  3: { // Могилевгражданпроект - Отцы и дети
+    setsHome: 2, setsAway: 1,
+    setScores: [
+      { home: 25, away: 22 },
+      { home: 18, away: 25 },
+      { home: 25, away: 19 },
+    ],
+  },
+  4: { // Могилевгипрозем - 33
     setsHome: 3, setsAway: 0,
     setScores: [
       { home: 25, away: 20 },

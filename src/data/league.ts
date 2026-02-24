@@ -62,13 +62,11 @@ function parseDateDMY(date: string): string {
 
 function buildMatches(): Match[] {
   const result: Match[] = [];
-  let id = 0;
   for (const gw of rawSchedule) {
     for (const m of gw.matches) {
-      const key = `GW${gw.gameweek}: ${m.home} - ${m.away}`;
-      const entry = matchResults[key];
+      const entry = matchResults[m.id];
       result.push({
-        id: id++,
+        id: m.id,
         gameweek: gw.gameweek,
         homeId: teamByName[m.home],
         awayId: teamByName[m.away],
