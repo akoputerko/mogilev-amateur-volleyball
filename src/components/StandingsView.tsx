@@ -11,16 +11,28 @@ const StandingsView = () => {
     <div className="animate-fade-in space-y-4">
       {/* Scoring rules */}
       <div className="bg-card rounded-lg border border-border p-4">
-        <h4 className="font-display text-sm text-muted-foreground mb-2 flex items-center gap-2">
-          <Info className="w-4 h-4" /> 📊 Система начисления очков
+        <h4 className="font-display text-sm text-muted-foreground mb-3 flex items-center gap-2">
+          <Info className="w-4 h-4" /> Система начисления очков
         </h4>
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-          <span><strong className="text-sport-win">Победа 3-0</strong> → 3 очка</span>
-          <span><strong className="text-sport-win">Победа 2-1</strong> → 2 очка</span>
-          <span><strong className="text-sport-loss">Поражение 1-2</strong> → 1 очко</span>
-          <span><strong className="text-sport-loss">Поражение 0-3</strong> → 0 очков</span>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="bg-sport-win/10 border border-sport-win/20 rounded-md px-3 py-2 text-center">
+            <div className="text-xs text-muted-foreground">Победа 3-0</div>
+            <div className="font-display text-lg font-bold text-sport-win">3 очка</div>
+          </div>
+          <div className="bg-sport-win/10 border border-sport-win/20 rounded-md px-3 py-2 text-center">
+            <div className="text-xs text-muted-foreground">Победа 2-1</div>
+            <div className="font-display text-lg font-bold text-sport-win">2 очка</div>
+          </div>
+          <div className="bg-sport-loss/10 border border-sport-loss/20 rounded-md px-3 py-2 text-center">
+            <div className="text-xs text-muted-foreground">Поражение 1-2</div>
+            <div className="font-display text-lg font-bold text-sport-loss">1 очко</div>
+          </div>
+          <div className="bg-sport-loss/10 border border-sport-loss/20 rounded-md px-3 py-2 text-center">
+            <div className="text-xs text-muted-foreground">Поражение 0-3</div>
+            <div className="font-display text-lg font-bold text-sport-loss">0 очков</div>
+          </div>
         </div>
-        <p className="text-[11px] text-muted-foreground/70 mt-1.5">Всегда 3 партии в матче · Плей-офф: топ-4 команды</p>
+        <p className="text-[11px] text-muted-foreground/70 mt-2.5 text-center">Всегда 3 партии в матче · Плей-офф: топ-4 команды</p>
       </div>
 
       {/* Legend */}
