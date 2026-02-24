@@ -8,7 +8,7 @@ const formatDate = (dateStr: string) =>
 
 const ToursPage = () => {
   const [gw, setGw] = useState(1);
-  const gwMatches = matches.filter((m) => m.gameweek === gw);
+  const gwMatches = matches.filter((m) => m.gameweek === gw).sort((a, b) => a.date.localeCompare(b.date));
 
   const dates = gwMatches.map((m) => m.date).sort();
   const dateRange = dates.length > 0
