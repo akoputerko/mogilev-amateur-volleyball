@@ -9,7 +9,6 @@
 | Площадка | URL |
 |---|---|
 | GitHub Pages | https://akoputerko.github.io/mogilev-amateur-volleyball/ |
-| Lovable | *(добавить ссылку)* |
 
 ## Страницы
 
@@ -56,7 +55,7 @@ npm run test      # запуск тестов
 | Состояние | TanStack React Query 5 |
 | Формы | React Hook Form, Zod |
 | Тесты | Vitest, jsdom |
-| Деплой | GitHub Pages, Lovable |
+| Деплой | GitHub Pages |
 
 ## Обновление данных
 

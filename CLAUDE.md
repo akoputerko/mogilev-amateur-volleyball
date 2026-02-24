@@ -63,4 +63,4 @@ Static React/TypeScript SPA for the Mogilev Amateur Volleyball League. No backen
 
 **Component library:** shadcn/ui components in `src/components/ui/`. Path alias `@/` maps to `src/`.
 
-**Deployments:** GitHub Pages (`https://akoputerko.github.io/mogilev-amateur-volleyball/`) and Lovable. `vite.config.ts` sets `base` conditionally: `/mogilev-amateur-volleyball/` when `process.env.GITHUB_ACTIONS` is set, `/` otherwise.
+**Deployments:** GitHub Pages (`https://akoputerko.github.io/mogilev-amateur-volleyball/`). `vite.config.ts` sets `base` conditionally: `/mogilev-amateur-volleyball/` when `process.env.GITHUB_ACTIONS` is set, `/` otherwise.
