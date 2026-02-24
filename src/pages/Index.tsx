@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
-import { CalendarDays, Users, Trophy, Sun, Moon } from "lucide-react";
+import { CalendarDays, Users, Trophy, Sun, Moon, Gamepad2 } from "lucide-react";
 import { seasonStart, seasonEnd } from "@/data/league";
 
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleDateString("ru-RU", { day: "numeric", month: "short", year: "numeric" });
 
 const tabs = [
-  { label: "Таблица", icon: Trophy, path: "/" },
-  { label: "Туры", icon: CalendarDays, path: "/tours" },
-  { label: "Команды", icon: Users, path: "/teams" },
+  { label: "Таблица",  icon: Trophy,    path: "/"            },
+  { label: "Туры",     icon: CalendarDays, path: "/tours"    },
+  { label: "Команды",  icon: Users,     path: "/teams"       },
+  { label: "Игрище",   icon: Gamepad2,  path: "/playground"  },
 ];
 
 const Index = () => {
