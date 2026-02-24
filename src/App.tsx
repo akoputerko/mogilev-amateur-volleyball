@@ -5,6 +5,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import StandingsPage from "./pages/StandingsPage";
+import ToursPage from "./pages/ToursPage";
+import TeamsPage from "./pages/TeamsPage";
+import TeamPage from "./pages/TeamPage";
 
 const queryClient = new QueryClient();
 
@@ -15,8 +19,12 @@ const App = () => (
       <Sonner />
       <BrowserRouter basename={import.meta.env.BASE_URL}>
         <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/" element={<Index />}>
+            <Route index element={<StandingsPage />} />
+            <Route path="tours" element={<ToursPage />} />
+            <Route path="teams" element={<TeamsPage />} />
+            <Route path="teams/:id" element={<TeamPage />} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

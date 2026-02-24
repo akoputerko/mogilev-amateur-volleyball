@@ -50,15 +50,15 @@ export function calcStandings(): TeamStanding[] {
     });
 
     const homeWon = r.setsHome > r.setsAway;
-    const totalSets = r.setsHome + r.setsAway;
+    const loserSets = homeWon ? r.setsAway : r.setsHome; // 0 = clean sweep (3-0), 1 = contested (2-1)
 
     if (homeWon) {
       home.won++; away.lost++;
       home.homeWon++;
       away.awayLost++;
-      if (totalSets <= 4) { // 3-0 or 3-1
+      if (loserSets === 0) { // 3-0
         home.points += 3;
-      } else { // 3-2
+      } else { // 2-1
         home.points += 2;
         away.points += 1;
       }
@@ -66,9 +66,9 @@ export function calcStandings(): TeamStanding[] {
       away.won++; home.lost++;
       away.awayWon++;
       home.homeLost++;
-      if (totalSets <= 4) {
+      if (loserSets === 0) { // 0-3
         away.points += 3;
-      } else {
+      } else { // 1-2
         away.points += 2;
         home.points += 1;
       }

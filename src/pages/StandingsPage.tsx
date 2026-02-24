@@ -3,7 +3,7 @@ import { calcStandings, getTeamMatches, getUpcoming, type TeamStanding } from "@
 import { getTeam, type Match } from "@/data/league";
 import { ChevronRight, Trophy, X, Calendar, Info } from "lucide-react";
 
-const StandingsView = () => {
+const StandingsPage = () => {
   const standings = calcStandings();
   const [selected, setSelected] = useState<TeamStanding | null>(null);
 
@@ -38,10 +38,10 @@ const StandingsView = () => {
       {/* Legend */}
       <div className="flex gap-4 text-xs text-muted-foreground">
         <span className="flex items-center gap-1.5">
-          <span className="w-3 h-1.5 rounded-sm bg-amber-500" /> Лидер
+          <span className="w-3 h-1.5 rounded-sm bg-amber-400" /> Лидер
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="w-3 h-1.5 rounded-sm bg-sport-win" /> Плей-офф
+          <span className="w-3 h-1.5 rounded-sm bg-sky-500" /> Плей-офф
         </span>
       </div>
 
@@ -68,9 +68,9 @@ const StandingsView = () => {
                 const setDiff = s.setsWon - s.setsLost;
                 const rowHighlight =
                   pos === 1
-                    ? "border-l-[3px] border-l-amber-500 bg-amber-500/5"
+                    ? "border-l-[3px] border-l-amber-400 bg-amber-400/5"
                     : pos <= 4
-                      ? "border-l-[3px] border-l-sport-win bg-sport-win/5"
+                      ? "border-l-[3px] border-l-sky-500 bg-sky-500/5"
                       : "";
 
                 return (
@@ -82,7 +82,7 @@ const StandingsView = () => {
                     }`}
                     style={{ animationDelay: `${i * 40}ms` }}
                   >
-                    <td className={`px-3 py-3 font-display font-bold ${pos === 1 ? "text-amber-500" : pos <= 4 ? "text-sport-win" : "text-muted-foreground"}`}>{pos}</td>
+                    <td className={`px-3 py-3 font-display font-bold ${pos === 1 ? "text-amber-400" : pos <= 4 ? "text-sky-500" : "text-muted-foreground"}`}>{pos}</td>
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-2">
                         <span
@@ -115,6 +115,10 @@ const StandingsView = () => {
         </div>
       </div>
 
+      <p className="text-center text-xs text-muted-foreground py-2">
+        * Таблица обновится после проведения первых матчей
+      </p>
+
       {/* Team stats panel */}
       {selected && <TeamStatsPanel standing={selected} onClose={() => setSelected(null)} />}
     </div>
@@ -144,10 +148,10 @@ function TeamStatsPanel({ standing: s, onClose }: { standing: TeamStanding; onCl
       <div className="p-4 space-y-6">
         {/* Stats grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <StatBox label="Победы/Поражения" value={`${s.won}/${s.lost}`} />
-          <StatBox label="Партии (В/П)" value={`${s.setsWon}/${s.setsLost}`} />
-          <StatBox label="Дома (В/П)" value={`${s.homeWon}/${s.homeLost}`} />
-          <StatBox label="В гостях (В/П)" value={`${s.awayWon}/${s.awayLost}`} />
+          <StatBox label="Победы / Поражения" wins={s.won} losses={s.lost} />
+          <StatBox label="Партии (В/П)" wins={s.setsWon} losses={s.setsLost} />
+          <StatBox label="Дома (В/П)" wins={s.homeWon} losses={s.homeLost} />
+          <StatBox label="В гостях (В/П)" wins={s.awayWon} losses={s.awayLost} />
         </div>
 
         {/* Match history */}
@@ -197,10 +201,14 @@ function TeamStatsPanel({ standing: s, onClose }: { standing: TeamStanding; onCl
   );
 }
 
-function StatBox({ label, value }: { label: string; value: string }) {
+function StatBox({ label, wins, losses }: { label: string; wins: number; losses: number }) {
   return (
     <div className="bg-secondary/50 rounded-lg p-3 text-center">
-      <div className="font-display text-xl font-bold text-accent">{value}</div>
+      <div className="font-display text-xl font-bold">
+        <span className="text-sport-win">{wins}</span>
+        <span className="text-muted-foreground/40 mx-1 text-base font-sans">/</span>
+        <span className="text-sport-loss">{losses}</span>
+      </div>
       <div className="text-xs text-muted-foreground mt-1">{label}</div>
     </div>
   );
@@ -232,4 +240,4 @@ function HistoryRow({ match: m, teamId }: { match: Match; teamId: number }) {
   );
 }
 
-export default StandingsView;
+export default StandingsPage;

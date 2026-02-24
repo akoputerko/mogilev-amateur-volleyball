@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { matches, totalGameweeks } from "@/data/league";
-import MatchCard from "./MatchCard";
+import MatchCard from "@/components/MatchCard";
 import { ChevronDown } from "lucide-react";
 
 const formatDate = (dateStr: string) =>
   new Date(dateStr).toLocaleDateString("ru-RU", { day: "numeric", month: "short" });
 
-const GameweekView = () => {
+const ToursPage = () => {
   const [gw, setGw] = useState(1);
   const gwMatches = matches.filter((m) => m.gameweek === gw);
 
@@ -41,11 +41,11 @@ const GameweekView = () => {
 
       <div className="grid gap-4 sm:grid-cols-2">
         {gwMatches.map((m) => (
-          <MatchCard key={m.id} match={m} />
+          <MatchCard key={m.id} match={m} linkTeams />
         ))}
       </div>
     </div>
   );
 };
 
-export default GameweekView;
+export default ToursPage;

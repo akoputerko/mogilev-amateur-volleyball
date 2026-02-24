@@ -18,18 +18,47 @@ To run a single test file: `npx vitest run src/test/example.test.ts`
 
 ## Architecture
 
-This is a static React/TypeScript SPA for the Mogilev Amateur Volleyball League. There is no backend — all data lives in `src/data/league.ts`.
+Static React/TypeScript SPA for the Mogilev Amateur Volleyball League. No backend — all data lives in `src/data/league.ts`.
 
-**Routing:** Single page at `/` renders `Index.tsx` with three tabs (gameweeks, teams, standings). React Router handles the `*` → `NotFound` fallback.
+**Routing:** `BrowserRouter` with `basename={import.meta.env.BASE_URL}`. `Index.tsx` is the layout shell with tab navigation; route content renders via `<Outlet />`. All route-level pages are in `src/pages/`:
 
-**Data flow:** `src/data/league.ts` exports `teams`, `matches`, and `totalGameweeks`. Components import directly from this file. `src/lib/standings.ts` derives standings from that data via `calcStandings()`.
+| Path | Component |
+|---|---|
+| `/` | `StandingsPage` |
+| `/tours` | `ToursPage` |
+| `/teams` | `TeamsPage` |
+| `/teams/:id` | `TeamPage` |
 
-**Schedule structure:** `rawSchedule` holds all 56 matches across 14 gameweeks. Each match entry includes an explicit `date` field in `DD.MM.YYYY` format, converted to `YYYY-MM-DD` by `parseDateDMY()` at build time. Season runs Feb 24 – May 30, 2026 (two legs, 8 teams).
+`src/components/` contains only reusable sub-components (`MatchCard`, shadcn/ui primitives, etc.).
 
-**Adding match results:** Set `played: true` and add a `result: { setsHome, setsAway, setScores }` to the relevant match object inside `buildMatches()` output — or directly in `rawSchedule` by extending the type. The standings recalculate automatically.
+**Data flow:** Data is split across three files:
+- `src/data/schedule.ts` — `rawSchedule` (56 matches, 14 gameweeks, explicit `DD.MM.YYYY` dates)
+- `src/data/results.ts` — `matchResults` record, keyed `"GW{n}: {home} - {away}"` using names exactly as in schedule
+- `src/data/league.ts` — imports both, exports `teams`, `matches`, `totalGameweeks`, `seasonStart`, `seasonEnd`
 
-**Points system (standings.ts):** Win 3-0 or 3-1 → 3 pts; Win 3-2 → 2 pts, loser gets 1 pt.
+`buildMatches()` in `league.ts` looks up each match by key in `matchResults`; presence of an entry sets `played: true` and populates `result`. `seasonStart`/`seasonEnd` are computed from match dates (`seasonEnd` = last match + 7 days for playoffs). `src/lib/standings.ts` derives standings via `calcStandings()`.
 
-**Team name casing:** The `teams` array uses `"Dream Team"` but the schedule uses `"Dream team"`. The `teamByName["Dream team"] = 7` alias in `league.ts` handles this mapping.
+**Adding match results:** Edit `src/data/results.ts` only. Add a key `"GW{n}: {home} - {away}"` with `{ setsHome, setsAway, setScores }` (exactly 3 set score entries). Standings recalculate automatically.
 
-**Component library:** shadcn/ui components are in `src/components/ui/`. The path alias `@/` maps to `src/`.
+**Match format:** Always exactly 3 sets per match. Valid results: 3-0 or 2-1 (and mirrored 0-3 / 1-2). No best-of-5 logic.
+
+**Points system:** Win 3-0 → 3 pts; Win 2-1 → 2 pts, loser gets 1 pt. Implemented in `standings.ts` via `loserSets === 0` check.
+
+**Team name casing:** `teams` array uses `"Dream Team"` but the schedule uses `"Dream team"`. The alias `teamByName["Dream team"] = 7` handles this.
+
+**Color system:** Consistent semantic colors used throughout:
+- `amber-400` — leader (1st place) in standings table
+- `sky-500` — playoff zone (2nd–4th) in standings table
+- `sport-win` (green) — wins, home match border/badge, positive set diff
+- `sport-loss` (red) — losses, away match result
+- `accent` (orange) — away match border/badge, points column
+
+**StatBox component** (in `StandingsPage` and `TeamPage`): takes `wins: number` and `losses: number` props (not a single `value` string) and renders them in `text-sport-win` / `text-sport-loss` respectively.
+
+**MatchCard props:** `teamId?: number` enables home/away left-border coloring and Дома/В гостях badge. `linkTeams?: boolean` makes team names clickable links to `/teams/:id`. The card uses `flex flex-col` with `flex-1 justify-center` on the content area so the footer always pins to the bottom regardless of whether a score or VS is shown — prevents layout breakage in two-column grids when adjacent cards have different content heights.
+
+**Theme toggle:** `Index.tsx` manages dark/light mode via `useState` + `useEffect` that toggles `.dark` on `document.documentElement` and persists to `localStorage`. Reads `prefers-color-scheme` as the default on first load. Icons: `Moon` (light mode) / `Sun` (dark mode) from lucide-react, shown in the header top-right.
+
+**Component library:** shadcn/ui components in `src/components/ui/`. Path alias `@/` maps to `src/`.
+
+**Deployments:** GitHub Pages (`https://akoputerko.github.io/mogilev-amateur-volleyball/`) and Lovable. `vite.config.ts` sets `base` conditionally: `/mogilev-amateur-volleyball/` when `process.env.GITHUB_ACTIONS` is set, `/` otherwise.

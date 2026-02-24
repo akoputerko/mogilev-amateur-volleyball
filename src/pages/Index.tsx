@@ -1,37 +1,61 @@
-import { useState } from "react";
-import GameweekView from "@/components/GameweekView";
-import TeamView from "@/components/TeamView";
-import StandingsView from "@/components/StandingsView";
-import { CalendarDays, Users, Trophy } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
+import { CalendarDays, Users, Trophy, Sun, Moon } from "lucide-react";
+import { seasonStart, seasonEnd } from "@/data/league";
 
-type Tab = "gameweek" | "team" | "standings";
+const fmtDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("ru-RU", { day: "numeric", month: "short", year: "numeric" });
 
-const tabs: { key: Tab; label: string; icon: typeof CalendarDays }[] = [
-  { key: "gameweek", label: "Туры", icon: CalendarDays },
-  { key: "team", label: "Команды", icon: Users },
-  { key: "standings", label: "Таблица", icon: Trophy },
+const tabs = [
+  { label: "Таблица", icon: Trophy, path: "/" },
+  { label: "Туры", icon: CalendarDays, path: "/tours" },
+  { label: "Команды", icon: Users, path: "/teams" },
 ];
 
 const Index = () => {
-  const [active, setActive] = useState<Tab>("standings");
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  const [dark, setDark] = useState(() => {
+    const stored = localStorage.getItem("theme");
+    if (stored) return stored === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark);
+    localStorage.setItem("theme", dark ? "dark" : "light");
+  }, [dark]);
+
+  const isActive = (path: string) =>
+    path === "/" ? pathname === "/" : pathname.startsWith(path);
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sport-gradient">
         <div className="container py-6 sm:py-8">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg accent-gradient flex items-center justify-center">
-              <Trophy className="w-5 h-5 text-accent-foreground" />
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg accent-gradient flex items-center justify-center">
+                <Trophy className="w-5 h-5 text-accent-foreground" />
+              </div>
+              <div>
+                <h1 className="text-xl sm:text-2xl text-primary-foreground tracking-wide">
+                  Могилёвская Любительская Лига
+                </h1>
+                <p className="text-primary-foreground/50 text-xs mt-0.5 font-sans normal-case tracking-normal">
+                  Сезон 2025/26 · 8 команд · Волейбол · {fmtDate(seasonStart)} — {fmtDate(seasonEnd)}
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl sm:text-2xl text-primary-foreground tracking-wide">
-                Могилёвская Любительская Лига
-              </h1>
-              <p className="text-primary-foreground/50 text-xs mt-0.5 font-sans normal-case tracking-normal">
-                Сезон 2025/26 · 8 команд · Волейбол
-              </p>
-            </div>
+            <button
+              onClick={() => setDark((d) => !d)}
+              className="w-9 h-9 rounded-lg flex items-center justify-center text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10 transition-colors flex-shrink-0"
+              aria-label="Переключить тему"
+            >
+              {dark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
           </div>
         </div>
       </header>
@@ -43,10 +67,10 @@ const Index = () => {
             const Icon = t.icon;
             return (
               <button
-                key={t.key}
-                onClick={() => setActive(t.key)}
+                key={t.path}
+                onClick={() => navigate(t.path)}
                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                  active === t.key
+                  isActive(t.path)
                     ? "border-accent text-accent"
                     : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
@@ -61,9 +85,7 @@ const Index = () => {
 
       {/* Content */}
       <main className="container py-6">
-        {active === "gameweek" && <GameweekView />}
-        {active === "team" && <TeamView />}
-        {active === "standings" && <StandingsView />}
+        <Outlet />
       </main>
     </div>
   );

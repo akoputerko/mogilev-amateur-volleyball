@@ -1,3 +1,6 @@
+import { rawSchedule } from "./schedule";
+import { matchResults } from "./results";
+
 export interface Team {
   id: number;
   name: string;
@@ -47,97 +50,10 @@ export const teams: Team[] = [
 
 const teamByName: Record<string, number> = {};
 teams.forEach((t) => { teamByName[t.name] = t.id; });
-// Also handle case variations
+// Handle case variation used in schedule
 teamByName["Dream team"] = 7;
 
 export const getTeam = (id: number) => teams.find((t) => t.id === id)!;
-
-const rawSchedule: { gameweek: number; matches: { home: string; away: string; hall: string; address: string; day: string; time: string; date: string }[] }[] = [
-  { gameweek: 1, matches: [
-    { home: "Макиато", away: "Dream team", hall: "ФОК Орловского", address: "ул. Орловского, 24а", day: "Четверг", time: "20:00-22:00", date: "26.02.2026" },
-    { home: "Серволюкс", away: "Сетка 37", hall: "МГУ Кулешова", address: "ул. Космонавтов, 1", day: "Вторник", time: "19:00-21:00", date: "24.02.2026" },
-    { home: "Могилевгражданпроект", away: "Отцы и дети", hall: "Зал МГП", address: "ул. Буденного, 11", day: "Среда", time: "18:00-20:00", date: "25.02.2026" },
-    { home: "Могилевгипрозем", away: "33", hall: "ФОК Орловского", address: "ул. Орловского, 24", day: "Воскресенье", time: "17:00-18:30", date: "01.03.2026" },
-  ]},
-  { gameweek: 2, matches: [
-    { home: "Dream team", away: "Серволюкс", hall: "Спутник", address: "ул. Якубовского, 20", day: "Пятница", time: "20:30-22:30", date: "06.03.2026" },
-    { home: "Сетка 37", away: "Могилевгражданпроект", hall: "Зал МГУП", address: "ул. Шмидта, 5", day: "Суббота", time: "15:00-17:00", date: "07.03.2026" },
-    { home: "Отцы и дети", away: "Могилевгипрозем", hall: "Школа 22", address: "ул. Вокзальная", day: "Среда", time: "17:30-20:00", date: "04.03.2026" },
-    { home: "33", away: "Макиато", hall: "Зал МГУП", address: "ул. Шмидта, 5", day: "Пятница", time: "18:00-20:00", date: "06.03.2026" },
-  ]},
-  { gameweek: 3, matches: [
-    { home: "Макиато", away: "Сетка 37", hall: "ФОК Орловского", address: "ул. Орловского, 24а", day: "Четверг", time: "20:00-22:00", date: "12.03.2026" },
-    { home: "Серволюкс", away: "Отцы и дети", hall: "МГУ Кулешова", address: "ул. Космонавтов, 1", day: "Вторник", time: "19:00-21:00", date: "10.03.2026" },
-    { home: "Могилевгражданпроект", away: "33", hall: "Зал МГП", address: "ул. Буденного, 11", day: "Среда", time: "18:00-20:00", date: "11.03.2026" },
-    { home: "Могилевгипрозем", away: "Dream team", hall: "ФОК Орловского", address: "ул. Орловского, 24", day: "Воскресенье", time: "17:00-18:30", date: "15.03.2026" },
-  ]},
-  { gameweek: 4, matches: [
-    { home: "Dream team", away: "Могилевгражданпроект", hall: "Спутник", address: "ул. Якубовского, 20", day: "Пятница", time: "20:30-22:30", date: "20.03.2026" },
-    { home: "Могилевгипрозем", away: "Сетка 37", hall: "ФОК Орловского", address: "ул. Орловского, 24", day: "Воскресенье", time: "17:00-18:30", date: "22.03.2026" },
-    { home: "Отцы и дети", away: "Макиато", hall: "Школа 22", address: "ул. Вокзальная", day: "Среда", time: "17:30-20:00", date: "18.03.2026" },
-    { home: "33", away: "Серволюкс", hall: "Зал МГУП", address: "ул. Шмидта, 5", day: "Пятница", time: "18:00-20:00", date: "20.03.2026" },
-  ]},
-  { gameweek: 5, matches: [
-    { home: "Макиато", away: "Могилевгражданпроект", hall: "ФОК Орловского", address: "ул. Орловского, 24а", day: "Четверг", time: "20:00-22:00", date: "26.03.2026" },
-    { home: "Серволюкс", away: "Могилевгипрозем", hall: "МГУ Кулешова", address: "ул. Космонавтов, 1", day: "Вторник", time: "19:00-21:00", date: "24.03.2026" },
-    { home: "Dream team", away: "33", hall: "Спутник", address: "ул. Якубовского, 20", day: "Пятница", time: "20:30-22:30", date: "27.03.2026" },
-    { home: "Сетка 37", away: "Отцы и дети", hall: "Зал МГУП", address: "ул. Шмидта, 5", day: "Суббота", time: "14:00-16:00", date: "28.03.2026" },
-  ]},
-  { gameweek: 6, matches: [
-    { home: "Могилевгражданпроект", away: "Серволюкс", hall: "Зал МГП", address: "ул. Буденного, 11", day: "Среда", time: "18:00-20:00", date: "01.04.2026" },
-    { home: "Могилевгипрозем", away: "Макиато", hall: "ФОК Орловского", address: "ул. Орловского, 24", day: "Воскресенье", time: "17:00-18:30", date: "05.04.2026" },
-    { home: "33", away: "Сетка 37", hall: "Зал МГУП", address: "ул. Шмидта, 5", day: "Пятница", time: "18:00-20:00", date: "03.04.2026" },
-    { home: "Отцы и дети", away: "Dream team", hall: "Школа 22", address: "ул. Вокзальная", day: "Среда", time: "17:30-20:00", date: "01.04.2026" },
-  ]},
-  { gameweek: 7, matches: [
-    { home: "Макиато", away: "Серволюкс", hall: "ФОК Орловского", address: "ул. Орловского, 24а", day: "Четверг", time: "20:00-22:00", date: "09.04.2026" },
-    { home: "Dream team", away: "Сетка 37", hall: "Спутник", address: "ул. Якубовского, 20", day: "Пятница", time: "20:30-22:30", date: "10.04.2026" },
-    { home: "33", away: "Отцы и дети", hall: "Зал МГУП", address: "ул. Шмидта, 5", day: "Пятница", time: "18:00-20:00", date: "10.04.2026" },
-    { home: "Могилевгипрозем", away: "Могилевгражданпроект", hall: "ФОК Орловского", address: "ул. Орловского, 24", day: "Воскресенье", time: "17:00-18:30", date: "12.04.2026" },
-  ]},
-  { gameweek: 8, matches: [
-    { home: "Dream team", away: "Макиато", hall: "Спутник", address: "ул. Якубовского, 20", day: "Пятница", time: "20:30-22:30", date: "17.04.2026" },
-    { home: "Сетка 37", away: "Серволюкс", hall: "ФОК Могилёвоблдорстрой", address: "ул. Вавилова, 15", day: "Суббота", time: "16:00-18:00", date: "18.04.2026" },
-    { home: "Отцы и дети", away: "Могилевгражданпроект", hall: "Школа 22", address: "ул. Вокзальная", day: "Среда", time: "17:30-20:00", date: "15.04.2026" },
-    { home: "33", away: "Могилевгипрозем", hall: "Зал МГУП", address: "ул. Шмидта, 5", day: "Пятница", time: "18:00-20:00", date: "17.04.2026" },
-  ]},
-  { gameweek: 9, matches: [
-    { home: "Серволюкс", away: "Dream team", hall: "МГУ Кулешова", address: "ул. Космонавтов, 1", day: "Вторник", time: "19:00-21:00", date: "21.04.2026" },
-    { home: "Могилевгражданпроект", away: "Сетка 37", hall: "Зал МГП", address: "ул. Буденного, 11", day: "Среда", time: "18:00-20:00", date: "22.04.2026" },
-    { home: "Могилевгипрозем", away: "Отцы и дети", hall: "ФОК Орловского", address: "ул. Орловского, 24", day: "Воскресенье", time: "17:00-18:30", date: "26.04.2026" },
-    { home: "Макиато", away: "33", hall: "ФОК Орловского", address: "ул. Орловского, 24а", day: "Четверг", time: "20:00-22:00", date: "23.04.2026" },
-  ]},
-  { gameweek: 10, matches: [
-    { home: "Сетка 37", away: "Макиато", hall: "ФОК Могилёвоблдорстрой", address: "ул. Вавилова, 15", day: "Суббота", time: "16:00-18:00", date: "02.05.2026" },
-    { home: "Отцы и дети", away: "Серволюкс", hall: "Школа 22", address: "ул. Вокзальная", day: "Среда", time: "17:30-20:00", date: "29.04.2026" },
-    { home: "33", away: "Могилевгражданпроект", hall: "Зал МГУП", address: "ул. Шмидта, 5", day: "Пятница", time: "18:00-20:00", date: "01.05.2026" },
-    { home: "Dream team", away: "Могилевгипрозем", hall: "Спутник", address: "ул. Якубовского, 20", day: "Пятница", time: "20:30-22:30", date: "01.05.2026" },
-  ]},
-  { gameweek: 11, matches: [
-    { home: "Могилевгражданпроект", away: "Макиато", hall: "Зал МГП", address: "ул. Буденного, 11", day: "Среда", time: "18:00-20:00", date: "06.05.2026" },
-    { home: "Могилевгипрозем", away: "Серволюкс", hall: "ФОК Орловского", address: "ул. Орловского, 24", day: "Воскресенье", time: "17:00-18:30", date: "10.05.2026" },
-    { home: "33", away: "Dream team", hall: "Зал МГУП", address: "ул. Шмидта, 5", day: "Пятница", time: "18:00-20:00", date: "08.05.2026" },
-    { home: "Отцы и дети", away: "Сетка 37", hall: "Школа 22", address: "ул. Вокзальная", day: "Среда", time: "17:30-20:00", date: "06.05.2026" },
-  ]},
-  { gameweek: 12, matches: [
-    { home: "Серволюкс", away: "Могилевгражданпроект", hall: "МГУ Кулешова", address: "ул. Космонавтов, 1", day: "Вторник", time: "19:00-21:00", date: "12.05.2026" },
-    { home: "Макиато", away: "Могилевгипрозем", hall: "ФОК Орловского", address: "ул. Орловского, 24а", day: "Четверг", time: "20:00-22:00", date: "14.05.2026" },
-    { home: "Сетка 37", away: "33", hall: "ФОК Могилёвоблдорстрой", address: "ул. Вавилова, 15", day: "Суббота", time: "16:00-18:00", date: "16.05.2026" },
-    { home: "Dream team", away: "Отцы и дети", hall: "Спутник", address: "ул. Якубовского, 20", day: "Пятница", time: "20:30-22:30", date: "15.05.2026" },
-  ]},
-  { gameweek: 13, matches: [
-    { home: "Серволюкс", away: "Макиато", hall: "МГУ Кулешова", address: "ул. Космонавтов, 1", day: "Вторник", time: "19:00-21:00", date: "19.05.2026" },
-    { home: "Сетка 37", away: "Dream team", hall: "ФОК Могилёвоблдорстрой", address: "ул. Вавилова, 15", day: "Суббота", time: "16:00-18:00", date: "23.05.2026" },
-    { home: "Отцы и дети", away: "33", hall: "Школа 22", address: "ул. Вокзальная", day: "Среда", time: "17:30-20:00", date: "20.05.2026" },
-    { home: "Могилевгражданпроект", away: "Могилевгипрозем", hall: "Зал МГП", address: "ул. Буденного, 11", day: "Среда", time: "18:00-20:00", date: "20.05.2026" },
-  ]},
-  { gameweek: 14, matches: [
-    { home: "Макиато", away: "Отцы и дети", hall: "ФОК Орловского", address: "ул. Орловского, 24а", day: "Четверг", time: "20:00-22:00", date: "28.05.2026" },
-    { home: "Сетка 37", away: "Могилевгипрозем", hall: "ФОК Могилёвоблдорстрой", address: "ул. Вавилова, 15", day: "Суббота", time: "16:00-18:00", date: "30.05.2026" },
-    { home: "Серволюкс", away: "33", hall: "МГУ Кулешова", address: "ул. Космонавтов, 1", day: "Вторник", time: "19:00-21:00", date: "26.05.2026" },
-    { home: "Могилевгражданпроект", away: "Dream team", hall: "Зал МГП", address: "ул. Буденного, 11", day: "Среда", time: "18:00-20:00", date: "27.05.2026" },
-  ]},
-];
 
 function parseDateDMY(date: string): string {
   const [dd, mm, yyyy] = date.split(".");
@@ -149,19 +65,20 @@ function buildMatches(): Match[] {
   let id = 0;
   for (const gw of rawSchedule) {
     for (const m of gw.matches) {
-      const homeId = teamByName[m.home];
-      const awayId = teamByName[m.away];
+      const key = `GW${gw.gameweek}: ${m.home} - ${m.away}`;
+      const entry = matchResults[key];
       result.push({
         id: id++,
         gameweek: gw.gameweek,
-        homeId,
-        awayId,
+        homeId: teamByName[m.home],
+        awayId: teamByName[m.away],
         venue: m.hall,
         address: m.address,
         day: m.day,
         date: parseDateDMY(m.date),
         time: m.time,
-        played: false,
+        played: entry !== undefined,
+        result: entry,
       });
     }
   }
@@ -170,3 +87,9 @@ function buildMatches(): Match[] {
 
 export const matches = buildMatches();
 export const totalGameweeks = 14;
+
+const allDates = matches.map((m) => m.date).sort();
+export const seasonStart = allDates[0];
+const lastMatchDate = new Date(allDates[allDates.length - 1]);
+lastMatchDate.setDate(lastMatchDate.getDate() + 7);
+export const seasonEnd = lastMatchDate.toISOString().slice(0, 10);
