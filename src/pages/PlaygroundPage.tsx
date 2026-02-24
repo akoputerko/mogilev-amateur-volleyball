@@ -44,7 +44,7 @@ function VolleyballIcon({ color, seamDark = false, size = 28 }: {
 }) {
   const seam = seamDark ? "rgba(80,48,0,0.30)" : "rgba(255,255,255,0.45)";
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
       {/* Ball body */}
       <circle cx="16" cy="16" r="14" fill={color} />
       {/* Three seam curves that give the volleyball its look */}
@@ -240,10 +240,10 @@ const PlaygroundPage = () => {
           <ScoreBox label="РЕКОРД" value={best}  />
           <button
             onClick={reset}
-            className="w-9 h-9 flex items-center justify-center rounded-lg bg-secondary hover:bg-secondary/80 text-muted-foreground hover:text-foreground transition-colors"
-            title="Новая игра"
+            className="w-11 h-11 flex items-center justify-center rounded-lg bg-secondary hover:bg-secondary/80 text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            aria-label="Новая игра"
           >
-            <RotateCcw className="w-4 h-4" />
+            <RotateCcw className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -251,6 +251,8 @@ const PlaygroundPage = () => {
       {/* Board */}
       <div
         ref={boardRef}
+        role="application"
+        aria-label="Игровое поле 2048. Используйте стрелки или WASD для управления."
         className="relative w-full max-w-sm rounded-xl p-2.5 overflow-hidden"
         style={{ background: "#b5a99a" }}
         onTouchStart={onTouchStart}
@@ -284,22 +286,22 @@ const PlaygroundPage = () => {
 
         {/* Game-over / win overlay */}
         {status !== "playing" && (
-          <div className="absolute inset-0 rounded-xl bg-black/60 flex flex-col items-center justify-center gap-3 p-4">
+          <div role="alert" className="absolute inset-0 rounded-xl bg-black/60 flex flex-col items-center justify-center gap-3 p-4">
             {status === "won" ? (
               <>
                 <VolleyballIcon color="#ffffff" seamDark size={56} />
-                <p className="font-display text-3xl text-yellow-400 uppercase">Победа!</p>
+                <p className="font-display text-3xl text-yellow-300 uppercase">Победа!</p>
                 <p className="text-sm text-white/70">Ты собрал 2048!</p>
                 <div className="flex gap-2 mt-1">
                   <button
                     onClick={() => { setContinued(true); setStatus("playing"); }}
-                    className="px-4 py-2 rounded-lg bg-yellow-400 text-yellow-900 font-semibold text-sm hover:bg-yellow-300 transition-colors"
+                    className="px-4 py-3 rounded-lg bg-yellow-400 text-yellow-900 font-semibold text-sm hover:bg-yellow-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-600"
                   >
                     Продолжить
                   </button>
                   <button
                     onClick={reset}
-                    className="px-4 py-2 rounded-lg bg-white/20 text-white font-semibold text-sm hover:bg-white/30 transition-colors"
+                    className="px-4 py-3 rounded-lg bg-white/20 text-white font-semibold text-sm hover:bg-white/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                   >
                     Заново
                   </button>
@@ -308,11 +310,11 @@ const PlaygroundPage = () => {
             ) : (
               <>
                 <VolleyballIcon color="#c8b490" seamDark size={56} />
-                <p className="font-display text-3xl text-red-400 uppercase">Конец игры</p>
+                <p className="font-display text-3xl text-red-300 uppercase">Конец игры</p>
                 <p className="text-sm text-white/70">Нет доступных ходов</p>
                 <button
                   onClick={reset}
-                  className="mt-1 px-4 py-2 rounded-lg bg-accent text-white font-semibold text-sm hover:bg-accent/90 transition-colors"
+                  className="mt-1 px-4 py-3 rounded-lg bg-accent text-white font-semibold text-sm hover:bg-accent/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
                   Заново
                 </button>

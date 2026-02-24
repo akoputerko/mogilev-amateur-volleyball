@@ -41,9 +41,10 @@ const TeamPage = () => {
       {/* Back */}
       <button
         onClick={() => navigate("/teams")}
-        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        aria-label="Вернуться к командам"
+        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:rounded"
       >
-        <ArrowLeft className="w-4 h-4" /> Команды
+        <ArrowLeft className="w-4 h-4" aria-hidden="true" /> Команды
       </button>
 
       {/* Header */}
@@ -58,10 +59,10 @@ const TeamPage = () => {
           <h2 className="text-xl text-primary-foreground">{team.name}</h2>
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
             <span className="flex items-center gap-1 text-primary-foreground/60 text-xs">
-              <MapPin className="w-3 h-3" /> {team.hall} · {team.hallAddress}
+              <MapPin className="w-3 h-3" aria-hidden="true" /> {team.hall} · {team.hallAddress}
             </span>
             <span className="flex items-center gap-1 text-primary-foreground/60 text-xs">
-              <Clock className="w-3 h-3" /> {team.trainDays.join(", ")} · {team.trainTime}
+              <Clock className="w-3 h-3" aria-hidden="true" /> {team.trainDays.join(", ")} · {team.trainTime}
             </span>
           </div>
         </div>
@@ -98,7 +99,7 @@ const TeamPage = () => {
               return (
                 <span
                   key={m.id}
-                  title={`${opp.name} · ${new Date(m.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short" })}`}
+                  aria-label={`${won ? "Победа" : "Поражение"} — ${opp.name}, ${new Date(m.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short" })}`}
                   className={`w-8 h-8 rounded flex items-center justify-center text-xs font-bold text-white ${won ? "bg-sport-win" : "bg-sport-loss"}`}
                 >
                   {won ? "В" : "П"}
@@ -113,18 +114,19 @@ const TeamPage = () => {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h4 className="font-display text-sm text-muted-foreground">Матчи</h4>
-          <div className="flex gap-1 bg-secondary rounded-lg p-1">
+          <div className="flex gap-1 bg-secondary rounded-lg p-1" role="group" aria-label="Фильтр матчей">
             {filters.map((f) => (
               <button
                 key={f.key}
                 onClick={() => setFilter(f.key)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                aria-pressed={filter === f.key}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                   filter === f.key
                     ? `${f.active} shadow-sm`
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {f.dot && <span className={`w-2 h-2 rounded-full ${f.dot}`} />}
+                {f.dot && <span className={`w-2 h-2 rounded-full ${f.dot}`} aria-hidden="true" />}
                 {f.label}
               </button>
             ))}

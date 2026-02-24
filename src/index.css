@@ -118,3 +118,14 @@
     background: linear-gradient(135deg, hsl(25 95% 53%), hsl(35 95% 55%));
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-up {
+    animation: none;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}

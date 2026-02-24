@@ -12,7 +12,7 @@ const StandingsPage = () => {
       {/* Scoring rules */}
       <div className="bg-card rounded-lg border border-border p-4">
         <h4 className="font-display text-sm text-muted-foreground mb-3 flex items-center gap-2">
-          <Info className="w-4 h-4" /> Система начисления очков
+          <Info className="w-4 h-4" aria-hidden="true" /> Система начисления очков
         </h4>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           <div className="bg-sport-win/10 border border-sport-win/20 rounded-md px-3 py-2 text-center">
@@ -36,12 +36,12 @@ const StandingsPage = () => {
       </div>
 
       {/* Legend */}
-      <div className="flex gap-4 text-xs text-muted-foreground">
+      <div className="flex gap-4 text-xs text-muted-foreground" aria-label="Обозначения таблицы">
         <span className="flex items-center gap-1.5">
-          <span className="w-3 h-1.5 rounded-sm bg-amber-400" /> Лидер
+          <span className="w-3 h-1.5 rounded-sm bg-amber-400" aria-hidden="true" /> Лидер
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="w-3 h-1.5 rounded-sm bg-sky-500" /> Плей-офф
+          <span className="w-3 h-1.5 rounded-sm bg-sky-500" aria-hidden="true" /> Плей-офф
         </span>
       </div>
 
@@ -51,15 +51,15 @@ const StandingsPage = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="sport-gradient text-primary-foreground text-left">
-                <th className="px-3 py-3 font-semibold text-xs tracking-wider">#</th>
-                <th className="px-3 py-3 font-semibold text-xs tracking-wider">Команда</th>
-                <th className="px-3 py-3 font-semibold text-xs tracking-wider text-center">И</th>
-                <th className="px-3 py-3 font-semibold text-xs tracking-wider text-center">В</th>
-                <th className="px-3 py-3 font-semibold text-xs tracking-wider text-center">П</th>
-                <th className="px-3 py-3 font-semibold text-xs tracking-wider text-center">Партии</th>
-                <th className="px-3 py-3 font-semibold text-xs tracking-wider text-center">+/−</th>
-                <th className="px-3 py-3 font-semibold text-xs tracking-wider text-center font-bold">Очки</th>
-                <th className="px-3 py-3 w-8"></th>
+                <th scope="col" className="px-3 py-3 font-semibold text-xs tracking-wider">#</th>
+                <th scope="col" className="px-3 py-3 font-semibold text-xs tracking-wider">Команда</th>
+                <th scope="col" className="px-3 py-3 font-semibold text-xs tracking-wider text-center" title="Сыграно">И</th>
+                <th scope="col" className="px-3 py-3 font-semibold text-xs tracking-wider text-center" title="Победы">В</th>
+                <th scope="col" className="px-3 py-3 font-semibold text-xs tracking-wider text-center" title="Поражения">П</th>
+                <th scope="col" className="px-3 py-3 font-semibold text-xs tracking-wider text-center">Партии</th>
+                <th scope="col" className="px-3 py-3 font-semibold text-xs tracking-wider text-center" title="Разница партий">+/−</th>
+                <th scope="col" className="px-3 py-3 font-semibold text-xs tracking-wider text-center font-bold">Очки</th>
+                <th scope="col" className="px-3 py-3 w-8"><span className="sr-only">Подробнее</span></th>
               </tr>
             </thead>
             <tbody>
@@ -77,7 +77,10 @@ const StandingsPage = () => {
                   <tr
                     key={s.team.id}
                     onClick={() => setSelected(s)}
-                    className={`border-t border-border cursor-pointer transition-colors hover:bg-secondary/60 ${rowHighlight} ${
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelected(s); } }}
+                    tabIndex={0}
+                    aria-label={`${s.team.name}, место ${pos}, очков ${s.points}`}
+                    className={`border-t border-border cursor-pointer transition-colors hover:bg-secondary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent ${rowHighlight} ${
                       selected?.team.id === s.team.id ? "bg-secondary" : ""
                     }`}
                     style={{ animationDelay: `${i * 40}ms` }}
@@ -88,6 +91,7 @@ const StandingsPage = () => {
                         <span
                           className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                           style={{ backgroundColor: `hsl(${s.team.color})` }}
+                          aria-hidden="true"
                         />
                         <span className="font-semibold">{s.team.name}</span>
                       </div>
@@ -105,7 +109,7 @@ const StandingsPage = () => {
                       <span className="font-display text-lg font-bold text-accent">{s.points}</span>
                     </td>
                     <td className="px-3 py-3">
-                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
                     </td>
                   </tr>
                 );
@@ -140,8 +144,12 @@ function TeamStatsPanel({ standing: s, onClose }: { standing: TeamStanding; onCl
           />
           <h3 className="text-primary-foreground text-xl">{s.team.name}</h3>
         </div>
-        <button onClick={onClose} className="text-primary-foreground/60 hover:text-primary-foreground transition-colors">
-          <X className="w-5 h-5" />
+        <button
+          onClick={onClose}
+          aria-label="Закрыть"
+          className="w-10 h-10 flex items-center justify-center text-primary-foreground/60 hover:text-primary-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-md"
+        >
+          <X className="w-5 h-5" aria-hidden="true" />
         </button>
       </div>
 
@@ -158,7 +166,7 @@ function TeamStatsPanel({ standing: s, onClose }: { standing: TeamStanding; onCl
         {teamMatches.length > 0 && (
           <div>
             <h4 className="font-display text-sm text-muted-foreground mb-3 flex items-center gap-2">
-              <Trophy className="w-4 h-4" /> Результаты
+              <Trophy className="w-4 h-4" aria-hidden="true" /> Результаты
             </h4>
             <div className="space-y-2">
               {teamMatches.map((m) => (
@@ -172,7 +180,7 @@ function TeamStatsPanel({ standing: s, onClose }: { standing: TeamStanding; onCl
         {upcoming.length > 0 && (
           <div>
             <h4 className="font-display text-sm text-muted-foreground mb-3 flex items-center gap-2">
-              <Calendar className="w-4 h-4" /> Ближайшие матчи
+              <Calendar className="w-4 h-4" aria-hidden="true" /> Ближайшие матчи
             </h4>
             <div className="space-y-2">
               {upcoming.map((m) => {
@@ -187,7 +195,7 @@ function TeamStatsPanel({ standing: s, onClose }: { standing: TeamStanding; onCl
                       {isHome ? "Д" : "Г"}
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: `hsl(${opp.color})` }} />
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: `hsl(${opp.color})` }} aria-hidden="true" />
                       <span className="font-medium">{opp.name}</span>
                     </span>
                   </div>
@@ -222,7 +230,7 @@ function HistoryRow({ match: m, teamId }: { match: Match; teamId: number }) {
 
   return (
     <div className="flex items-center gap-3 text-sm bg-secondary/30 rounded-md px-3 py-2">
-      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${won ? "bg-sport-win" : "bg-sport-loss"}`} />
+      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${won ? "bg-sport-win" : "bg-sport-loss"}`} aria-hidden="true" />
       <span className="text-xs text-muted-foreground w-14">
         {new Date(m.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short" })}
       </span>
@@ -230,7 +238,7 @@ function HistoryRow({ match: m, teamId }: { match: Match; teamId: number }) {
         {isHome ? "Д" : "Г"}
       </span>
       <span className="flex items-center gap-1.5 flex-1 min-w-0">
-        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: `hsl(${opp.color})` }} />
+        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: `hsl(${opp.color})` }} aria-hidden="true" />
         <span className="truncate">{opp.name}</span>
       </span>
       <span className="font-mono font-semibold">

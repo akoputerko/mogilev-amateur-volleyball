@@ -25,6 +25,7 @@ const ToursPage = () => {
             <select
               value={gw}
               onChange={(e) => setGw(Number(e.target.value))}
+              aria-label="Выберите тур"
               className="appearance-none bg-card border border-border rounded-lg px-4 py-2.5 pr-10 font-display text-lg font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer"
             >
               {Array.from({ length: totalGameweeks }, (_, i) => (
@@ -33,7 +34,7 @@ const ToursPage = () => {
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" aria-hidden="true" />
           </div>
           <span className="text-muted-foreground text-sm">{dateRange}</span>
         </div>

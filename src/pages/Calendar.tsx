@@ -73,15 +73,17 @@ const Calendar = () => {
         <div className="flex gap-1">
           <button
             onClick={prevMonth}
-            className="w-8 h-8 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            aria-label="Предыдущий месяц"
+            className="w-10 h-10 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-4 h-4" aria-hidden="true" />
           </button>
           <button
             onClick={nextMonth}
-            className="w-8 h-8 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            aria-label="Следующий месяц"
+            className="w-10 h-10 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -138,21 +140,22 @@ const Calendar = () => {
                         <button
                           key={m.id}
                           onClick={() => setSelectedMatch(m)}
-                          className={`w-full text-left text-[10px] leading-snug px-1 py-0.5 rounded transition-opacity hover:opacity-70 active:scale-95 ${
+                          aria-label={`${home.name} — ${away.name}${m.played && m.result ? `, счёт ${m.result.setsHome}:${m.result.setsAway}` : `, начало ${startTime}`}, ${m.venue}`}
+                          className={`w-full text-left text-[10px] leading-snug px-1 py-0.5 rounded transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                             m.played
-                              ? "bg-sport-win/15 text-sport-win"
-                              : "bg-accent/15 text-accent"
+                              ? "bg-sport-win/20 border-l-2 border-sport-win"
+                              : "bg-accent/15 border-l-2 border-accent"
                           }`}
                         >
-                          <div className="font-semibold truncate">
+                          <div className="font-semibold truncate text-foreground">
                             {home.short} – {away.short}
                           </div>
-                          <div className="opacity-75">
+                          <div className="text-foreground/70">
                             {m.played && m.result
                               ? `${m.result.setsHome}:${m.result.setsAway}`
                               : startTime}
                           </div>
-                          <div className="opacity-50 truncate">{m.venue}</div>
+                          <div className="text-muted-foreground truncate">{m.venue}</div>
                         </button>
                       );
                     })}
@@ -165,13 +168,13 @@ const Calendar = () => {
       </div>
 
       {/* Legend */}
-      <div className="flex gap-4 mt-3 text-xs text-muted-foreground">
+      <div className="flex gap-4 mt-3 text-xs text-muted-foreground" aria-label="Обозначения">
         <span className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-sm bg-sport-win/15 border border-sport-win/30 inline-block" />
+          <span className="w-2 h-2 rounded-sm bg-sport-win/15 border border-sport-win/30 inline-block" aria-hidden="true" />
           Сыгран
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-sm bg-accent/15 border border-accent/30 inline-block" />
+          <span className="w-2 h-2 rounded-sm bg-accent/15 border border-accent/30 inline-block" aria-hidden="true" />
           Предстоит
         </span>
       </div>

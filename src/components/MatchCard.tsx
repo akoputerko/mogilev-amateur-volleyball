@@ -30,8 +30,12 @@ const MatchCard = ({ match, teamId, linkTeams }: MatchCardProps) => {
       <div className="p-4 flex flex-col items-center gap-3 flex-1 justify-center">
         {/* Home team */}
         <div
-          className={`flex items-center gap-2.5 ${linkTeams ? "cursor-pointer group/home" : ""}`}
+          className={`flex items-center gap-2.5 ${linkTeams ? "cursor-pointer group/home rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent" : ""}`}
           onClick={linkTeams ? (e) => handleTeamClick(match.homeId, e) : undefined}
+          onKeyDown={linkTeams ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate(`/teams/${match.homeId}`); } } : undefined}
+          role={linkTeams ? "button" : undefined}
+          tabIndex={linkTeams ? 0 : undefined}
+          aria-label={linkTeams ? `Страница команды ${home.name}` : undefined}
         >
           <span
             className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold text-primary-foreground"
@@ -74,8 +78,12 @@ const MatchCard = ({ match, teamId, linkTeams }: MatchCardProps) => {
 
         {/* Away team */}
         <div
-          className={`flex items-center gap-2.5 ${linkTeams ? "cursor-pointer group/away" : ""}`}
+          className={`flex items-center gap-2.5 ${linkTeams ? "cursor-pointer group/away rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent" : ""}`}
           onClick={linkTeams ? (e) => handleTeamClick(match.awayId, e) : undefined}
+          onKeyDown={linkTeams ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate(`/teams/${match.awayId}`); } } : undefined}
+          role={linkTeams ? "button" : undefined}
+          tabIndex={linkTeams ? 0 : undefined}
+          aria-label={linkTeams ? `Страница команды ${away.name}` : undefined}
         >
           <span
             className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold text-primary-foreground"
@@ -97,15 +105,15 @@ const MatchCard = ({ match, teamId, linkTeams }: MatchCardProps) => {
           </span>
         )}
         <span className="inline-flex items-center gap-1">
-          <Calendar className="w-3 h-3" />
+          <Calendar className="w-3 h-3" aria-hidden="true" />
           {new Date(match.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short", weekday: "short" })}
         </span>
         <span className="inline-flex items-center gap-1">
-          <Clock className="w-3 h-3" />
+          <Clock className="w-3 h-3" aria-hidden="true" />
           {match.time}
         </span>
         <span className="inline-flex items-center gap-1">
-          <MapPin className="w-3 h-3" />
+          <MapPin className="w-3 h-3" aria-hidden="true" />
           {match.venue} · {match.address}
         </span>
       </div>

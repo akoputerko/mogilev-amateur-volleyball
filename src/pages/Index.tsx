@@ -11,7 +11,7 @@ const tabs = [
   { label: "Календарь", icon: LayoutGrid, path: "/calendar" },
   { label: "Туры",     icon: CalendarDays, path: "/tours"    },
   { label: "Команды",  icon: Users,     path: "/teams"       },
-  { label: "Игрище",   icon: Gamepad2,  path: "/playground"  },
+  { label: "2048",      icon: Gamepad2,  path: "/playground"  },
 ];
 
 const Index = () => {
@@ -40,7 +40,7 @@ const Index = () => {
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg accent-gradient flex items-center justify-center">
-                <Trophy className="w-5 h-5 text-accent-foreground" />
+                <Trophy className="w-5 h-5 text-accent-foreground" aria-hidden="true" />
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl text-primary-foreground tracking-wide">
@@ -53,17 +53,17 @@ const Index = () => {
             </div>
             <button
               onClick={() => setDark((d) => !d)}
-              className="w-9 h-9 rounded-lg flex items-center justify-center text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10 transition-colors flex-shrink-0"
-              aria-label="Переключить тему"
+              className="w-11 h-11 rounded-lg flex items-center justify-center text-primary-foreground/80 hover:text-primary-foreground hover:bg-white/10 transition-colors flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+              aria-label={dark ? "Включить светлую тему" : "Включить тёмную тему"}
             >
-              {dark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {dark ? <Sun className="w-5 h-5" aria-hidden="true" /> : <Moon className="w-5 h-5" aria-hidden="true" />}
             </button>
           </div>
         </div>
       </header>
 
       {/* Tab bar */}
-      <div className="border-b border-border bg-card sticky top-0 z-10">
+      <nav aria-label="Основная навигация" className="border-b border-border bg-card sticky top-0 z-10">
         <div className="container flex">
           {tabs.map((t) => {
             const Icon = t.icon;
@@ -71,19 +71,21 @@ const Index = () => {
               <button
                 key={t.path}
                 onClick={() => navigate(t.path)}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                aria-label={t.label}
+                aria-current={isActive(t.path) ? "page" : undefined}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent ${
                   isActive(t.path)
                     ? "border-accent text-accent"
                     : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-4 h-4" aria-hidden="true" />
                 <span className="hidden sm:inline">{t.label}</span>
               </button>
             );
           })}
         </div>
-      </div>
+      </nav>
 
       {/* Content */}
       <main className="container py-6">
