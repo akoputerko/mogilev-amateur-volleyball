@@ -13,60 +13,56 @@ const MatchCard = ({ match }: MatchCardProps) => {
   return (
     <div className="group bg-card rounded-xl border border-border overflow-hidden animate-fade-in hover:border-accent/30 transition-all hover:shadow-lg hover:shadow-accent/5">
       {/* Teams & Score */}
-      <div className="p-4 space-y-3">
-        {/* Home team row */}
-        <div className="flex items-center gap-3">
+      <div className="p-4 flex flex-col items-center gap-3">
+        {/* Home team */}
+        <div className="flex flex-col items-center gap-1.5">
           <span
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-primary-foreground flex-shrink-0"
+            className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold text-primary-foreground"
             style={{ backgroundColor: `hsl(${home.color})` }}
           >
             {home.name.slice(0, 2).toUpperCase()}
           </span>
-          <span className="font-semibold text-sm flex-1 truncate">{home.name}</span>
-          {match.played && r && (
-            <span className={`font-display text-xl font-bold min-w-[1.5rem] text-right ${r.setsHome > r.setsAway ? "text-sport-win" : "text-muted-foreground"}`}>
-              {r.setsHome}
-            </span>
-          )}
+          <span className="font-semibold text-sm text-center">{home.name}</span>
         </div>
 
-        {/* Away team row */}
-        <div className="flex items-center gap-3">
+        {/* Score or VS */}
+        {match.played && r ? (
+          <div className="flex flex-col items-center gap-1.5">
+            <div className="flex items-center gap-2">
+              <span className={`font-display text-3xl font-bold ${r.setsHome > r.setsAway ? "text-sport-win" : "text-muted-foreground"}`}>
+                {r.setsHome}
+              </span>
+              <span className="text-muted-foreground/40 text-lg">:</span>
+              <span className={`font-display text-3xl font-bold ${r.setsAway > r.setsHome ? "text-sport-win" : "text-muted-foreground"}`}>
+                {r.setsAway}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              {r.setScores.map((s, i) => (
+                <span key={i} className="bg-secondary rounded-md px-2 py-0.5 text-xs font-mono">
+                  <span className={s.home > s.away ? "text-sport-win font-bold" : "text-muted-foreground"}>{s.home}</span>
+                  <span className="text-muted-foreground/50 mx-0.5">:</span>
+                  <span className={s.away > s.home ? "text-sport-win font-bold" : "text-muted-foreground"}>{s.away}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <span className="px-4 py-1 rounded-full accent-gradient text-accent-foreground text-xs font-bold tracking-widest shadow-sm">
+            VS
+          </span>
+        )}
+
+        {/* Away team */}
+        <div className="flex flex-col items-center gap-1.5">
           <span
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-primary-foreground flex-shrink-0"
+            className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold text-primary-foreground"
             style={{ backgroundColor: `hsl(${away.color})` }}
           >
             {away.name.slice(0, 2).toUpperCase()}
           </span>
-          <span className="font-semibold text-sm flex-1 truncate">{away.name}</span>
-          {match.played && r && (
-            <span className={`font-display text-xl font-bold min-w-[1.5rem] text-right ${r.setsAway > r.setsHome ? "text-sport-win" : "text-muted-foreground"}`}>
-              {r.setsAway}
-            </span>
-          )}
+          <span className="font-semibold text-sm text-center">{away.name}</span>
         </div>
-
-        {/* VS badge for unplayed */}
-        {!match.played && (
-          <div className="flex justify-center">
-            <span className="px-4 py-1 rounded-full accent-gradient text-accent-foreground text-xs font-bold tracking-widest shadow-sm">
-              VS
-            </span>
-          </div>
-        )}
-
-        {/* Set scores for played */}
-        {match.played && r && (
-          <div className="flex justify-center gap-2 pt-1">
-            {r.setScores.map((s, i) => (
-              <span key={i} className="bg-secondary rounded-md px-2.5 py-1 text-xs font-mono">
-                <span className={s.home > s.away ? "text-sport-win font-bold" : "text-muted-foreground"}>{s.home}</span>
-                <span className="text-muted-foreground/50 mx-0.5">:</span>
-                <span className={s.away > s.home ? "text-sport-win font-bold" : "text-muted-foreground"}>{s.away}</span>
-              </span>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Meta footer */}
