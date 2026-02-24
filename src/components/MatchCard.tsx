@@ -15,14 +15,14 @@ const MatchCard = ({ match }: MatchCardProps) => {
       {/* Teams & Score */}
       <div className="p-4 flex flex-col items-center gap-3">
         {/* Home team */}
-        <div className="flex flex-col items-center gap-1.5">
+        <div className="flex items-center gap-2.5">
           <span
             className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold text-primary-foreground"
             style={{ backgroundColor: `hsl(${home.color})` }}
           >
             {home.name.slice(0, 2).toUpperCase()}
           </span>
-          <span className="font-semibold text-sm text-center">{home.name}</span>
+          <span className="font-semibold text-sm">{home.name}</span>
         </div>
 
         {/* Score or VS */}
@@ -54,14 +54,14 @@ const MatchCard = ({ match }: MatchCardProps) => {
         )}
 
         {/* Away team */}
-        <div className="flex flex-col items-center gap-1.5">
+        <div className="flex items-center gap-2.5">
           <span
             className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold text-primary-foreground"
             style={{ backgroundColor: `hsl(${away.color})` }}
           >
             {away.name.slice(0, 2).toUpperCase()}
           </span>
-          <span className="font-semibold text-sm text-center">{away.name}</span>
+          <span className="font-semibold text-sm">{away.name}</span>
         </div>
       </div>
 
