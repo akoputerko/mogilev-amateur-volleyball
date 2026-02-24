@@ -10,6 +10,7 @@ import ToursPage from "./pages/ToursPage";
 import TeamsPage from "./pages/TeamsPage";
 import TeamPage from "./pages/TeamPage";
 import PlaygroundPage from "./pages/PlaygroundPage";
+import Calendar from "./pages/Calendar.tsx";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="teams" element={<TeamsPage />} />
             <Route path="teams/:id" element={<TeamPage />} />
             <Route path="playground" element={<PlaygroundPage />} />
+            <Route path="calendar" element={<Calendar />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

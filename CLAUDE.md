@@ -20,14 +20,16 @@ To run a single test file: `npx vitest run src/test/example.test.ts`
 
 Static React/TypeScript SPA for the Mogilev Amateur Volleyball League. No backend — all data lives in `src/data/league.ts`.
 
-**Routing:** `BrowserRouter` with `basename={import.meta.env.BASE_URL}`. `Index.tsx` is the layout shell with tab navigation; route content renders via `<Outlet />`. All route-level pages are in `src/pages/`:
+**Routing:** `HashRouter`. `Index.tsx` is the layout shell with tab navigation; route content renders via `<Outlet />`. All route-level pages are in `src/pages/`:
 
 | Path | Component |
 |---|---|
 | `/` | `StandingsPage` |
+| `/calendar` | `Calendar` |
 | `/tours` | `ToursPage` |
 | `/teams` | `TeamsPage` |
 | `/teams/:id` | `TeamPage` |
+| `/playground` | `PlaygroundPage` |
 
 `src/components/` contains only reusable sub-components (`MatchCard`, shadcn/ui primitives, etc.).
 

@@ -28,6 +28,7 @@ const TILE_CFG: Record<number, TileCfg> = {
   512:  { bg: "#22c55e", fg: "#052e16", ballColor: "#22bb33"                   },
   1024: { bg: "#16a34a", fg: "#f0fdf4", ballColor: "#003d14"                   },
   2048: { bg: "#f97316", fg: "#fff7ed", ballColor: "#ffffff", seamDark: true  },
+  4096: { bg: "#6d28d9", fg: "#ede9fe", ballColor: "#ddd6fe"                 },
 };
 
 const getTileCfg = (v: number): TileCfg =>
@@ -156,7 +157,16 @@ const PlaygroundPage = () => {
   const [best,      setBest]      = useState(()    => Number(localStorage.getItem(BEST_KEY) || "0"));
   const [status,    setStatus]    = useState<Status>(() => loadGame()?.status  ?? "playing");
   const [continued, setContinued] = useState(()    => loadGame()?.continued   ?? false);
-  const touchRef = useRef<{ x: number; y: number } | null>(null);
+  const touchRef  = useRef<{ x: number; y: number } | null>(null);
+  const boardRef  = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = boardRef.current;
+    if (!el) return;
+    const prevent = (e: TouchEvent) => e.preventDefault();
+    el.addEventListener("touchmove", prevent, { passive: false });
+    return () => el.removeEventListener("touchmove", prevent);
+  }, []);
 
   const reset = useCallback(() => {
     setBoard(initBoard());
@@ -240,6 +250,7 @@ const PlaygroundPage = () => {
 
       {/* Board */}
       <div
+        ref={boardRef}
         className="relative w-full max-w-sm rounded-xl p-2.5 overflow-hidden"
         style={{ background: "#b5a99a" }}
         onTouchStart={onTouchStart}
@@ -319,13 +330,13 @@ const PlaygroundPage = () => {
       {/* Tile legend */}
       <div className="w-full max-w-sm">
         <p className="text-xs text-muted-foreground mb-2 text-center">Путь к чемпионству</p>
-        <div className="flex flex-wrap justify-center gap-1.5">
-          {([2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048] as const).map(v => {
+        <div className="grid grid-cols-4 gap-1.5">
+          {([2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096] as const).map(v => {
             const cfg = getTileCfg(v);
             return (
               <div
                 key={v}
-                className="w-10 h-10 rounded-md flex flex-col items-center justify-center text-center"
+                className="aspect-square rounded-md flex flex-col items-center justify-center text-center"
                 style={{ background: cfg.bg }}
               >
                 <VolleyballIcon color={cfg.ballColor} seamDark={cfg.seamDark} size={18} />

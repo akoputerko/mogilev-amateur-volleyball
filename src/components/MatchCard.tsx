@@ -106,7 +106,7 @@ const MatchCard = ({ match, teamId, linkTeams }: MatchCardProps) => {
         </span>
         <span className="inline-flex items-center gap-1">
           <MapPin className="w-3 h-3" />
-          {match.venue}
+          {match.venue} · {match.address}
         </span>
       </div>
     </div>
