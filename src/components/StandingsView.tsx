@@ -1,14 +1,38 @@
 import { useState } from "react";
 import { calcStandings, getTeamMatches, getUpcoming, type TeamStanding } from "@/lib/standings";
 import { getTeam, type Match } from "@/data/league";
-import { ChevronRight, Trophy, X, Calendar } from "lucide-react";
+import { ChevronRight, Trophy, X, Calendar, Info } from "lucide-react";
 
 const StandingsView = () => {
   const standings = calcStandings();
   const [selected, setSelected] = useState<TeamStanding | null>(null);
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in space-y-4">
+      {/* Scoring rules */}
+      <div className="bg-card rounded-lg border border-border p-4">
+        <h4 className="font-display text-sm text-muted-foreground mb-2 flex items-center gap-2">
+          <Info className="w-4 h-4" /> 📊 Система начисления очков
+        </h4>
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+          <span><strong className="text-sport-win">Победа 3-0</strong> → 3 очка</span>
+          <span><strong className="text-sport-win">Победа 2-1</strong> → 2 очка</span>
+          <span><strong className="text-sport-loss">Поражение 1-2</strong> → 1 очко</span>
+          <span><strong className="text-sport-loss">Поражение 0-3</strong> → 0 очков</span>
+        </div>
+        <p className="text-[11px] text-muted-foreground/70 mt-1.5">Всегда 3 партии в матче · Плей-офф: топ-4 команды</p>
+      </div>
+
+      {/* Legend */}
+      <div className="flex gap-4 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1.5">
+          <span className="w-3 h-1.5 rounded-sm bg-amber-500" /> Лидер
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-3 h-1.5 rounded-sm bg-sport-win" /> Плей-офф
+        </span>
+      </div>
+
       {/* Table */}
       <div className="bg-card rounded-lg border border-border overflow-hidden">
         <div className="overflow-x-auto">
@@ -21,44 +45,59 @@ const StandingsView = () => {
                 <th className="px-3 py-3 font-semibold text-xs tracking-wider text-center">В</th>
                 <th className="px-3 py-3 font-semibold text-xs tracking-wider text-center">П</th>
                 <th className="px-3 py-3 font-semibold text-xs tracking-wider text-center">Партии</th>
+                <th className="px-3 py-3 font-semibold text-xs tracking-wider text-center">+/−</th>
                 <th className="px-3 py-3 font-semibold text-xs tracking-wider text-center font-bold">Очки</th>
                 <th className="px-3 py-3 w-8"></th>
               </tr>
             </thead>
             <tbody>
-              {standings.map((s, i) => (
-                <tr
-                  key={s.team.id}
-                  onClick={() => setSelected(s)}
-                  className={`border-t border-border cursor-pointer transition-colors hover:bg-secondary/60 ${
-                    selected?.team.id === s.team.id ? "bg-secondary" : ""
-                  }`}
-                  style={{ animationDelay: `${i * 40}ms` }}
-                >
-                  <td className="px-3 py-3 font-display font-bold text-muted-foreground">{i + 1}</td>
-                  <td className="px-3 py-3">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: `hsl(${s.team.color})` }}
-                      />
-                      <span className="font-semibold">{s.team.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3 text-center text-muted-foreground">{s.played}</td>
-                  <td className="px-3 py-3 text-center text-sport-win font-semibold">{s.won}</td>
-                  <td className="px-3 py-3 text-center text-sport-loss font-semibold">{s.lost}</td>
-                  <td className="px-3 py-3 text-center text-muted-foreground">
-                    {s.setsWon}-{s.setsLost}
-                  </td>
-                  <td className="px-3 py-3 text-center">
-                    <span className="font-display text-lg font-bold text-accent">{s.points}</span>
-                  </td>
-                  <td className="px-3 py-3">
-                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                  </td>
-                </tr>
-              ))}
+              {standings.map((s, i) => {
+                const pos = i + 1;
+                const setDiff = s.setsWon - s.setsLost;
+                const rowHighlight =
+                  pos === 1
+                    ? "border-l-[3px] border-l-amber-500 bg-amber-500/5"
+                    : pos <= 4
+                      ? "border-l-[3px] border-l-sport-win bg-sport-win/5"
+                      : "";
+
+                return (
+                  <tr
+                    key={s.team.id}
+                    onClick={() => setSelected(s)}
+                    className={`border-t border-border cursor-pointer transition-colors hover:bg-secondary/60 ${rowHighlight} ${
+                      selected?.team.id === s.team.id ? "bg-secondary" : ""
+                    }`}
+                    style={{ animationDelay: `${i * 40}ms` }}
+                  >
+                    <td className={`px-3 py-3 font-display font-bold ${pos === 1 ? "text-amber-500" : pos <= 4 ? "text-sport-win" : "text-muted-foreground"}`}>{pos}</td>
+                    <td className="px-3 py-3">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: `hsl(${s.team.color})` }}
+                        />
+                        <span className="font-semibold">{s.team.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-3 py-3 text-center text-muted-foreground">{s.played}</td>
+                    <td className="px-3 py-3 text-center text-sport-win font-semibold">{s.won}</td>
+                    <td className="px-3 py-3 text-center text-sport-loss font-semibold">{s.lost}</td>
+                    <td className="px-3 py-3 text-center text-muted-foreground">
+                      {s.setsWon}-{s.setsLost}
+                    </td>
+                    <td className={`px-3 py-3 text-center font-semibold ${setDiff > 0 ? "text-sport-win" : setDiff < 0 ? "text-sport-loss" : "text-muted-foreground"}`}>
+                      {setDiff > 0 ? `+${setDiff}` : setDiff}
+                    </td>
+                    <td className="px-3 py-3 text-center">
+                      <span className="font-display text-lg font-bold text-accent">{s.points}</span>
+                    </td>
+                    <td className="px-3 py-3">
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
