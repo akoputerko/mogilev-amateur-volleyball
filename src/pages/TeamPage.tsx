@@ -39,6 +39,23 @@ const TeamPage = () => {
     return acc;
   }, {});
 
+  const totalSets = (standing?.played ?? 0) * 3;
+  const totalPts  = (standing?.pointsWon ?? 0) + (standing?.pointsLost ?? 0);
+  const ptDiff    = (standing?.pointsWon ?? 0) - (standing?.pointsLost ?? 0);
+  const ptEff     = totalPts > 0 ? Math.round(((standing?.pointsWon ?? 0) / totalPts) * 100) : 0;
+  const avgWon    = totalSets > 0 ? ((standing?.pointsWon ?? 0) / totalSets).toFixed(1) : "—";
+  const avgLost   = totalSets > 0 ? ((standing?.pointsLost ?? 0) / totalSets).toFixed(1) : "—";
+  let w30 = 0, w21 = 0, l12 = 0, l03 = 0;
+  for (const m of playedMatches) {
+    const r = m.result!;
+    const mine = m.homeId === teamId ? r.setsHome : r.setsAway;
+    const opp  = m.homeId === teamId ? r.setsAway : r.setsHome;
+    if      (mine === 3 && opp === 0) w30++;
+    else if (mine === 2 && opp === 1) w21++;
+    else if (mine === 1 && opp === 2) l12++;
+    else                               l03++;
+  }
+
   const filtered = allMatches.filter((m) => {
     if (filter === "home") return m.homeId === teamId;
     if (filter === "away") return m.awayId === teamId;
@@ -91,6 +108,71 @@ const TeamPage = () => {
           <StatBox label="Партии (В/П)" wins={standing.setsWon} losses={standing.setsLost} />
           <StatBox label="Дома (В/П)" wins={standing.homeWon} losses={standing.homeLost} />
           <StatBox label="В гостях (В/П)" wins={standing.awayWon} losses={standing.awayLost} />
+        </div>
+      )}
+
+      {/* Score totals + match breakdown */}
+      {standing && standing.played > 0 && (
+        <div className="bg-card rounded-lg border border-border p-4 space-y-4">
+
+          {/* Points totals */}
+          <div>
+            <h4 className="font-display text-sm text-muted-foreground mb-3">Очки в партиях</h4>
+            <div className="flex items-end gap-4 mb-2">
+              <div className="text-center">
+                <div className="font-display text-3xl font-bold text-sport-win">{standing.pointsWon}</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">забито</div>
+              </div>
+              <div className="text-xl text-muted-foreground/30 mb-1 font-sans">:</div>
+              <div className="text-center">
+                <div className="font-display text-3xl font-bold text-sport-loss">{standing.pointsLost}</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">пропущено</div>
+              </div>
+              <div className="flex-1" />
+              <div className="text-center">
+                <div className={`font-display text-xl font-bold ${ptDiff > 0 ? "text-sport-win" : ptDiff < 0 ? "text-sport-loss" : "text-muted-foreground"}`}>
+                  {ptDiff > 0 ? `+${ptDiff}` : ptDiff}
+                </div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">разница</div>
+              </div>
+              <div className="text-center">
+                <div className={`font-display text-xl font-bold ${ptEff >= 50 ? "text-sport-win" : "text-sport-loss"}`}>
+                  {ptEff}%
+                </div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">эфф-ть</div>
+              </div>
+            </div>
+            <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+              <div className="h-full bg-sport-win transition-all" style={{ width: `${ptEff}%` }} />
+            </div>
+            <div className="flex justify-between text-[10px] text-muted-foreground mt-1.5">
+              <span>≈{avgWon} оч/партию</span>
+              <span>≈{avgLost} оч/партию</span>
+            </div>
+          </div>
+
+          {/* Match type breakdown */}
+          <div>
+            <div className="text-xs text-muted-foreground mb-2">Характер матчей</div>
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { label: "3:0", sub: "Победа",    count: w30, win: true,  strong: true  },
+                { label: "2:1", sub: "Победа",    count: w21, win: true,  strong: false },
+                { label: "1:2", sub: "Поражение", count: l12, win: false, strong: false },
+                { label: "0:3", sub: "Поражение", count: l03, win: false, strong: true  },
+              ].map(({ label, sub, count, win, strong }) => (
+                <div
+                  key={label}
+                  className={`rounded-lg p-2.5 text-center ${win ? (strong ? "bg-sport-win/20" : "bg-sport-win/10") : (strong ? "bg-sport-loss/20" : "bg-sport-loss/10")}`}
+                >
+                  <div className={`text-[10px] font-semibold ${win ? "text-sport-win" : "text-sport-loss"}`}>{sub}</div>
+                  <div className="font-display text-2xl font-bold text-foreground mt-0.5">{count}</div>
+                  <div className={`text-xs font-mono font-bold mt-0.5 ${win ? "text-sport-win/70" : "text-sport-loss/70"}`}>{label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
       )}
 
