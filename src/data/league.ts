@@ -76,7 +76,13 @@ function buildMatches(): Match[] {
         date: parseDateDMY(m.date),
         time: m.time,
         played: entry !== undefined,
-        result: entry,
+        result: entry
+          ? {
+              setsHome: entry.setScores.filter((s) => s.home > s.away).length,
+              setsAway: entry.setScores.filter((s) => s.away > s.home).length,
+              setScores: entry.setScores,
+            }
+          : undefined,
       });
     }
   }

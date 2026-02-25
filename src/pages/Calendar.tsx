@@ -132,7 +132,7 @@ const Calendar = () => {
 
                   {/* Match chips */}
                   <div className="flex flex-col gap-0.5">
-                    {dayMatches.map((m) => {
+                    {[...dayMatches].sort((a, b) => a.time.localeCompare(b.time)).map((m) => {
                       const home = teamById[m.homeId];
                       const away = teamById[m.awayId];
                       const startTime = m.time.split("-")[0];

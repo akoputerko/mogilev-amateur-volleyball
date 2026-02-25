@@ -30,6 +30,15 @@ const TeamPage = () => {
   const allMatches = getTeamMatches(teamId);
   const playedMatches = allMatches.filter((m) => m.played);
 
+  const h2h = playedMatches.reduce<Record<number, { won: number; lost: number }>>((acc, m) => {
+    const oppId = m.homeId === teamId ? m.awayId : m.homeId;
+    if (!acc[oppId]) acc[oppId] = { won: 0, lost: 0 };
+    const r = m.result!;
+    const won = m.homeId === teamId ? r.setsHome > r.setsAway : r.setsAway > r.setsHome;
+    if (won) acc[oppId].won++; else acc[oppId].lost++;
+    return acc;
+  }, {});
+
   const filtered = allMatches.filter((m) => {
     if (filter === "home") return m.homeId === teamId;
     if (filter === "away") return m.awayId === teamId;
@@ -104,6 +113,35 @@ const TeamPage = () => {
                 >
                   {won ? "В" : "П"}
                 </span>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Head-to-head records */}
+      {Object.keys(h2h).length > 0 && (
+        <div className="bg-card rounded-lg border border-border p-4">
+          <h4 className="font-display text-sm text-muted-foreground mb-3">Очные встречи</h4>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            {Object.entries(h2h).map(([oppIdStr, record]) => {
+              const opp = getTeam(Number(oppIdStr));
+              return (
+                <div key={oppIdStr} className="bg-secondary/40 rounded-lg p-2 text-center">
+                  <div className="flex items-center gap-1.5 justify-center mb-1">
+                    <span
+                      className="w-2 h-2 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: `hsl(${opp.color})` }}
+                      aria-hidden="true"
+                    />
+                    <span className="text-xs font-medium truncate">{opp.short}</span>
+                  </div>
+                  <div className="font-display text-base font-bold">
+                    <span className="text-sport-win">{record.won}</span>
+                    <span className="text-muted-foreground/40 mx-0.5 text-sm font-sans">:</span>
+                    <span className="text-sport-loss">{record.lost}</span>
+                  </div>
+                </div>
               );
             })}
           </div>

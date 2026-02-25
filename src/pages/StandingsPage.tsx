@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { calcStandings, getTeamMatches, getUpcoming, type TeamStanding } from "@/lib/standings";
-import { getTeam, type Match } from "@/data/league";
+import { getTeam, matches, totalGameweeks, type Match } from "@/data/league";
 import { ChevronRight, Trophy, X, Calendar, Info } from "lucide-react";
 
 const StandingsPage = () => {
   const standings = calcStandings();
   const [selected, setSelected] = useState<TeamStanding | null>(null);
+
+  const playedCount = matches.filter((m) => m.played).length;
+  const playedGameweeks = new Set(matches.filter((m) => m.played).map((m) => m.gameweek)).size;
+  const progressPercent = Math.round((playedCount / matches.length) * 100);
 
   return (
     <div className="animate-fade-in space-y-4">
@@ -58,6 +62,7 @@ const StandingsPage = () => {
                 <th scope="col" className="px-3 py-3 font-semibold text-xs tracking-wider text-center" title="Поражения">П</th>
                 <th scope="col" className="px-3 py-3 font-semibold text-xs tracking-wider text-center">Партии</th>
                 <th scope="col" className="px-3 py-3 font-semibold text-xs tracking-wider text-center" title="Разница партий">+/−</th>
+                <th scope="col" className="px-3 py-3 font-semibold text-xs tracking-wider hidden sm:table-cell">Форма</th>
                 <th scope="col" className="px-3 py-3 font-semibold text-xs tracking-wider text-center font-bold">Очки</th>
                 <th scope="col" className="px-3 py-3 w-8"><span className="sr-only">Подробнее</span></th>
               </tr>
@@ -105,6 +110,23 @@ const StandingsPage = () => {
                     <td className={`px-3 py-3 text-center font-semibold ${setDiff > 0 ? "text-sport-win" : setDiff < 0 ? "text-sport-loss" : "text-muted-foreground"}`}>
                       {setDiff > 0 ? `+${setDiff}` : setDiff}
                     </td>
+                    <td className="px-3 py-2.5 hidden sm:table-cell">
+                      <div className="flex gap-0.5">
+                        {getTeamMatches(s.team.id).filter((m) => m.played).slice(-5).map((m) => {
+                          const r = m.result!;
+                          const won = m.homeId === s.team.id ? r.setsHome > r.setsAway : r.setsAway > r.setsHome;
+                          return (
+                            <span
+                              key={m.id}
+                              aria-hidden="true"
+                              className={`w-[18px] h-[18px] rounded-sm flex items-center justify-center text-[9px] font-bold text-white ${won ? "bg-sport-win" : "bg-sport-loss"}`}
+                            >
+                              {won ? "В" : "П"}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </td>
                     <td className="px-3 py-3 text-center">
                       <span className="font-display text-lg font-bold text-accent">{s.points}</span>
                     </td>
@@ -119,9 +141,21 @@ const StandingsPage = () => {
         </div>
       </div>
 
-      <p className="text-center text-xs text-muted-foreground py-2">
-        * Таблица обновится после проведения первых матчей
-      </p>
+      {/* Season progress */}
+      <div className="bg-card rounded-lg border border-border px-4 py-3 space-y-1.5">
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span>Прогресс сезона</span>
+          <span>
+            {playedCount} из {matches.length} матчей · тур {playedGameweeks} из {totalGameweeks}
+          </span>
+        </div>
+        <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+          <div
+            className="h-full bg-accent rounded-full transition-all duration-500"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+      </div>
 
       {/* Team stats panel */}
       {selected && <TeamStatsPanel standing={selected} onClose={() => setSelected(null)} />}
