@@ -17,37 +17,37 @@ type ResultEntry = {
 export const matchResults: Record<number, ResultEntry> = {
 
   // --- Тур 1 ---
-  1: { // Макиато - Dream team
+  // 1: { // Макиато - Dream team
+  //   setsHome: 2, setsAway: 1,
+  //   setScores: [
+  //     { home: 25, away: 18 },
+  //     { home: 22, away: 25 },
+  //     { home: 25, away: 20 },
+  //   ],
+  // },
+  2: { // Серволюкс - Сетка 37
     setsHome: 2, setsAway: 1,
     setScores: [
-      { home: 25, away: 18 },
-      { home: 22, away: 25 },
-      { home: 25, away: 20 },
-    ],
-  },
-  2: { // Серволюкс - Сетка 37
-    setsHome: 3, setsAway: 0,
-    setScores: [
-      { home: 25, away: 17 },
-      { home: 25, away: 20 },
-      { home: 25, away: 15 },
+      { home: 25, away: 16 },
+      { home: 13, away: 25 },
+      { home: 25, away: 23 },
     ],
   },
   3: { // Могилевгражданпроект - Отцы и дети
     setsHome: 2, setsAway: 1,
     setScores: [
-      { home: 25, away: 22 },
-      { home: 18, away: 25 },
-      { home: 25, away: 19 },
+      { home: 25, away: 23 },
+      { home: 25, away: 23 },
+      { home: 17, away: 25 },
     ],
   },
-  4: { // Могилевгипрозем - 33
-    setsHome: 3, setsAway: 0,
-    setScores: [
-      { home: 25, away: 20 },
-      { home: 25, away: 17 },
-      { home: 25, away: 21 },
-    ],
-  },
+  // 4: { // Могилевгипрозем - 33
+  //   setsHome: 3, setsAway: 0,
+  //   setScores: [
+  //     { home: 25, away: 20 },
+  //     { home: 25, away: 17 },
+  //     { home: 25, away: 21 },
+  //   ],
+  // },
 
 };
