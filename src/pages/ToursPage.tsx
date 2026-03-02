@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { matches, totalGameweeks } from "@/data/league";
 import MatchCard from "@/components/MatchCard";
-import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, LocateFixed } from "lucide-react";
 
 const formatDate = (dateStr: string) =>
   new Date(dateStr).toLocaleDateString("ru-RU", { day: "numeric", month: "short" });
@@ -79,6 +79,16 @@ const ToursPage = () => {
               {statusConfig.label}
             </span>
           </div>
+          {gw !== currentGw && (
+            <button
+              onClick={() => setGw(currentGw)}
+              aria-label={`Перейти к текущему туру ${currentGw}`}
+              className="ml-1 flex items-center gap-1.5 px-3 h-9 rounded-lg border border-accent/40 bg-accent/10 text-accent text-sm font-medium hover:bg-accent/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              <LocateFixed className="w-3.5 h-3.5" aria-hidden="true" />
+              Текущий
+            </button>
+          )}
         </div>
       </div>
 
