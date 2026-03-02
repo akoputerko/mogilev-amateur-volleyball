@@ -68,7 +68,7 @@ const Index = () => {
 
       {/* Tab bar */}
       <nav aria-label="Основная навигация" className="border-b border-border bg-card sticky top-0 z-10">
-        <div className="container flex">
+        <div className="container flex overflow-x-auto scrollbar-none">
           {tabs.map((t) => {
             const Icon = t.icon;
             return (

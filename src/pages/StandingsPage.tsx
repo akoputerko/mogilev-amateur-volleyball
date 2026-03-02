@@ -143,7 +143,7 @@ const StandingsPage = () => {
 
       {/* Season progress */}
       <div className="bg-card rounded-lg border border-border px-4 py-3 space-y-1.5">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-between gap-1 text-xs text-muted-foreground">
           <span>Прогресс сезона</span>
           <span>
             {playedCount} из {matches.length} матчей · тур {playedGameweeks} из {totalGameweeks}

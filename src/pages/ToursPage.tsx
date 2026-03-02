@@ -41,54 +41,56 @@ const ToursPage = () => {
   return (
     <div className="animate-fade-in">
       <div className="mb-6">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setGw((g) => Math.max(1, g - 1))}
-            disabled={gw === 1}
-            aria-label="Предыдущий тур"
-            className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          >
-            <ChevronLeft className="w-4 h-4" aria-hidden="true" />
-          </button>
-          <div className="relative inline-block">
-            <select
-              value={gw}
-              onChange={(e) => setGw(Number(e.target.value))}
-              aria-label="Выберите тур"
-              className="appearance-none bg-card border border-border rounded-lg px-4 py-2.5 pr-10 font-display text-lg font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer"
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setGw((g) => Math.max(1, g - 1))}
+              disabled={gw === 1}
+              aria-label="Предыдущий тур"
+              className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
-              {Array.from({ length: totalGameweeks }, (_, i) => (
-                <option key={i + 1} value={i + 1}>
-                  Тур {i + 1}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" aria-hidden="true" />
+              <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+            </button>
+            <div className="relative inline-block">
+              <select
+                value={gw}
+                onChange={(e) => setGw(Number(e.target.value))}
+                aria-label="Выберите тур"
+                className="appearance-none bg-card border border-border rounded-lg px-4 py-2.5 pr-10 font-display text-lg font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer"
+              >
+                {Array.from({ length: totalGameweeks }, (_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    Тур {i + 1}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" aria-hidden="true" />
+            </div>
+            <button
+              onClick={() => setGw((g) => Math.min(totalGameweeks, g + 1))}
+              disabled={gw === totalGameweeks}
+              aria-label="Следующий тур"
+              className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              <ChevronRight className="w-4 h-4" aria-hidden="true" />
+            </button>
           </div>
-          <button
-            onClick={() => setGw((g) => Math.min(totalGameweeks, g + 1))}
-            disabled={gw === totalGameweeks}
-            aria-label="Следующий тур"
-            className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          >
-            <ChevronRight className="w-4 h-4" aria-hidden="true" />
-          </button>
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">{dateRange}</span>
             <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusConfig.className}`}>
               {statusConfig.label}
             </span>
+            {gw !== currentGw && (
+              <button
+                onClick={() => setGw(currentGw)}
+                aria-label={`Перейти к текущему туру ${currentGw}`}
+                className="flex items-center gap-1.5 px-3 h-9 rounded-lg border border-accent/40 bg-accent/10 text-accent text-sm font-medium hover:bg-accent/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                <LocateFixed className="w-3.5 h-3.5" aria-hidden="true" />
+                <span className="hidden sm:inline">Текущий</span>
+              </button>
+            )}
           </div>
-          {gw !== currentGw && (
-            <button
-              onClick={() => setGw(currentGw)}
-              aria-label={`Перейти к текущему туру ${currentGw}`}
-              className="ml-1 flex items-center gap-1.5 px-3 h-9 rounded-lg border border-accent/40 bg-accent/10 text-accent text-sm font-medium hover:bg-accent/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            >
-              <LocateFixed className="w-3.5 h-3.5" aria-hidden="true" />
-              Текущий
-            </button>
-          )}
         </div>
       </div>
 
