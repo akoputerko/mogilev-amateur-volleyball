@@ -1,7 +1,7 @@
 import { calcStandings } from "@/lib/standings";
 import { matches } from "@/data/league";
 import { Link } from "react-router-dom";
-import { Info } from "lucide-react";
+import { ChevronDown, Info } from "lucide-react";
 import type { Team } from "@/data/league";
 
 // ── Slot data ────────────────────────────────────────────────────────────────
@@ -137,6 +137,11 @@ function Bracket({ title, subtitle, theme, sf1, sf2, finalLabel, thirdLabel }: B
       <div className="sm:hidden space-y-3">
         <MatchCard theme={theme} label="Полуфинал 1" top={sf1[0]} bottom={sf1[1]} />
         <MatchCard theme={theme} label="Полуфинал 2" top={sf2[0]} bottom={sf2[1]} />
+        <div className="flex items-center gap-2 py-0.5" aria-hidden="true">
+          <div className={`flex-1 h-px ${t.accentBar} opacity-30`} />
+          <ChevronDown className={`w-3.5 h-3.5 ${t.titleText} opacity-60`} />
+          <div className={`flex-1 h-px ${t.accentBar} opacity-30`} />
+        </div>
         <MatchCard theme={theme} label={finalLabel}  top={ADV_W1}  bottom={ADV_W2} />
         <MatchCard theme={theme} label={thirdLabel}  top={ADV_L1}  bottom={ADV_L2} />
       </div>
@@ -220,13 +225,24 @@ const PlayoffPage = () => {
           <Info className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
           <span className="font-display text-sm text-muted-foreground">Формат плей-офф</span>
         </div>
-        <ul className="space-y-1.5 text-sm text-muted-foreground list-disc list-inside">
-          <li>
-            Верхняя сетка — команды 1–4 по итогам регулярного сезона.
-            Полуфинал: 1-е vs 4-е, 2-е vs 3-е. Победители играют за чемпионство.
+        <ul className="space-y-2.5 text-sm">
+          <li className="flex gap-2.5">
+            <span className="w-1 shrink-0 rounded-full bg-amber-400 mt-1" aria-hidden="true" />
+            <span className="text-muted-foreground">
+              <span className="font-semibold text-amber-500 dark:text-amber-400">Верхняя сетка</span> — команды 1–4 по итогам регулярного сезона.
+              Полуфинал: 1-е vs 4-е, 2-е vs 3-е. Победители играют за чемпионство.
+            </span>
           </li>
-          <li>Нижняя сетка — команды 5–8. Полуфинал: 5-е vs 8-е, 6-е vs 7-е.</li>
-          <li>Проигравшие полуфиналов играют за 3-е (7-е) место.</li>
+          <li className="flex gap-2.5">
+            <span className="w-1 shrink-0 rounded-full bg-sky-500 mt-1" aria-hidden="true" />
+            <span className="text-muted-foreground">
+              <span className="font-semibold text-sky-600 dark:text-sky-400">Нижняя сетка</span> — команды 5–8. Полуфинал: 5-е vs 8-е, 6-е vs 7-е.
+            </span>
+          </li>
+          <li className="flex gap-2.5">
+            <span className="w-1 shrink-0 rounded-full bg-border mt-1" aria-hidden="true" />
+            <span className="text-muted-foreground">Проигравшие полуфиналов играют за 3-е (7-е) место.</span>
+          </li>
         </ul>
       </div>
     </div>

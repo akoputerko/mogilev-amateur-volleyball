@@ -82,7 +82,7 @@ const TeamPage = () => {
           {team.short}
         </span>
         <div className="flex-1 min-w-0">
-          <h2 className="text-xl text-primary-foreground">{team.name}</h2>
+          <h2 className="text-xl text-primary-foreground truncate">{team.name}</h2>
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
             <span className="flex items-center gap-1 text-primary-foreground/60 text-xs">
               <MapPin className="w-3 h-3" aria-hidden="true" /> {team.hall} · {team.hallAddress}
