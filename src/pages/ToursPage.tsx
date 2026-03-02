@@ -8,11 +8,21 @@ const formatDate = (dateStr: string) =>
 
 function getDefaultGameweek(): number {
   const today = new Date().toISOString().slice(0, 10);
-  const playedGws = matches.filter((m) => m.played).map((m) => m.gameweek);
-  if (playedGws.length > 0) return Math.max(...playedGws);
-  const upcoming = matches.find((m) => !m.played && m.date >= today);
-  return upcoming ? upcoming.gameweek : 1;
+  for (let gw = 1; gw <= totalGameweeks; gw++) {
+    const gwDates = matches.filter((m) => m.gameweek === gw).map((m) => m.date);
+    const maxDate = gwDates.sort().at(-1);
+    if (maxDate && maxDate >= today) return gw;
+  }
+  return totalGameweeks;
 }
+
+const currentGw = getDefaultGameweek();
+
+const tourStatusConfig = {
+  past:    { label: "Завершён",  className: "bg-muted text-muted-foreground border border-border" },
+  current: { label: "Текущий",   className: "bg-accent/15 text-accent border border-accent/30" },
+  future:  { label: "Предстоит", className: "bg-sky-500/10 text-sky-500 border border-sky-500/30" },
+} as const;
 
 const ToursPage = () => {
   const [gw, setGw] = useState(getDefaultGameweek);
@@ -24,6 +34,9 @@ const ToursPage = () => {
       ? formatDate(dates[0])
       : `${formatDate(dates[0])} – ${formatDate(dates[dates.length - 1])}`
     : "";
+
+  const status = gw < currentGw ? "past" : gw > currentGw ? "future" : "current";
+  const statusConfig = tourStatusConfig[status];
 
   return (
     <div className="animate-fade-in">
@@ -60,7 +73,12 @@ const ToursPage = () => {
           >
             <ChevronRight className="w-4 h-4" aria-hidden="true" />
           </button>
-          <span className="text-muted-foreground text-sm">{dateRange}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground text-sm">{dateRange}</span>
+            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusConfig.className}`}>
+              {statusConfig.label}
+            </span>
+          </div>
         </div>
       </div>
 

@@ -47,8 +47,9 @@ function getMonthGrid(year: number, month: number): Date[] {
 }
 
 const Calendar = () => {
-  const [year, setYear] = useState(2026);
-  const [month, setMonth] = useState(1);
+  const today = new Date();
+  const [year, setYear] = useState(today.getFullYear());
+  const [month, setMonth] = useState(today.getMonth());
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
 
   const grid = getMonthGrid(year, month);

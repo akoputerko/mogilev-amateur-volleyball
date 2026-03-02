@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
-import { CalendarDays, LayoutGrid, Users, Trophy, Sun, Moon, Gamepad2 } from "lucide-react";
+import { CalendarDays, LayoutGrid, Users, Trophy, Sun, Moon, Gamepad2, Medal } from "lucide-react";
 import { seasonStart, seasonEnd } from "@/data/league";
 
 const fmtDate = (iso: string) =>
@@ -11,6 +11,7 @@ const tabs = [
   { label: "Календарь", icon: LayoutGrid, path: "/calendar" },
   { label: "Туры",     icon: CalendarDays, path: "/tours"    },
   { label: "Команды",  icon: Users,     path: "/teams"       },
+  { label: "Плей-офф", icon: Medal,     path: "/playoff"     },
   { label: "2048",      icon: Gamepad2,  path: "/playground"  },
 ];
 
@@ -48,6 +49,9 @@ const Index = () => {
                 </h1>
                 <p className="text-primary-foreground/50 text-xs mt-0.5 font-sans normal-case tracking-normal">
                   Сезон 2025/26 · 8 команд · Волейбол · {fmtDate(seasonStart)} — {fmtDate(seasonEnd)}
+                </p>
+                <p className="text-primary-foreground/35 text-xs mt-0.5 font-sans normal-case tracking-normal">
+                  Лига не несёт коммерческий характер
                 </p>
               </div>
             </div>
