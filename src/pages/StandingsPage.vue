@@ -62,9 +62,9 @@
             <TableRow
               v-for="(s, i) in standings"
               :key="s.team.id"
-              @click="selected = s"
-              @keydown.enter.prevent="selected = s"
-              @keydown.space.prevent="selected = s"
+              @click="selected = selected?.team.id === s.team.id ? null : s"
+              @keydown.enter.prevent="selected = selected?.team.id === s.team.id ? null : s"
+              @keydown.space.prevent="selected = selected?.team.id === s.team.id ? null : s"
               :tabindex="0"
               :aria-label="`${s.team.name}, место ${i + 1}, очков ${s.points}`"
               :class="[
