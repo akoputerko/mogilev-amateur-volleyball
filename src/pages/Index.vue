@@ -20,14 +20,16 @@
               </p>
             </div>
           </div>
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             @click="dark = !dark"
-            class="w-11 h-11 rounded-lg flex items-center justify-center text-primary-foreground/80 hover:text-primary-foreground hover:bg-white/10 transition-colors flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
             :aria-label="dark ? 'Включить светлую тему' : 'Включить тёмную тему'"
+            class="text-primary-foreground/80 hover:text-primary-foreground hover:bg-white/10 flex-shrink-0"
           >
             <Sun v-if="dark" class="w-5 h-5" aria-hidden="true" />
             <Moon v-else class="w-5 h-5" aria-hidden="true" />
-          </button>
+          </Button>
         </div>
       </div>
     </header>
@@ -35,23 +37,23 @@
     <!-- Tab bar -->
     <nav aria-label="Основная навигация" class="border-b border-border bg-card sticky top-0 z-10">
       <div class="container flex overflow-x-auto scrollbar-none">
-        <button
+        <Button
           v-for="tab in tabs"
           :key="tab.path"
+          variant="ghost"
           @click="router.push(tab.path)"
           :aria-label="tab.label"
           :aria-current="isActive(tab.path) ? 'page' : undefined"
           :class="[
-            'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent',
+            'rounded-none border-b-2 px-4 py-3 h-auto gap-2',
             isActive(tab.path)
-              ? 'border-accent text-accent'
-              : 'border-transparent text-muted-foreground hover:text-foreground',
+              ? 'border-accent text-accent hover:bg-transparent hover:text-accent'
+              : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-transparent',
           ]"
         >
           <component :is="tab.icon" class="w-4 h-4" aria-hidden="true" />
           <span class="hidden sm:inline">{{ tab.label }}</span>
-        </button>
+        </Button>
       </div>
     </nav>
 
@@ -67,6 +69,7 @@ import { ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { CalendarDays, LayoutGrid, Users, Trophy, Sun, Moon, Gamepad2, Medal } from "lucide-vue-next";
 import { seasonStart, seasonEnd } from "@/data/league";
+import { Button } from "@/components/ui/button";
 
 const router = useRouter();
 const route = useRoute();

@@ -4,20 +4,24 @@
     <div class="flex items-center justify-between mb-4">
       <h2 class="font-display text-xl font-semibold">{{ MONTH_NAMES[month] }} {{ year }}</h2>
       <div class="flex gap-1">
-        <button
+        <Button
+          variant="outline"
+          size="icon"
           @click="prevMonth"
           aria-label="Предыдущий месяц"
-          class="w-10 h-10 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          class="w-10 h-10"
         >
           <ChevronLeft class="w-4 h-4" aria-hidden="true" />
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
           @click="nextMonth"
           aria-label="Следующий месяц"
-          class="w-10 h-10 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          class="w-10 h-10"
         >
           <ChevronRight class="w-4 h-4" aria-hidden="true" />
-        </button>
+        </Button>
       </div>
     </div>
 
@@ -95,42 +99,38 @@
     </div>
 
     <!-- Match detail dialog -->
-    <Teleport to="body">
-      <div
-        v-if="selectedMatch"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4"
-        role="dialog"
-        aria-modal="true"
-        :aria-label="selectedMatch ? `Тур ${selectedMatch.gameweek}: ${teamById[selectedMatch.homeId]?.name} — ${teamById[selectedMatch.awayId]?.name}` : ''"
-      >
-        <div class="fixed inset-0 bg-black/50" @click="selectedMatch = null" />
-        <div class="relative z-10 bg-card rounded-xl overflow-hidden shadow-2xl max-w-[600px] w-full">
-          <div class="px-5 py-3 pr-12 bg-card border-b border-border flex items-center justify-between">
-            <span class="text-xs font-semibold text-accent uppercase tracking-widest">
-              Тур {{ selectedMatch.gameweek }}
-            </span>
-            <span
-              :class="[
-                'text-xs font-medium px-2 py-0.5 rounded-full',
-                selectedMatch.played ? 'bg-sport-win/15 text-sport-win' : 'bg-accent/15 text-accent',
-              ]"
-            >
-              {{ selectedMatch.played ? "Сыгран" : "Предстоит" }}
-            </span>
-          </div>
-          <MatchCard :match="selectedMatch" :link-teams="true" />
-        </div>
-      </div>
-    </Teleport>
+    <Dialog :open="!!selectedMatch" @update:open="(open) => { if (!open) selectedMatch = null }">
+      <DialogContent class="max-w-[600px] p-0 gap-0 overflow-hidden">
+        <DialogHeader class="px-5 py-3 bg-card border-b border-border flex-row items-center justify-between space-y-0">
+          <DialogTitle class="text-xs font-semibold text-accent uppercase tracking-widest sr-only">
+            {{ selectedMatch ? `Тур ${selectedMatch.gameweek}: ${teamById[selectedMatch.homeId]?.name} — ${teamById[selectedMatch.awayId]?.name}` : '' }}
+          </DialogTitle>
+          <span class="text-xs font-semibold text-accent uppercase tracking-widest">
+            Тур {{ selectedMatch?.gameweek }}
+          </span>
+          <Badge
+            v-if="selectedMatch"
+            :class="selectedMatch.played ? 'bg-sport-win/15 text-sport-win border-sport-win/30' : 'bg-accent/15 text-accent border-accent/30'"
+            class="border"
+          >
+            {{ selectedMatch.played ? "Сыгран" : "Предстоит" }}
+          </Badge>
+        </DialogHeader>
+        <MatchCard v-if="selectedMatch" :match="selectedMatch" :link-teams="true" />
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed } from "vue";
 import { ChevronLeft, ChevronRight } from "lucide-vue-next";
 import { matches, teams } from "@/data/league";
 import type { Match } from "@/data/league";
 import MatchCard from "@/components/MatchCard.vue";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const teamById = Object.fromEntries(teams.map((t) => [t.id, t]));
 
@@ -180,10 +180,4 @@ function nextMonth() {
 function sortedMatches(date: Date) {
   return [...(matchesByDate[toKey(date)] ?? [])].sort((a, b) => a.time.localeCompare(b.time));
 }
-
-function handleEsc(e: KeyboardEvent) {
-  if (e.key === "Escape") selectedMatch.value = null;
-}
-onMounted(() => window.addEventListener("keydown", handleEsc));
-onUnmounted(() => window.removeEventListener("keydown", handleEsc));
 </script>

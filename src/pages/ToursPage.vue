@@ -3,50 +3,54 @@
     <div class="mb-6">
       <div class="flex flex-wrap items-center gap-3">
         <div class="flex items-center gap-3">
-          <button
+          <Button
+            variant="outline"
+            size="icon"
             @click="gw = Math.max(1, gw - 1)"
             :disabled="gw === 1"
             aria-label="Предыдущий тур"
-            class="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            class="w-9 h-9"
           >
             <ChevronLeft class="w-4 h-4" aria-hidden="true" />
-          </button>
-          <div class="relative inline-block">
-            <select
-              v-model="gw"
-              aria-label="Выберите тур"
-              class="appearance-none bg-card border border-border rounded-lg px-4 py-2.5 pr-10 font-display text-lg font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer"
-            >
-              <option v-for="n in totalGameweeks" :key="n" :value="n">Тур {{ n }}</option>
-            </select>
-            <ChevronDown
-              class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"
-              aria-hidden="true"
-            />
-          </div>
-          <button
+          </Button>
+
+          <Select :model-value="String(gw)" @update:model-value="gw = Number($event)">
+            <SelectTrigger class="w-36 font-display text-lg font-semibold" aria-label="Выберите тур">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="n in totalGameweeks" :key="n" :value="String(n)">
+                Тур {{ n }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button
+            variant="outline"
+            size="icon"
             @click="gw = Math.min(totalGameweeks, gw + 1)"
             :disabled="gw === totalGameweeks"
             aria-label="Следующий тур"
-            class="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            class="w-9 h-9"
           >
             <ChevronRight class="w-4 h-4" aria-hidden="true" />
-          </button>
+          </Button>
         </div>
+
         <div class="flex items-center gap-2">
           <span class="text-muted-foreground text-sm">{{ dateRange }}</span>
-          <span :class="['text-xs font-medium px-2 py-0.5 rounded-full', statusConfig.className]">
-            {{ statusConfig.label }}
-          </span>
-          <button
+          <Badge :class="statusConfig.className">{{ statusConfig.label }}</Badge>
+          <Button
             v-if="gw !== currentGw"
+            variant="outline"
+            size="sm"
             @click="gw = currentGw"
             :aria-label="`Перейти к текущему туру ${currentGw}`"
-            class="flex items-center gap-1.5 px-3 h-9 rounded-lg border border-accent/40 bg-accent/10 text-accent text-sm font-medium hover:bg-accent/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            class="gap-1.5 border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 hover:text-accent"
           >
             <LocateFixed class="w-3.5 h-3.5" aria-hidden="true" />
             <span class="hidden sm:inline">Текущий</span>
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -61,7 +65,10 @@
 import { ref, computed } from "vue";
 import { matches, totalGameweeks } from "@/data/league";
 import MatchCard from "@/components/MatchCard.vue";
-import { ChevronDown, ChevronLeft, ChevronRight, LocateFixed } from "lucide-vue-next";
+import { ChevronLeft, ChevronRight, LocateFixed } from "lucide-vue-next";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("ru-RU", { day: "numeric", month: "short" });

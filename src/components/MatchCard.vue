@@ -1,13 +1,11 @@
 <template>
-  <div
+  <Card
     :class="[
-      'group bg-card rounded-xl border border-border overflow-hidden animate-fade-in',
-      'hover:border-accent/30 transition-all hover:shadow-lg hover:shadow-accent/5 flex flex-col',
+      'group animate-fade-in hover:border-accent/30 transition-all hover:shadow-lg hover:shadow-accent/5 flex flex-col overflow-hidden',
       perspectiveBorder,
     ]"
   >
-    <!-- Teams & Score -->
-    <div class="p-4 flex flex-col items-center gap-3 flex-1 justify-center">
+    <CardContent class="pt-4 flex flex-col items-center gap-3 flex-1 justify-center">
       <!-- Home team -->
       <div
         :class="[
@@ -96,16 +94,17 @@
           {{ away.name }}
         </span>
       </div>
-    </div>
+    </CardContent>
 
     <!-- Meta footer -->
-    <div class="px-4 py-2.5 bg-secondary/40 border-t border-border flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground items-center">
-      <span
+    <CardFooter class="px-4 py-2.5 bg-secondary/40 border-t border-border flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground items-center">
+      <Badge
         v-if="isHome !== undefined"
-        :class="['font-semibold px-1.5 py-0.5 rounded text-[10px]', isHome ? 'bg-sport-win/20 text-sport-win' : 'bg-accent/20 text-accent']"
+        :class="isHome ? 'bg-sport-win/20 text-sport-win border-sport-win/30' : 'bg-accent/20 text-accent border-accent/30'"
+        class="text-[10px] border h-auto py-0.5"
       >
         {{ isHome ? "Дома" : "В гостях" }}
-      </span>
+      </Badge>
       <span class="inline-flex items-center gap-1">
         <Calendar class="w-3 h-3" aria-hidden="true" />
         {{ new Date(match.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short", weekday: "short" }) }}
@@ -118,8 +117,8 @@
         <MapPin class="w-3 h-3" aria-hidden="true" />
         {{ match.venue }} · {{ match.address }}
       </span>
-    </div>
-  </div>
+    </CardFooter>
+  </Card>
 </template>
 
 <script setup lang="ts">
@@ -127,6 +126,8 @@ import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { Calendar, Clock, MapPin } from "lucide-vue-next";
 import { type Match, getTeam } from "@/data/league";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const props = defineProps<{
   match: Match;

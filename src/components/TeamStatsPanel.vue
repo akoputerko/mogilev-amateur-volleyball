@@ -1,21 +1,23 @@
 <template>
-  <div class="mt-6 bg-card rounded-lg border border-border overflow-hidden animate-slide-up">
+  <Card class="mt-6 overflow-hidden animate-slide-up">
     <!-- Header -->
     <div class="sport-gradient px-4 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <span class="w-4 h-4 rounded-full" :style="{ backgroundColor: `hsl(${standing.team.color})` }" />
         <h3 class="text-primary-foreground text-xl">{{ standing.team.name }}</h3>
       </div>
-      <button
+      <Button
+        variant="ghost"
+        size="icon"
         @click="$emit('close')"
         aria-label="Закрыть"
-        class="w-10 h-10 flex items-center justify-center text-primary-foreground/60 hover:text-primary-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-md"
+        class="text-primary-foreground/60 hover:text-primary-foreground hover:bg-white/10"
       >
         <X class="w-5 h-5" aria-hidden="true" />
-      </button>
+      </Button>
     </div>
 
-    <div class="p-4 space-y-6">
+    <CardContent class="pt-4 space-y-6">
       <!-- Stats grid -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatBox label="Победы / Поражения" :wins="standing.won" :losses="standing.lost" />
@@ -42,14 +44,12 @@
             <span class="text-xs text-muted-foreground w-14">
               {{ new Date(m.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short" }) }}
             </span>
-            <span
-              :class="[
-                'text-xs font-semibold px-1.5 py-0.5 rounded',
-                isHomeMatch(m) ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground',
-              ]"
+            <Badge
+              :class="isHomeMatch(m) ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'"
+              class="text-[10px] h-auto py-0.5"
             >
               {{ isHomeMatch(m) ? "Д" : "Г" }}
-            </span>
+            </Badge>
             <span class="flex items-center gap-1.5 flex-1 min-w-0">
               <span
                 class="w-2 h-2 rounded-full flex-shrink-0"
@@ -79,14 +79,12 @@
             <span class="text-xs text-muted-foreground w-14">
               {{ new Date(m.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short" }) }}
             </span>
-            <span
-              :class="[
-                'text-xs font-semibold px-1.5 py-0.5 rounded',
-                m.homeId === standing.team.id ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground',
-              ]"
+            <Badge
+              :class="m.homeId === standing.team.id ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'"
+              class="text-[10px] h-auto py-0.5"
             >
               {{ m.homeId === standing.team.id ? "Д" : "Г" }}
-            </span>
+            </Badge>
             <span class="flex items-center gap-1.5">
               <span
                 class="w-2 h-2 rounded-full"
@@ -98,8 +96,8 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </CardContent>
+  </Card>
 </template>
 
 <script setup lang="ts">
@@ -108,6 +106,9 @@ import { X, Trophy, Calendar as CalendarIcon } from "lucide-vue-next";
 import { getTeam, type Match } from "@/data/league";
 import { getTeamMatches, getUpcoming, type TeamStanding } from "@/lib/standings";
 import StatBox from "./StatBox.vue";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const props = defineProps<{ standing: TeamStanding }>();
 defineEmits<{ close: [] }>();
