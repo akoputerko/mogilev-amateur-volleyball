@@ -1,8 +1,7 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import vue from "@vitejs/plugin-vue";
 import path from "path";
 
-// https://vitejs.dev/config/
 export default defineConfig({
   base: process.env.GITHUB_ACTIONS ? "/mogilev-amateur-volleyball/" : "/",
   server: {
@@ -12,7 +11,7 @@ export default defineConfig({
       overlay: false,
     },
   },
-  plugins: [react()],
+  plugins: [vue()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

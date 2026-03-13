@@ -1,0 +1,46 @@
+<template>
+  <div class="animate-fade-in grid gap-4 sm:grid-cols-2">
+    <div
+      v-for="team in teams"
+      :key="team.id"
+      role="button"
+      :tabindex="0"
+      @click="router.push(`/teams/${team.id}`)"
+      @keydown.enter.prevent="router.push(`/teams/${team.id}`)"
+      @keydown.space.prevent="router.push(`/teams/${team.id}`)"
+      :aria-label="`Команда ${team.name}`"
+      class="bg-card rounded-xl border border-border p-4 cursor-pointer hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5 transition-all flex items-center gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+    >
+      <span
+        class="w-12 h-12 rounded-xl flex items-center justify-center text-sm font-bold text-primary-foreground flex-shrink-0"
+        :style="{ backgroundColor: `hsl(${team.color})` }"
+      >
+        {{ team.short }}
+      </span>
+      <div class="flex-1 min-w-0">
+        <div class="font-semibold">{{ team.name }}</div>
+        <div class="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+          <MapPin class="w-3 h-3 flex-shrink-0" aria-hidden="true" />
+          <span class="truncate">{{ team.hall }}</span>
+        </div>
+        <div v-if="standingMap[team.id]?.s.played > 0" class="text-xs text-muted-foreground mt-0.5">
+          #{{ standingMap[team.id].pos }} · {{ standingMap[team.id].s.points }} оч. · {{ standingMap[team.id].s.won }}В {{ standingMap[team.id].s.lost }}П
+        </div>
+      </div>
+      <ChevronRight class="w-4 h-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useRouter } from "vue-router";
+import { teams } from "@/data/league";
+import { calcStandings } from "@/lib/standings";
+import { MapPin, ChevronRight } from "lucide-vue-next";
+
+const router = useRouter();
+const standings = calcStandings();
+const standingMap = Object.fromEntries(
+  standings.map((s, i) => [s.team.id, { s, pos: i + 1 }]),
+);
+</script>
