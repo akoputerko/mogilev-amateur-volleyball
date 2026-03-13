@@ -13,12 +13,11 @@
 
     <!-- Header -->
     <div class="sport-gradient rounded-xl p-5 flex items-center gap-4">
-      <span
-        class="w-14 h-14 rounded-xl flex items-center justify-center text-lg font-bold text-primary-foreground flex-shrink-0"
-        :style="{ backgroundColor: `hsl(${team.color})` }"
-      >
-        {{ team.short }}
-      </span>
+      <Avatar shape="square" size="base" :style="{ backgroundColor: `hsl(${team.color})` }">
+        <AvatarFallback class="bg-transparent text-primary-foreground font-bold text-lg">
+          {{ team.short }}
+        </AvatarFallback>
+      </Avatar>
       <div class="flex-1 min-w-0">
         <h2 class="text-xl text-primary-foreground truncate">{{ team.name }}</h2>
         <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1">
@@ -49,44 +48,44 @@
 
     <!-- Score totals + match breakdown -->
     <Card v-if="standing && standing.played > 0">
-      <CardContent class="pt-4 space-y-4">
-        <!-- Points totals -->
-        <div>
-          <h4 class="font-display text-sm text-muted-foreground mb-3">Очки в партиях</h4>
-          <div class="flex items-end gap-4 mb-2">
-            <div class="text-center">
-              <div class="font-display text-3xl font-bold text-sport-win">{{ standing.pointsWon }}</div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">забито</div>
-            </div>
-            <div class="text-xl text-muted-foreground/30 mb-1 font-sans">:</div>
-            <div class="text-center">
-              <div class="font-display text-3xl font-bold text-sport-loss">{{ standing.pointsLost }}</div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">пропущено</div>
-            </div>
-            <div class="flex-1" />
-            <div class="text-center">
-              <div :class="['font-display text-xl font-bold', ptDiff > 0 ? 'text-sport-win' : ptDiff < 0 ? 'text-sport-loss' : 'text-muted-foreground']">
-                {{ ptDiff > 0 ? `+${ptDiff}` : ptDiff }}
-              </div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">разница</div>
-            </div>
-            <div class="text-center">
-              <div :class="['font-display text-xl font-bold', ptEff >= 50 ? 'text-sport-win' : 'text-sport-loss']">
-                {{ ptEff }}%
-              </div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">эфф-ть</div>
-            </div>
+      <CardHeader class="pb-2">
+        <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Очки в партиях</CardTitle>
+      </CardHeader>
+      <CardContent class="space-y-4">
+        <div class="flex items-end gap-4 mb-2">
+          <div class="text-center">
+            <div class="font-display text-3xl font-bold text-sport-win">{{ standing.pointsWon }}</div>
+            <div class="text-[10px] text-muted-foreground mt-0.5">забито</div>
           </div>
-          <Progress :model-value="ptEff" class="h-1.5 [&>div]:bg-sport-win" />
-          <div class="flex justify-between text-[10px] text-muted-foreground mt-1.5">
-            <span>≈{{ avgWon }} оч/партию</span>
-            <span>≈{{ avgLost }} оч/партию</span>
+          <div class="text-xl text-muted-foreground/30 mb-1 font-sans">:</div>
+          <div class="text-center">
+            <div class="font-display text-3xl font-bold text-sport-loss">{{ standing.pointsLost }}</div>
+            <div class="text-[10px] text-muted-foreground mt-0.5">пропущено</div>
+          </div>
+          <div class="flex-1" />
+          <div class="text-center">
+            <div :class="['font-display text-xl font-bold', ptDiff > 0 ? 'text-sport-win' : ptDiff < 0 ? 'text-sport-loss' : 'text-muted-foreground']">
+              {{ ptDiff > 0 ? `+${ptDiff}` : ptDiff }}
+            </div>
+            <div class="text-[10px] text-muted-foreground mt-0.5">разница</div>
+          </div>
+          <div class="text-center">
+            <div :class="['font-display text-xl font-bold', ptEff >= 50 ? 'text-sport-win' : 'text-sport-loss']">
+              {{ ptEff }}%
+            </div>
+            <div class="text-[10px] text-muted-foreground mt-0.5">эфф-ть</div>
           </div>
         </div>
+        <Progress :model-value="ptEff" class="h-1.5 [&>div]:bg-sport-win" />
+        <div class="flex justify-between text-[10px] text-muted-foreground">
+          <span>≈{{ avgWon }} оч/партию</span>
+          <span>≈{{ avgLost }} оч/партию</span>
+        </div>
 
-        <!-- Match type breakdown -->
+        <Separator />
+
         <div>
-          <div class="text-xs text-muted-foreground mb-2">Характер матчей</div>
+          <p class="text-xs text-muted-foreground mb-2">Характер матчей</p>
           <div class="grid grid-cols-4 gap-2">
             <div
               v-for="item in matchBreakdown"
@@ -104,10 +103,12 @@
 
     <!-- Form strip -->
     <Card v-if="playedMatches.length > 0">
-      <CardContent class="pt-4">
-        <h4 class="font-display text-sm text-muted-foreground mb-3">
+      <CardHeader class="pb-2">
+        <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">
           Форма (последние {{ Math.min(playedMatches.length, 7) }})
-        </h4>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
         <div class="flex gap-1.5">
           <span
             v-for="m in playedMatches.slice(-7)"
@@ -123,8 +124,10 @@
 
     <!-- Head-to-head records -->
     <Card v-if="Object.keys(h2h).length > 0">
-      <CardContent class="pt-4">
-        <h4 class="font-display text-sm text-muted-foreground mb-3">Очные встречи</h4>
+      <CardHeader class="pb-2">
+        <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Очные встречи</CardTitle>
+      </CardHeader>
+      <CardContent>
         <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
           <div
             v-for="[oppIdStr, record] in Object.entries(h2h)"
@@ -132,11 +135,11 @@
             class="bg-secondary/40 rounded-lg p-2 text-center"
           >
             <div class="flex items-center gap-1.5 justify-center mb-1">
-              <span
-                class="w-2 h-2 rounded-full flex-shrink-0"
-                :style="{ backgroundColor: `hsl(${getTeam(Number(oppIdStr)).color})` }"
-                aria-hidden="true"
-              />
+              <Avatar shape="square" class="w-4 h-4 text-[8px]" :style="{ backgroundColor: `hsl(${getTeam(Number(oppIdStr)).color})` }">
+                <AvatarFallback class="bg-transparent text-primary-foreground font-bold">
+                  {{ getTeam(Number(oppIdStr)).short.slice(0, 1) }}
+                </AvatarFallback>
+              </Avatar>
               <span class="text-xs font-medium truncate">{{ getTeam(Number(oppIdStr)).short }}</span>
             </div>
             <div class="font-display text-base font-bold">
@@ -153,23 +156,23 @@
     <div>
       <div class="flex items-center justify-between mb-4">
         <h4 class="font-display text-sm text-muted-foreground">Матчи</h4>
-        <div class="flex gap-1 bg-secondary rounded-lg p-1" role="group" aria-label="Фильтр матчей">
-          <Button
-            v-for="f in filters"
-            :key="f.key"
-            variant="ghost"
-            size="sm"
-            @click="filter = f.key"
-            :aria-pressed="filter === f.key"
-            :class="[
-              'gap-1.5 h-8',
-              filter === f.key ? `${f.active} shadow-sm hover:opacity-90` : 'text-muted-foreground hover:text-foreground hover:bg-transparent',
-            ]"
-          >
-            <span v-if="f.dot" :class="['w-2 h-2 rounded-full', f.dot]" aria-hidden="true" />
-            {{ f.label }}
-          </Button>
-        </div>
+        <ToggleGroup
+          type="single"
+          :model-value="filter"
+          @update:model-value="(val) => { if (val) filter = val as Filter }"
+          aria-label="Фильтр матчей"
+          class="bg-secondary rounded-lg p-1 gap-0"
+        >
+          <ToggleGroupItem value="all" class="h-8 px-3 rounded-md data-[state=on]:bg-accent data-[state=on]:text-accent-foreground">
+            Все
+          </ToggleGroupItem>
+          <ToggleGroupItem value="home" class="h-8 px-3 rounded-md gap-1.5 data-[state=on]:bg-sport-win/20 data-[state=on]:text-sport-win">
+            <span class="w-2 h-2 rounded-full bg-sport-win" aria-hidden="true" /> Дома
+          </ToggleGroupItem>
+          <ToggleGroupItem value="away" class="h-8 px-3 rounded-md gap-1.5 data-[state=on]:bg-accent/20 data-[state=on]:text-accent">
+            <span class="w-2 h-2 rounded-full bg-accent" aria-hidden="true" /> В гостях
+          </ToggleGroupItem>
+        </ToggleGroup>
       </div>
       <div class="grid gap-4 sm:grid-cols-2">
         <MatchCard v-for="m in filteredMatches" :key="m.id" :match="m" :team-id="teamId" :link-teams="true" />
@@ -187,7 +190,11 @@ import MatchCard from "@/components/MatchCard.vue";
 import StatBox from "@/components/StatBox.vue";
 import { ArrowLeft, MapPin, Clock } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import type { Match } from "@/data/league";
 
 type Filter = "all" | "home" | "away";
@@ -203,12 +210,6 @@ onMounted(() => {
 });
 
 const filter = ref<Filter>("all");
-
-const filters: { key: Filter; label: string; dot?: string; active: string }[] = [
-  { key: "all",  label: "Все",      active: "bg-accent text-accent-foreground" },
-  { key: "home", label: "Дома",     dot: "bg-sport-win", active: "bg-sport-win/20 text-sport-win" },
-  { key: "away", label: "В гостях", dot: "bg-accent",    active: "bg-accent/20 text-accent" },
-];
 
 const standings = calcStandings();
 const standingIdx = standings.findIndex((s) => s.team.id === teamId);

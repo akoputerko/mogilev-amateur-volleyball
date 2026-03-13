@@ -2,10 +2,12 @@
   <div class="animate-fade-in space-y-4">
     <!-- Scoring rules -->
     <Card>
-      <CardContent class="pt-4">
-        <h4 class="font-display text-sm text-muted-foreground mb-3 flex items-center gap-2">
+      <CardHeader class="pb-3">
+        <CardTitle class="text-sm font-display text-muted-foreground flex items-center gap-2 normal-case tracking-normal">
           <Info class="w-4 h-4" aria-hidden="true" /> Система начисления очков
-        </h4>
+        </CardTitle>
+      </CardHeader>
+      <CardContent class="pt-0 space-y-3">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
           <div class="bg-sport-win/10 border border-sport-win/20 rounded-md px-3 py-2 text-center">
             <div class="text-xs text-muted-foreground">Победа 3-0</div>
@@ -24,7 +26,7 @@
             <div class="font-display text-lg font-bold text-sport-loss">0 очков</div>
           </div>
         </div>
-        <p class="text-[11px] text-muted-foreground/70 mt-2.5 text-center">
+        <p class="text-[11px] text-muted-foreground/70 text-center">
           Всегда 3 партии в матче · Плей-офф: топ-4 команды
         </p>
       </CardContent>
@@ -49,12 +51,32 @@
             <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider">Команда</TableHead>
             <!-- mobile only: В/П combined -->
             <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider text-center sm:hidden">В/П</TableHead>
-            <!-- desktop only columns -->
-            <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider text-center hidden sm:table-cell" title="Сыграно">И</TableHead>
-            <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider text-center hidden sm:table-cell" title="Победы">В</TableHead>
-            <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider text-center hidden sm:table-cell" title="Поражения">П</TableHead>
+            <!-- desktop only -->
+            <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider text-center hidden sm:table-cell">
+              <Tooltip>
+                <TooltipTrigger class="cursor-help">И</TooltipTrigger>
+                <TooltipContent>Сыграно</TooltipContent>
+              </Tooltip>
+            </TableHead>
+            <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider text-center hidden sm:table-cell">
+              <Tooltip>
+                <TooltipTrigger class="cursor-help">В</TooltipTrigger>
+                <TooltipContent>Победы</TooltipContent>
+              </Tooltip>
+            </TableHead>
+            <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider text-center hidden sm:table-cell">
+              <Tooltip>
+                <TooltipTrigger class="cursor-help">П</TooltipTrigger>
+                <TooltipContent>Поражения</TooltipContent>
+              </Tooltip>
+            </TableHead>
             <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider text-center hidden sm:table-cell">Партии</TableHead>
-            <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider text-center hidden sm:table-cell" title="Разница партий">+/−</TableHead>
+            <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider text-center hidden sm:table-cell">
+              <Tooltip>
+                <TooltipTrigger class="cursor-help">+/−</TooltipTrigger>
+                <TooltipContent>Разница партий</TooltipContent>
+              </Tooltip>
+            </TableHead>
             <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider hidden sm:table-cell">Форма</TableHead>
             <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider text-center font-bold">Очки</TableHead>
             <TableHead scope="col" class="w-8 pr-3"><span class="sr-only">Подробнее</span></TableHead>
@@ -70,12 +92,10 @@
             :tabindex="0"
             :aria-label="`${s.team.name}, место ${i + 1}, очков ${s.points}`"
             :class="[
-              'cursor-pointer',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent',
+              'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent',
               rowHighlight(i + 1),
               selected?.team.id === s.team.id ? 'bg-secondary' : '',
             ]"
-            :style="{ animationDelay: `${i * 40}ms` }"
           >
             <TableCell
               :class="[
@@ -87,23 +107,22 @@
             </TableCell>
             <TableCell>
               <div class="flex items-center gap-2">
-                <span
-                  class="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                  :style="{ backgroundColor: `hsl(${s.team.color})` }"
-                  aria-hidden="true"
-                />
-                <!-- short name on mobile, full name on sm+ -->
+                <Avatar shape="square" size="sm" class="w-5 h-5 text-[10px] font-bold" :style="{ backgroundColor: `hsl(${s.team.color})` }">
+                  <AvatarFallback class="bg-transparent text-primary-foreground">
+                    {{ s.team.short.slice(0, 1) }}
+                  </AvatarFallback>
+                </Avatar>
                 <span class="font-semibold sm:hidden">{{ s.team.short }}</span>
                 <span class="font-semibold hidden sm:inline">{{ s.team.name }}</span>
               </div>
             </TableCell>
-            <!-- mobile only: combined wins/losses -->
+            <!-- mobile: combined W/L -->
             <TableCell class="text-center sm:hidden">
               <span class="text-sport-win font-semibold">{{ s.won }}</span>
               <span class="text-muted-foreground/40 mx-0.5 text-xs">/</span>
               <span class="text-sport-loss font-semibold">{{ s.lost }}</span>
             </TableCell>
-            <!-- desktop only columns -->
+            <!-- desktop columns -->
             <TableCell class="text-center text-muted-foreground hidden sm:table-cell">{{ s.played }}</TableCell>
             <TableCell class="text-center text-sport-win font-semibold hidden sm:table-cell">{{ s.won }}</TableCell>
             <TableCell class="text-center text-sport-loss font-semibold hidden sm:table-cell">{{ s.lost }}</TableCell>
@@ -125,8 +144,7 @@
                   :class="[
                     'w-[18px] h-[18px] rounded-sm flex items-center justify-center text-[9px] font-bold text-white',
                     (m.homeId === s.team.id ? m.result!.setsHome > m.result!.setsAway : m.result!.setsAway > m.result!.setsHome)
-                      ? 'bg-sport-win'
-                      : 'bg-sport-loss',
+                      ? 'bg-sport-win' : 'bg-sport-loss',
                   ]"
                 >
                   {{ (m.homeId === s.team.id ? m.result!.setsHome > m.result!.setsAway : m.result!.setsAway > m.result!.setsHome) ? "В" : "П" }}
@@ -149,15 +167,12 @@
       <CardContent class="pt-4 space-y-1.5">
         <div class="flex flex-wrap items-center justify-between gap-1 text-xs text-muted-foreground">
           <span>Прогресс сезона</span>
-          <span>
-            {{ playedCount }} из {{ matches.length }} матчей · тур {{ playedGameweeks }} из {{ totalGameweeks }}
-          </span>
+          <span>{{ playedCount }} из {{ matches.length }} матчей · тур {{ playedGameweeks }} из {{ totalGameweeks }}</span>
         </div>
         <Progress :model-value="progressPercent" class="h-1.5 [&>div]:bg-accent" />
       </CardContent>
     </Card>
 
-    <!-- Team stats panel -->
     <TeamStatsPanel v-if="selected" :standing="selected" @close="selected = null" />
   </div>
 </template>
@@ -168,9 +183,11 @@ import { Info, ChevronRight } from "lucide-vue-next";
 import { calcStandings, getTeamMatches, type TeamStanding } from "@/lib/standings";
 import { matches, totalGameweeks } from "@/data/league";
 import TeamStatsPanel from "@/components/TeamStatsPanel.vue";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const standings = calcStandings();
 const selected = ref<TeamStanding | null>(null);

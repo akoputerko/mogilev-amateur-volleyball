@@ -4,36 +4,20 @@
     <div class="flex items-center justify-between mb-4">
       <h2 class="font-display text-xl font-semibold">{{ MONTH_NAMES[month] }} {{ year }}</h2>
       <div class="flex gap-1">
-        <Button
-          variant="outline"
-          size="icon"
-          @click="prevMonth"
-          aria-label="Предыдущий месяц"
-          class="w-10 h-10"
-        >
+        <Button variant="outline" size="icon" @click="prevMonth" aria-label="Предыдущий месяц" class="w-10 h-10">
           <ChevronLeft class="w-4 h-4" aria-hidden="true" />
         </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          @click="nextMonth"
-          aria-label="Следующий месяц"
-          class="w-10 h-10"
-        >
+        <Button variant="outline" size="icon" @click="nextMonth" aria-label="Следующий месяц" class="w-10 h-10">
           <ChevronRight class="w-4 h-4" aria-hidden="true" />
         </Button>
       </div>
     </div>
 
-    <div class="overflow-x-auto">
+    <ScrollArea class="w-full">
       <div class="min-w-[560px]">
         <!-- Day-of-week header -->
         <div class="grid grid-cols-7 mb-px">
-          <div
-            v-for="d in DOW"
-            :key="d"
-            class="text-center text-xs font-medium text-muted-foreground py-2"
-          >
+          <div v-for="d in DOW" :key="d" class="text-center text-xs font-medium text-muted-foreground py-2">
             {{ d }}
           </div>
         </div>
@@ -45,21 +29,16 @@
             :key="i"
             :class="['border-r border-b border-border min-h-[88px] p-1.5', date.getMonth() !== month ? 'bg-muted/20' : '']"
           >
-            <!-- Day number -->
             <div
               :class="[
                 'text-xs font-medium w-6 h-6 flex items-center justify-center rounded-full mb-1',
                 toKey(date) === todayKey
                   ? 'bg-accent text-accent-foreground'
-                  : date.getMonth() === month
-                    ? 'text-foreground'
-                    : 'text-muted-foreground/50',
+                  : date.getMonth() === month ? 'text-foreground' : 'text-muted-foreground/50',
               ]"
             >
               {{ date.getDate() }}
             </div>
-
-            <!-- Match chips -->
             <div class="flex flex-col gap-0.5">
               <button
                 v-for="m in sortedMatches(date)"
@@ -84,7 +63,8 @@
           </div>
         </div>
       </div>
-    </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
 
     <!-- Legend -->
     <div class="flex gap-4 mt-3 text-xs text-muted-foreground" aria-label="Обозначения">
@@ -102,7 +82,7 @@
     <Dialog :open="!!selectedMatch" @update:open="(open) => { if (!open) selectedMatch = null }">
       <DialogContent class="max-w-[600px] p-0 gap-0 overflow-hidden">
         <DialogHeader class="px-5 py-3 bg-card border-b border-border flex-row items-center justify-between space-y-0">
-          <DialogTitle class="text-xs font-semibold text-accent uppercase tracking-widest sr-only">
+          <DialogTitle class="sr-only">
             {{ selectedMatch ? `Тур ${selectedMatch.gameweek}: ${teamById[selectedMatch.homeId]?.name} — ${teamById[selectedMatch.awayId]?.name}` : '' }}
           </DialogTitle>
           <span class="text-xs font-semibold text-accent uppercase tracking-widest">
@@ -131,6 +111,7 @@ import MatchCard from "@/components/MatchCard.vue";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const teamById = Object.fromEntries(teams.map((t) => [t.id, t]));
 

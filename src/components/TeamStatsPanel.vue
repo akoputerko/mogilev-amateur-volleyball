@@ -1,9 +1,12 @@
 <template>
   <Card class="mt-6 overflow-hidden animate-slide-up">
-    <!-- Header -->
     <div class="sport-gradient px-4 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <span class="w-4 h-4 rounded-full" :style="{ backgroundColor: `hsl(${standing.team.color})` }" />
+        <Avatar shape="square" class="w-6 h-6 text-[10px]" :style="{ backgroundColor: `hsl(${standing.team.color})` }">
+          <AvatarFallback class="bg-transparent text-primary-foreground font-bold">
+            {{ standing.team.short.slice(0, 1) }}
+          </AvatarFallback>
+        </Avatar>
         <h3 class="text-primary-foreground text-xl">{{ standing.team.name }}</h3>
       </div>
       <Button
@@ -26,11 +29,13 @@
         <StatBox label="В гостях (В/П)" :wins="standing.awayWon" :losses="standing.awayLost" />
       </div>
 
+      <Separator />
+
       <!-- Match history -->
       <div v-if="teamMatches.length > 0">
-        <h4 class="font-display text-sm text-muted-foreground mb-3 flex items-center gap-2">
+        <p class="text-sm font-display text-muted-foreground mb-3 flex items-center gap-2">
           <Trophy class="w-4 h-4" aria-hidden="true" /> Результаты
-        </h4>
+        </p>
         <div class="space-y-2">
           <div
             v-for="m in teamMatches"
@@ -44,18 +49,15 @@
             <span class="text-xs text-muted-foreground w-14">
               {{ new Date(m.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short" }) }}
             </span>
-            <Badge
-              :class="isHomeMatch(m) ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'"
-              class="text-[10px] h-auto py-0.5"
-            >
+            <Badge :class="isHomeMatch(m) ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'" class="text-[10px] h-auto py-0.5">
               {{ isHomeMatch(m) ? "Д" : "Г" }}
             </Badge>
             <span class="flex items-center gap-1.5 flex-1 min-w-0">
-              <span
-                class="w-2 h-2 rounded-full flex-shrink-0"
-                :style="{ backgroundColor: `hsl(${getOpponent(m).color})` }"
-                aria-hidden="true"
-              />
+              <Avatar shape="square" class="w-4 h-4 text-[8px] flex-shrink-0" :style="{ backgroundColor: `hsl(${getOpponent(m).color})` }">
+                <AvatarFallback class="bg-transparent text-primary-foreground font-bold">
+                  {{ getOpponent(m).short.slice(0, 1) }}
+                </AvatarFallback>
+              </Avatar>
               <span class="truncate">{{ getOpponent(m).name }}</span>
             </span>
             <span class="font-mono font-semibold">
@@ -67,9 +69,9 @@
 
       <!-- Upcoming -->
       <div v-if="upcoming.length > 0">
-        <h4 class="font-display text-sm text-muted-foreground mb-3 flex items-center gap-2">
+        <p class="text-sm font-display text-muted-foreground mb-3 flex items-center gap-2">
           <CalendarIcon class="w-4 h-4" aria-hidden="true" /> Ближайшие матчи
-        </h4>
+        </p>
         <div class="space-y-2">
           <div
             v-for="m in upcoming"
@@ -79,18 +81,15 @@
             <span class="text-xs text-muted-foreground w-14">
               {{ new Date(m.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short" }) }}
             </span>
-            <Badge
-              :class="m.homeId === standing.team.id ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'"
-              class="text-[10px] h-auto py-0.5"
-            >
+            <Badge :class="m.homeId === standing.team.id ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'" class="text-[10px] h-auto py-0.5">
               {{ m.homeId === standing.team.id ? "Д" : "Г" }}
             </Badge>
             <span class="flex items-center gap-1.5">
-              <span
-                class="w-2 h-2 rounded-full"
-                :style="{ backgroundColor: `hsl(${getUpcomingOpponent(m).color})` }"
-                aria-hidden="true"
-              />
+              <Avatar shape="square" class="w-4 h-4 text-[8px]" :style="{ backgroundColor: `hsl(${getUpcomingOpponent(m).color})` }">
+                <AvatarFallback class="bg-transparent text-primary-foreground font-bold">
+                  {{ getUpcomingOpponent(m).short.slice(0, 1) }}
+                </AvatarFallback>
+              </Avatar>
               <span class="font-medium">{{ getUpcomingOpponent(m).name }}</span>
             </span>
           </div>
@@ -109,6 +108,8 @@ import StatBox from "./StatBox.vue";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const props = defineProps<{ standing: TeamStanding }>();
 defineEmits<{ close: [] }>();
