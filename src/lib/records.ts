@@ -81,11 +81,11 @@ export function getLeagueRecords(): LeagueRecord[] {
     return ids.every((id) => id === ids[0]) ? ids[0] : undefined;
   }
 
+  records.push({ label: "Очков в матче", value: String(maxMatchPoints), detail: joinDetail(maxMatchOccurrences) });
   if (minMargin < Infinity) {
     records.push({ label: "Самая напряжённая", value: minMarginValue, detail: joinDetail(minMarginOccurrences) });
   }
   records.push({ label: "Самый разгромный", value: maxMarginValue, detail: joinDetail(maxMarginOccurrences), teamId: resolveTeamId(maxMarginOccurrences) });
-  records.push({ label: "Очков в матче", value: String(maxMatchPoints), detail: joinDetail(maxMatchOccurrences) });
 
   return records;
 }
