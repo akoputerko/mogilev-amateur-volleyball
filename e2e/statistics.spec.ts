@@ -39,50 +39,24 @@ test.describe("Standings page", () => {
 
   // ── League records ────────────────────────────────────────────────────────
 
-  test("league records section shows all 5 record labels", async ({ page }) => {
+  test("league records section shows 3 record labels", async ({ page }) => {
     await expect(page.getByText("Рекорды лиги")).toBeVisible();
-    for (const label of [
-      "Макс. очков в партии",
-      "Самая напряжённая",
-      "Самый разгромный",
-      "Очков в матче",
-      "Эфф-ть атаки",
-    ]) {
+    for (const label of ["Самая напряжённая", "Самый разгромный", "Очков в матче"]) {
       await expect(page.getByText(label, { exact: true })).toBeVisible();
     }
+    await expect(page.getByText("Макс. очков в партии", { exact: true })).not.toBeVisible();
+    await expect(page.getByText("Эфф-ть атаки", { exact: true })).not.toBeVisible();
   });
 
-  test("max set score is 27, attributed to С37 (not МАК)", async ({ page }) => {
-    const labelEl = page.getByText("Макс. очков в партии", { exact: true });
-    const cardEl = labelEl.locator("xpath=..");
-
-    // value must be 27
-    await expect(cardEl.getByText("27")).toBeVisible();
-
-    // detail must start with С37 (the team that actually scored 27)
-    const detail = await cardEl.locator("div").last().textContent();
-    expect(detail).toMatch(/^С37/);
-    expect(detail).not.toMatch(/^МАК/);
-  });
-
-  test("closest set record shows latest occurrence with count suffix", async ({ page }) => {
+  test("closest set record is uniquely 25:27 in Tour 3 (highest total among margin-2 sets)", async ({ page }) => {
     const labelEl = page.getByText("Самая напряжённая", { exact: true });
     const cardEl = labelEl.locator("xpath=..");
-    const detail = await cardEl.locator("div").last().textContent();
-    // Many sets in tours 1-4 share margin=2, so detail shows count like "×9"
-    expect(detail).toMatch(/×\d+/);
-  });
-
-  test("closest set record detail shows latest Tour with winner first", async ({
-    page,
-  }) => {
-    const labelEl = page.getByText("Самая напряжённая", { exact: true });
-    const cardEl = labelEl.locator("xpath=..");
+    // Value: 25:27 (home:away, margin=2, total=52 — unique highest)
+    await expect(cardEl.getByText("25:27")).toBeVisible();
+    // Detail: no ×N suffix (single occurrence), points to Tour 3
     const detail = (await cardEl.locator("div").last().textContent()) ?? "";
-    // Detail shows the latest occurrence + count, e.g. "МГП - ДТ, Тур 4 (×9)"
-    // The detail must contain a Тур reference and a count
-    expect(detail).toMatch(/Тур \d+/);
-    expect(detail).toMatch(/×\d+/);
+    expect(detail).toContain("Тур 3");
+    expect(detail).not.toMatch(/×\d+/);
   });
 
   test("dominant set record shows winner team first", async ({ page }) => {
@@ -103,13 +77,6 @@ test.describe("Standings page", () => {
     expect(Number(value)).toBeGreaterThan(100);
   });
 
-  test("attack efficiency record ends with %", async ({ page }) => {
-    const labelEl = page.getByText("Эфф-ть атаки", { exact: true });
-    const cardEl = labelEl.locator("xpath=..");
-    const value = (await cardEl.locator("div").nth(1).textContent()) ?? "";
-    expect(value.endsWith("%")).toBe(true);
-    expect(Number(value.replace("%", ""))).toBeGreaterThan(0);
-  });
 });
 
 // ─── Tours page ───────────────────────────────────────────────────────────────

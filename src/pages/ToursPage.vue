@@ -143,7 +143,7 @@ const tourSummary = computed(() => {
 
   let totalPoints = 0;
   let clean = 0, contested = 0;
-  let minMargin = Infinity, minMarginScore = "", minMarginDetail = "";
+  let minMargin = Infinity, minMarginTotal = 0, minMarginScore = "", minMarginDetail = "";
   let maxMargin = 0, maxMarginScore = "", maxMarginDetail = "";
 
   for (const m of played) {
@@ -155,8 +155,10 @@ const tourSummary = computed(() => {
       const margin = Math.abs(s.home - s.away);
       const homeShort = getTeam(m.homeId).short;
       const awayShort = getTeam(m.awayId).short;
-      if (margin < minMargin) {
+      const setTotal = s.home + s.away;
+      if (margin < minMargin || (margin === minMargin && setTotal > minMarginTotal)) {
         minMargin = margin;
+        minMarginTotal = setTotal;
         minMarginScore = `${s.home}:${s.away}`;
         minMarginDetail = `${homeShort} - ${awayShort}`;
       }

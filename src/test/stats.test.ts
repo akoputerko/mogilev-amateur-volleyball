@@ -224,34 +224,11 @@ describe("getLeagueRecords", () => {
     });
   });
 
-  it("max set score is at least 25", () => {
-    const result = getLeagueRecords();
-    const maxSet = result.find((r) => r.label === "Макс. очков в партии");
-    expect(maxSet).toBeDefined();
-    expect(Number(maxSet!.value)).toBeGreaterThanOrEqual(25);
-  });
-
   it("highest-scoring match is reasonable (>100 total points)", () => {
     const result = getLeagueRecords();
     const maxMatch = result.find((r) => r.label === "Очков в матче");
     expect(maxMatch).toBeDefined();
     expect(Number(maxMatch!.value)).toBeGreaterThan(100);
-  });
-
-  it("efficiency record value ends with %", () => {
-    const result = getLeagueRecords();
-    const eff = result.find((r) => r.label === "Эфф-ть атаки");
-    expect(eff).toBeDefined();
-    expect(eff!.value.endsWith("%")).toBe(true);
-  });
-
-  it("max set score is 27 scored by С37 (not МАК) in Tour 3", () => {
-    const result = getLeagueRecords();
-    const maxSet = result.find((r) => r.label === "Макс. очков в партии");
-    expect(maxSet).toBeDefined();
-    expect(maxSet!.value).toBe("27");
-    // Winner (С37) must appear first in the detail
-    expect(maxSet!.detail).toMatch(/^С37/);
   });
 
   it("closest set detail shows winner team first (С37 before МАК for 27:25 set)", () => {
@@ -269,11 +246,13 @@ describe("getLeagueRecords", () => {
     }
   });
 
-  it("detail shows count suffix when multiple tied records exist", () => {
+  it("closest set is uniquely 25:27 (tour 3, highest total among margin-2 sets)", () => {
     const result = getLeagueRecords();
     const closest = result.find((r) => r.label === "Самая напряжённая");
     expect(closest).toBeDefined();
-    // Many sets have margin 2 across 16 played matches, so detail should contain "×N"
-    expect(closest!.detail).toMatch(/×\d+/);
+    // 25:27 has margin=2 and total=52 — uniquely highest total among all margin-2 sets
+    // so no ×N count suffix, and detail is just the one occurrence
+    expect(closest!.detail).not.toMatch(/×\d+/);
+    expect(closest!.detail).toContain("Тур 3");
   });
 });
