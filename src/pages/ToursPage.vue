@@ -153,19 +153,17 @@ const tourSummary = computed(() => {
 
     for (const s of r.setScores) {
       const margin = Math.abs(s.home - s.away);
-      const hi = Math.max(s.home, s.away);
-      const lo = Math.min(s.home, s.away);
-      const winnerShort = s.home > s.away ? getTeam(m.homeId).short : getTeam(m.awayId).short;
-      const loserShort = s.home > s.away ? getTeam(m.awayId).short : getTeam(m.homeId).short;
+      const homeShort = getTeam(m.homeId).short;
+      const awayShort = getTeam(m.awayId).short;
       if (margin < minMargin) {
         minMargin = margin;
-        minMarginScore = `${hi}:${lo}`;
-        minMarginDetail = `${winnerShort} - ${loserShort}`;
+        minMarginScore = `${s.home}:${s.away}`;
+        minMarginDetail = `${homeShort} - ${awayShort}`;
       }
       if (margin > maxMargin) {
         maxMargin = margin;
-        maxMarginScore = `${hi}:${lo}`;
-        maxMarginDetail = `${winnerShort} - ${loserShort}`;
+        maxMarginScore = `${s.home}:${s.away}`;
+        maxMarginDetail = `${homeShort} - ${awayShort}`;
       }
     }
   }

@@ -269,11 +269,11 @@ describe("getLeagueRecords", () => {
     }
   });
 
-  it("detail contains multiple occurrences joined by ' · ' when tied records exist", () => {
+  it("detail shows count suffix when multiple tied records exist", () => {
     const result = getLeagueRecords();
     const closest = result.find((r) => r.label === "Самая напряжённая");
     expect(closest).toBeDefined();
-    // Many sets have margin 2 across 16 played matches, so detail should contain " · "
-    expect(closest!.detail).toContain(" · ");
+    // Many sets have margin 2 across 16 played matches, so detail should contain "×N"
+    expect(closest!.detail).toMatch(/×\d+/);
   });
 });

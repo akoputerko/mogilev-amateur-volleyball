@@ -79,7 +79,9 @@ export function getLeagueRecords(): LeagueRecord[] {
   }
 
   function joinDetail(occ: Occurrence[]): string {
-    return occ.map((o) => o.detail).join(" · ");
+    if (occ.length === 0) return "";
+    const latest = occ[occ.length - 1].detail;
+    return occ.length > 1 ? `${latest} (×${occ.length})` : latest;
   }
   function resolveTeamId(occ: Occurrence[]): number | undefined {
     const ids = occ.map((o) => o.teamId).filter((id) => id !== undefined);

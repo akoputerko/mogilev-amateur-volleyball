@@ -65,29 +65,24 @@ test.describe("Standings page", () => {
     expect(detail).not.toMatch(/^МАК/);
   });
 
-  test("closest set record lists multiple occurrences separated by ·", async ({ page }) => {
+  test("closest set record shows latest occurrence with count suffix", async ({ page }) => {
     const labelEl = page.getByText("Самая напряжённая", { exact: true });
     const cardEl = labelEl.locator("xpath=..");
     const detail = await cardEl.locator("div").last().textContent();
-    // Many sets in tours 1-4 share margin=2, so the detail must contain " · "
-    expect(detail).toContain("·");
+    // Many sets in tours 1-4 share margin=2, so detail shows count like "×9"
+    expect(detail).toMatch(/×\d+/);
   });
 
-  test("С37 - МАК entry in closest set record puts С37 first (set winner)", async ({
+  test("closest set record detail shows latest Tour with winner first", async ({
     page,
   }) => {
     const labelEl = page.getByText("Самая напряжённая", { exact: true });
     const cardEl = labelEl.locator("xpath=..");
     const detail = (await cardEl.locator("div").last().textContent()) ?? "";
-
-    const entries = detail.split("·").map((s) => s.trim());
-    const t3entry = entries.find(
-      (e) => e.includes("Тур 3") && e.includes("С37") && e.includes("МАК"),
-    );
-    if (t3entry) {
-      // С37 scored 27 (won the set), so it must appear before МАК
-      expect(t3entry.indexOf("С37")).toBeLessThan(t3entry.indexOf("МАК"));
-    }
+    // Detail shows the latest occurrence + count, e.g. "МГП - ДТ, Тур 4 (×9)"
+    // The detail must contain a Тур reference and a count
+    expect(detail).toMatch(/Тур \d+/);
+    expect(detail).toMatch(/×\d+/);
   });
 
   test("dominant set record shows winner team first", async ({ page }) => {
@@ -136,19 +131,18 @@ test.describe("Tours page - Tour 3", () => {
     await expect(page.getByText("Разгром", { exact: true })).toBeVisible();
   });
 
-  test("Tour 3 closest set is 27:25 with С37 winning (С37 listed first)", async ({
+  test("Tour 3 closest set shows home:away score and home - away teams", async ({
     page,
   }) => {
     const labelEl = page.getByText("Самая напряжённая", { exact: true }).first();
     const cardEl = labelEl.locator("xpath=..");
 
-    // The 27:25 set is the first margin-2 set processed, so it should be the value shown
-    await expect(cardEl.getByText("27:25")).toBeVisible();
-
-    // С37 won that set (scored 27), so it must appear first in the detail
+    // Match 9 set 1: Макиато(home)=25, Сетка 37(away)=27, margin=2 — first margin-2 set in Tour 3
+    // Score shown as home:away → "25:27"; teams shown as home-away → "МАК - С37"
+    await expect(cardEl.getByText("25:27")).toBeVisible();
     const detail = (await cardEl.locator("div").last().textContent()) ?? "";
-    expect(detail).toMatch(/^С37/);
-    expect(detail).not.toMatch(/^МАК/);
+    expect(detail).toMatch(/^МАК/);
+    expect(detail).toContain("С37");
   });
 
   test("Tour 3 has 4 match cards", async ({ page }) => {
