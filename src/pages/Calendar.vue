@@ -44,18 +44,18 @@
                 v-for="m in sortedMatches(date)"
                 :key="m.id"
                 @click="selectedMatch = m"
-                :aria-label="`${teamById[m.homeId].name} — ${teamById[m.awayId].name}${m.played && m.result ? `, счёт ${m.result.setsHome}:${m.result.setsAway}` : `, начало ${m.time.split('-')[0]}`}, ${m.venue}`"
+                :aria-label="`${teamById[m.homeId].name} — ${teamById[m.awayId].name}${m.played && m.result ? `, счёт ${m.result.setsHome}:${m.result.setsAway}` : getMatchStatus(m) === 'past-no-result' ? ', нет результата' : `, начало ${m.time.split('-')[0]}`}, ${m.venue}`"
                 :class="[
                   'w-full text-left text-[10px] leading-snug px-1 py-0.5 rounded transition-opacity hover:opacity-70',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
-                  m.played ? 'bg-sport-win/20 border-l-2 border-sport-win' : 'bg-accent/15 border-l-2 border-accent',
+                  chipClass(m),
                 ]"
               >
                 <div class="font-semibold truncate text-foreground">
                   {{ teamById[m.homeId].short }} – {{ teamById[m.awayId].short }}
                 </div>
                 <div class="text-foreground/70">
-                  {{ m.played && m.result ? `${m.result.setsHome}:${m.result.setsAway}` : m.time.split("-")[0] }}
+                  {{ m.played && m.result ? `${m.result.setsHome}:${m.result.setsAway}` : getMatchStatus(m) === 'past-no-result' ? '—' : m.time.split("-")[0] }}
                 </div>
                 <div class="text-muted-foreground truncate">{{ m.venue }}</div>
               </button>
@@ -71,6 +71,10 @@
       <span class="flex items-center gap-1.5">
         <span class="w-2 h-2 rounded-sm bg-sport-win/15 border border-sport-win/30 inline-block" aria-hidden="true" />
         Сыгран
+      </span>
+      <span class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-sm bg-muted border border-muted-foreground/30 inline-block" aria-hidden="true" />
+        Нет результата
       </span>
       <span class="flex items-center gap-1.5">
         <span class="w-2 h-2 rounded-sm bg-accent/15 border border-accent/30 inline-block" aria-hidden="true" />
@@ -90,10 +94,10 @@
           </span>
           <Badge
             v-if="selectedMatch"
-            :class="selectedMatch.played ? 'bg-sport-win/15 text-sport-win border-sport-win/30' : 'bg-accent/15 text-accent border-accent/30'"
+            :class="badgeConfig(selectedMatch).cls"
             class="border"
           >
-            {{ selectedMatch.played ? "Сыгран" : "Предстоит" }}
+            {{ badgeConfig(selectedMatch).label }}
           </Badge>
         </DialogHeader>
         <MatchCard v-if="selectedMatch" :match="selectedMatch" :link-teams="true" />
@@ -107,6 +111,7 @@ import { ref, computed } from "vue";
 import { ChevronLeft, ChevronRight } from "lucide-vue-next";
 import { matches, teams } from "@/data/league";
 import type { Match } from "@/data/league";
+import { getMatchStatus } from "@/lib/standings";
 import MatchCard from "@/components/MatchCard.vue";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -160,5 +165,19 @@ function nextMonth() {
 }
 function sortedMatches(date: Date) {
   return [...(matchesByDate[toKey(date)] ?? [])].sort((a, b) => a.time.localeCompare(b.time));
+}
+
+function chipClass(m: Match): string {
+  const s = getMatchStatus(m);
+  if (s === "played") return "bg-sport-win/20 border-l-2 border-sport-win";
+  if (s === "past-no-result") return "bg-muted border-l-2 border-muted-foreground/30";
+  return "bg-accent/15 border-l-2 border-accent";
+}
+
+function badgeConfig(m: Match): { cls: string; label: string } {
+  const s = getMatchStatus(m);
+  if (s === "played") return { cls: "bg-sport-win/15 text-sport-win border-sport-win/30", label: "Сыгран" };
+  if (s === "past-no-result") return { cls: "bg-muted text-muted-foreground border-border", label: "Нет результата" };
+  return { cls: "bg-accent/15 text-accent border-accent/30", label: "Предстоит" };
 }
 </script>

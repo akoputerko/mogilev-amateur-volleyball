@@ -95,6 +95,20 @@ export function getTeamMatches(teamId: number): Match[] {
 
 export function getUpcoming(teamId: number, count: number): Match[] {
   return getTeamMatches(teamId)
-    .filter((m) => !m.played)
+    .filter((m) => !m.played && !isMatchPast(m))
     .slice(0, count);
+}
+
+export type MatchStatus = "played" | "past-no-result" | "upcoming";
+
+export function isMatchPast(match: Match): boolean {
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  return match.date < todayStr;
+}
+
+export function getMatchStatus(match: Match): MatchStatus {
+  if (match.played) return "played";
+  if (isMatchPast(match)) return "past-no-result";
+  return "upcoming";
 }

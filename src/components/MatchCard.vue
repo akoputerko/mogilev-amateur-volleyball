@@ -52,7 +52,14 @@
         </div>
       </template>
       <template v-else>
-        <span class="px-4 py-1 rounded-full accent-gradient text-accent-foreground text-xs font-bold tracking-widest shadow-sm">VS</span>
+        <span
+          :class="[
+            'px-4 py-1 rounded-full text-xs font-bold tracking-widest shadow-sm',
+            getMatchStatus(match) === 'past-no-result'
+              ? 'bg-muted text-muted-foreground'
+              : 'accent-gradient text-accent-foreground',
+          ]"
+        >VS</span>
       </template>
 
       <!-- Away team -->
@@ -105,6 +112,7 @@ import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { Calendar, Clock, MapPin } from "lucide-vue-next";
 import { type Match, getTeam } from "@/data/league";
+import { getMatchStatus } from "@/lib/standings";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";

@@ -154,8 +154,19 @@
 
     <!-- Matches with filter -->
     <div>
-      <div class="flex items-center justify-between mb-4">
-        <h4 class="font-display text-sm text-muted-foreground">Матчи</h4>
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+          <h4 class="font-display text-sm text-muted-foreground">Матчи</h4>
+          <label class="flex items-center gap-1.5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              v-model="showPast"
+              class="w-3.5 h-3.5 rounded accent-accent cursor-pointer"
+              aria-label="Показать прошедшие матчи"
+            />
+            <span class="text-xs text-muted-foreground">Прошедшие</span>
+          </label>
+        </div>
         <ToggleGroup
           type="single"
           :model-value="filter"
@@ -185,7 +196,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getTeam } from "@/data/league";
-import { calcStandings, getTeamMatches } from "@/lib/standings";
+import { calcStandings, getTeamMatches, isMatchPast } from "@/lib/standings";
 import MatchCard from "@/components/MatchCard.vue";
 import StatBox from "@/components/StatBox.vue";
 import { ArrowLeft, MapPin, Clock } from "lucide-vue-next";
@@ -210,6 +221,7 @@ onMounted(() => {
 });
 
 const filter = ref<Filter>("all");
+const showPast = ref(false);
 
 const standings = calcStandings();
 const standingIdx = standings.findIndex((s) => s.team.id === teamId);
@@ -255,6 +267,7 @@ const matchBreakdown = [
 
 const filteredMatches = computed(() =>
   allMatches.filter((m) => {
+    if (!showPast.value && (m.played || isMatchPast(m))) return false;
     if (filter.value === "home") return m.homeId === teamId;
     if (filter.value === "away") return m.awayId === teamId;
     return true;

@@ -167,7 +167,7 @@
       <CardContent class="pt-4 space-y-1.5">
         <div class="flex flex-wrap items-center justify-between gap-1 text-xs text-muted-foreground">
           <span>Прогресс сезона</span>
-          <span>{{ playedCount }} из {{ matches.length }} матчей · тур {{ playedGameweeks }} из {{ totalGameweeks }}</span>
+          <span>{{ playedCount }} из {{ matches.length }} матчей · тур {{ playedGameweeks }} из {{ totalGameweeks }} · {{ progressPercent }}%</span>
         </div>
         <Progress :model-value="progressPercent" class="h-1.5 [&>div]:bg-accent" />
       </CardContent>
