@@ -95,7 +95,6 @@ const tabs = [
   { label: "Туры",      icon: CalendarDays, path: "/tours"     },
   { label: "Команды",   icon: Users,       path: "/teams"      },
   { label: "Плей-офф",  icon: Medal,       path: "/playoff"    },
-  { label: "2048",      icon: Gamepad2,    path: "/playground" },
 ];
 
 function isActive(path: string) {
