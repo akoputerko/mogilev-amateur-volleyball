@@ -244,4 +244,36 @@ describe("getLeagueRecords", () => {
     expect(eff).toBeDefined();
     expect(eff!.value.endsWith("%")).toBe(true);
   });
+
+  it("max set score is 27 scored by С37 (not МАК) in Tour 3", () => {
+    const result = getLeagueRecords();
+    const maxSet = result.find((r) => r.label === "Макс. очков в партии");
+    expect(maxSet).toBeDefined();
+    expect(maxSet!.value).toBe("27");
+    // Winner (С37) must appear first in the detail
+    expect(maxSet!.detail).toMatch(/^С37/);
+  });
+
+  it("closest set detail shows winner team first (С37 before МАК for 27:25 set)", () => {
+    const result = getLeagueRecords();
+    const closest = result.find((r) => r.label === "Самая напряжённая");
+    expect(closest).toBeDefined();
+    // The 27:25 set (margin 2) is one of the first margin-2 sets found.
+    // Regardless of which occurrence lands first, no occurrence should show МАК - С37
+    // for the 27:25 set (С37 scored 27 and won that set).
+    const occurrences = closest!.detail.split(" · ");
+    const mak_c37_entry = occurrences.find((o) => o.includes("МАК") && o.includes("С37") && o.includes("Тур 3"));
+    if (mak_c37_entry) {
+      // The winner (С37) must come before the loser (МАК)
+      expect(mak_c37_entry.indexOf("С37")).toBeLessThan(mak_c37_entry.indexOf("МАК"));
+    }
+  });
+
+  it("detail contains multiple occurrences joined by ' · ' when tied records exist", () => {
+    const result = getLeagueRecords();
+    const closest = result.find((r) => r.label === "Самая напряжённая");
+    expect(closest).toBeDefined();
+    // Many sets have margin 2 across 16 played matches, so detail should contain " · "
+    expect(closest!.detail).toContain(" · ");
+  });
 });
