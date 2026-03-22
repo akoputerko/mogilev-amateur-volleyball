@@ -52,7 +52,7 @@
         <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Очки в партиях</CardTitle>
       </CardHeader>
       <CardContent class="space-y-4">
-        <div class="flex items-end gap-4 mb-2">
+        <div class="flex items-end gap-4 mb-2 flex-wrap">
           <div class="text-center">
             <div class="font-display text-3xl font-bold text-sport-win">{{ standing.pointsWon }}</div>
             <div class="text-[10px] text-muted-foreground mt-0.5">забито</div>
@@ -86,7 +86,7 @@
 
         <div>
           <p class="text-xs text-muted-foreground mb-2">Характер матчей</p>
-          <div class="grid grid-cols-4 gap-2">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <div
               v-for="item in matchBreakdown"
               :key="item.label"

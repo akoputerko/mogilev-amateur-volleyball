@@ -33,7 +33,7 @@
     </Card>
 
     <!-- Legend -->
-    <div class="flex gap-4 text-xs text-muted-foreground" aria-label="Обозначения таблицы">
+    <div class="flex flex-wrap gap-4 text-xs text-muted-foreground" aria-label="Обозначения таблицы">
       <span class="flex items-center gap-1.5">
         <span class="w-3 h-1.5 rounded-sm bg-amber-400" aria-hidden="true" /> Лидер
       </span>

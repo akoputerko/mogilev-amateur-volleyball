@@ -67,7 +67,7 @@
     </ScrollArea>
 
     <!-- Legend -->
-    <div class="flex gap-4 mt-3 text-xs text-muted-foreground" aria-label="Обозначения">
+    <div class="flex flex-wrap gap-4 mt-3 text-xs text-muted-foreground" aria-label="Обозначения">
       <span class="flex items-center gap-1.5">
         <span class="w-2 h-2 rounded-sm bg-sport-win/15 border border-sport-win/30 inline-block" aria-hidden="true" />
         Сыгран

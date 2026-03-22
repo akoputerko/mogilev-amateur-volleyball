@@ -1,13 +1,13 @@
 <template>
   <Card class="mt-6 overflow-hidden animate-slide-up">
     <div class="sport-gradient px-4 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3 flex-1 min-w-0">
         <Avatar shape="square" class="w-6 h-6 text-[10px]" :style="{ backgroundColor: `hsl(${standing.team.color})` }">
           <AvatarFallback class="bg-transparent text-primary-foreground font-bold">
             {{ standing.team.short.slice(0, 1) }}
           </AvatarFallback>
         </Avatar>
-        <h3 class="text-primary-foreground text-xl">{{ standing.team.name }}</h3>
+        <h3 class="text-primary-foreground text-xl truncate">{{ standing.team.name }}</h3>
       </div>
       <Button
         variant="ghost"
@@ -84,13 +84,13 @@
             <Badge :class="m.homeId === standing.team.id ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'" class="text-[10px] h-auto py-0.5">
               {{ m.homeId === standing.team.id ? "Д" : "Г" }}
             </Badge>
-            <span class="flex items-center gap-1.5">
-              <Avatar shape="square" class="w-4 h-4 text-[8px]" :style="{ backgroundColor: `hsl(${getUpcomingOpponent(m).color})` }">
+            <span class="flex items-center gap-1.5 flex-1 min-w-0">
+              <Avatar shape="square" class="w-4 h-4 text-[8px] flex-shrink-0" :style="{ backgroundColor: `hsl(${getUpcomingOpponent(m).color})` }">
                 <AvatarFallback class="bg-transparent text-primary-foreground font-bold">
                   {{ getUpcomingOpponent(m).short.slice(0, 1) }}
                 </AvatarFallback>
               </Avatar>
-              <span class="font-medium">{{ getUpcomingOpponent(m).name }}</span>
+              <span class="font-medium truncate">{{ getUpcomingOpponent(m).name }}</span>
             </span>
           </div>
         </div>

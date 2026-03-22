@@ -52,7 +52,7 @@
           ]"
         >
           <component :is="tab.icon" class="w-4 h-4" aria-hidden="true" />
-          <span class="hidden sm:inline">{{ tab.label }}</span>
+          <span class="hidden md:inline">{{ tab.label }}</span>
         </Button>
       </div>
     </nav>

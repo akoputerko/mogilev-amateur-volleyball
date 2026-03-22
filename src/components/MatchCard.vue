@@ -5,10 +5,10 @@
       perspectiveBorder,
     ]"
   >
-    <CardContent class="pt-4 flex flex-col items-center gap-3 flex-1 justify-center">
+    <CardContent class="pt-4 flex flex-col items-center gap-3 flex-1 justify-center min-w-0 w-full">
       <!-- Home team -->
       <div
-        :class="['flex items-center gap-2.5', linkTeams ? 'cursor-pointer rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent' : '']"
+        :class="['flex items-center gap-2.5 min-w-0', linkTeams ? 'cursor-pointer rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent' : '']"
         @click="linkTeams ? handleTeamClick(match.homeId, $event) : undefined"
         @keydown.enter.prevent="linkTeams ? router.push(`/teams/${match.homeId}`) : undefined"
         @keydown.space.prevent="linkTeams ? router.push(`/teams/${match.homeId}`) : undefined"
@@ -21,7 +21,7 @@
             {{ home.short.slice(0, 2) }}
           </AvatarFallback>
         </Avatar>
-        <span :class="['font-semibold text-sm', linkTeams ? 'hover:text-accent hover:underline transition-colors' : '']">
+        <span :class="['font-semibold text-sm truncate', linkTeams ? 'hover:text-accent hover:underline transition-colors' : '']">
           {{ home.name }}
         </span>
       </div>
@@ -64,7 +64,7 @@
 
       <!-- Away team -->
       <div
-        :class="['flex items-center gap-2.5', linkTeams ? 'cursor-pointer rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent' : '']"
+        :class="['flex items-center gap-2.5 min-w-0', linkTeams ? 'cursor-pointer rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent' : '']"
         @click="linkTeams ? handleTeamClick(match.awayId, $event) : undefined"
         @keydown.enter.prevent="linkTeams ? router.push(`/teams/${match.awayId}`) : undefined"
         @keydown.space.prevent="linkTeams ? router.push(`/teams/${match.awayId}`) : undefined"
@@ -77,7 +77,7 @@
             {{ away.short.slice(0, 2) }}
           </AvatarFallback>
         </Avatar>
-        <span :class="['font-semibold text-sm', linkTeams ? 'hover:text-accent hover:underline transition-colors' : '']">
+        <span :class="['font-semibold text-sm truncate', linkTeams ? 'hover:text-accent hover:underline transition-colors' : '']">
           {{ away.name }}
         </span>
       </div>
