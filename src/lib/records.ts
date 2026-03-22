@@ -48,17 +48,17 @@ export function getLeagueRecords(): LeagueRecord[] {
         minMargin = margin;
         minMarginTotal = setTotal;
         minMarginValue = `${s.home}:${s.away}`;
-        minMarginOccurrences = [{ detail: `${winnerShort} - ${loserShort}, Тур ${m.gameweek}` }];
+        minMarginOccurrences = [{ detail: `${homeShort} - ${awayShort}, Тур ${m.gameweek}` }];
       } else if (sameTightest) {
-        minMarginOccurrences.push({ detail: `${winnerShort} - ${loserShort}, Тур ${m.gameweek}` });
+        minMarginOccurrences.push({ detail: `${homeShort} - ${awayShort}, Тур ${m.gameweek}` });
       }
 
       if (margin > maxMargin) {
         maxMargin = margin;
         maxMarginValue = `+${margin}`;
-        maxMarginOccurrences = [{ detail: `${winner}:${loser}, ${winnerShort} - ${loserShort}`, teamId: winnerTeamId }];
+        maxMarginOccurrences = [{ detail: `${s.home}:${s.away}, ${homeShort} - ${awayShort}`, teamId: winnerTeamId }];
       } else if (margin === maxMargin) {
-        maxMarginOccurrences.push({ detail: `${winner}:${loser}, ${winnerShort} - ${loserShort}`, teamId: winnerTeamId });
+        maxMarginOccurrences.push({ detail: `${s.home}:${s.away}, ${homeShort} - ${awayShort}`, teamId: winnerTeamId });
       }
     }
 
