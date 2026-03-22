@@ -85,7 +85,7 @@
     <!-- Match detail dialog -->
     <Dialog :open="!!selectedMatch" @update:open="(open) => { if (!open) selectedMatch = null }">
       <DialogContent class="max-w-[600px] p-0 gap-0 overflow-hidden">
-        <DialogHeader class="px-5 py-3 bg-card border-b border-border flex-row items-center justify-between space-y-0">
+        <DialogHeader class="pl-5 pr-12 py-3 bg-card border-b border-border flex-row items-center justify-between space-y-0">
           <DialogTitle class="sr-only">
             {{ selectedMatch ? `Тур ${selectedMatch.gameweek}: ${teamById[selectedMatch.homeId]?.name} — ${teamById[selectedMatch.awayId]?.name}` : '' }}
           </DialogTitle>
