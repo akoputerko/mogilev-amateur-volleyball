@@ -1,6 +1,6 @@
 <template>
   <template v-if="data.kind === 'adv'">
-    <div class="flex items-center gap-2.5 px-3 py-2.5 min-h-[40px]">
+    <div class="flex items-center gap-2.5 px-3 py-2.5 min-h-[44px]">
       <span class="text-sm text-muted-foreground/40 italic">{{ data.label }}</span>
     </div>
   </template>
@@ -12,7 +12,7 @@
       class="block hover:bg-secondary/50 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent"
       :aria-label="`${data.team.name}, место ${data.pos}`"
     >
-      <div class="flex items-center gap-2.5 px-3 py-2.5 min-h-[40px]">
+      <div class="flex items-center gap-2.5 px-3 py-2.5 min-h-[44px]">
         <span
           :class="[
             'font-display font-bold text-[11px] w-5 h-5 flex items-center justify-center rounded shrink-0',
@@ -32,7 +32,7 @@
     </RouterLink>
 
     <div v-else>
-      <div class="flex items-center gap-2.5 px-3 py-2.5 min-h-[40px]">
+      <div class="flex items-center gap-2.5 px-3 py-2.5 min-h-[44px]">
         <span
           :class="[
             'font-display font-bold text-[11px] w-5 h-5 flex items-center justify-center rounded shrink-0',
