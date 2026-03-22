@@ -55,6 +55,33 @@
       </div>
     </div>
 
+    <!-- Tour summary (only for completed tours) -->
+    <div v-if="tourSummary" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+      <div class="bg-secondary/40 rounded-lg px-3 py-2 text-center">
+        <div class="text-[10px] text-muted-foreground">Очков разыграно</div>
+        <div class="font-display text-xl font-bold text-foreground mt-0.5">{{ tourSummary.totalPoints }}</div>
+      </div>
+      <div class="bg-secondary/40 rounded-lg px-3 py-2 text-center">
+        <div class="text-[10px] text-muted-foreground">Разгромы / Борьба</div>
+        <div class="font-display text-xl font-bold text-foreground mt-0.5">
+          <span class="text-sport-win">{{ tourSummary.clean }}</span>
+          <span class="text-muted-foreground/30 mx-0.5 text-sm font-sans">/</span>
+          <span class="text-accent">{{ tourSummary.contested }}</span>
+        </div>
+        <div class="text-[9px] text-muted-foreground">3-0 / 2-1</div>
+      </div>
+      <div class="bg-secondary/40 rounded-lg px-3 py-2 text-center">
+        <div class="text-[10px] text-muted-foreground">Самая напряжённая</div>
+        <div class="font-display text-xl font-bold text-foreground mt-0.5">{{ tourSummary.closestScore }}</div>
+        <div class="text-[9px] text-muted-foreground truncate">{{ tourSummary.closestDetail }}</div>
+      </div>
+      <div class="bg-secondary/40 rounded-lg px-3 py-2 text-center">
+        <div class="text-[10px] text-muted-foreground">Разгром</div>
+        <div class="font-display text-xl font-bold text-foreground mt-0.5">{{ tourSummary.dominantScore }}</div>
+        <div class="text-[9px] text-muted-foreground truncate">{{ tourSummary.dominantDetail }}</div>
+      </div>
+    </div>
+
     <div class="grid gap-4 sm:grid-cols-2">
       <MatchCard v-for="m in gwMatches" :key="m.id" :match="m" :link-teams="true" />
     </div>
@@ -63,7 +90,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { matches, totalGameweeks } from "@/data/league";
+import { matches, totalGameweeks, getTeam } from "@/data/league";
 import MatchCard from "@/components/MatchCard.vue";
 import { ChevronLeft, ChevronRight, LocateFixed } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
@@ -108,5 +135,47 @@ const tourStatusConfig = {
 const statusConfig = computed(() => {
   const status = gw.value < currentGw ? "past" : gw.value > currentGw ? "future" : "current";
   return tourStatusConfig[status];
+});
+
+const tourSummary = computed(() => {
+  const played = gwMatches.value.filter((m) => m.played && m.result);
+  if (played.length === 0) return null;
+
+  let totalPoints = 0;
+  let clean = 0, contested = 0;
+  let minMargin = Infinity, minMarginScore = "", minMarginDetail = "";
+  let maxMargin = 0, maxMarginScore = "", maxMarginDetail = "";
+
+  for (const m of played) {
+    const r = m.result!;
+    totalPoints += r.setScores.reduce((sum, s) => sum + s.home + s.away, 0);
+    if (Math.min(r.setsHome, r.setsAway) === 0) clean++; else contested++;
+
+    for (const s of r.setScores) {
+      const margin = Math.abs(s.home - s.away);
+      const hi = Math.max(s.home, s.away);
+      const lo = Math.min(s.home, s.away);
+      if (margin < minMargin) {
+        minMargin = margin;
+        minMarginScore = `${hi}:${lo}`;
+        minMarginDetail = `${getTeam(m.homeId).short} - ${getTeam(m.awayId).short}`;
+      }
+      if (margin > maxMargin) {
+        maxMargin = margin;
+        maxMarginScore = `${hi}:${lo}`;
+        maxMarginDetail = `${getTeam(m.homeId).short} - ${getTeam(m.awayId).short}`;
+      }
+    }
+  }
+
+  return {
+    totalPoints,
+    clean,
+    contested,
+    closestScore: minMargin < Infinity ? minMarginScore : "—",
+    closestDetail: minMargin < Infinity ? minMarginDetail : "",
+    dominantScore: maxMargin > 0 ? maxMarginScore : "—",
+    dominantDetail: maxMargin > 0 ? maxMarginDetail : "",
+  };
 });
 </script>

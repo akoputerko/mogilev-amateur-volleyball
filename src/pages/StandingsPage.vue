@@ -78,6 +78,12 @@
               </Tooltip>
             </TableHead>
             <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider hidden sm:table-cell">Форма</TableHead>
+            <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider text-center hidden sm:table-cell">
+              <Tooltip>
+                <TooltipTrigger class="cursor-help">Серия</TooltipTrigger>
+                <TooltipContent>Текущая серия побед/поражений</TooltipContent>
+              </Tooltip>
+            </TableHead>
             <TableHead scope="col" class="text-primary-foreground font-semibold text-xs tracking-wider text-center font-bold">Очки</TableHead>
             <TableHead scope="col" class="w-8 pr-3"><span class="sr-only">Подробнее</span></TableHead>
           </TableRow>
@@ -151,6 +157,20 @@
                 </span>
               </div>
             </TableCell>
+            <TableCell class="text-center hidden sm:table-cell">
+              <span
+                v-if="streakMap[s.team.id]?.current"
+                :class="[
+                  'text-xs font-bold px-1.5 py-0.5 rounded',
+                  streakMap[s.team.id].current!.type === 'win'
+                    ? 'bg-sport-win/20 text-sport-win'
+                    : 'bg-sport-loss/20 text-sport-loss',
+                ]"
+              >
+                {{ streakMap[s.team.id].current!.count }}{{ streakMap[s.team.id].current!.type === 'win' ? 'В' : 'П' }}
+              </span>
+              <span v-else class="text-muted-foreground/30 text-xs">—</span>
+            </TableCell>
             <TableCell class="text-center">
               <span class="font-display text-lg font-bold text-accent">{{ s.points }}</span>
             </TableCell>
@@ -173,15 +193,39 @@
       </CardContent>
     </Card>
 
+    <!-- League records -->
+    <Card v-if="leagueRecords.length > 0">
+      <CardHeader class="pb-3">
+        <CardTitle class="text-sm font-display text-muted-foreground flex items-center gap-2 normal-case tracking-normal">
+          <Trophy class="w-4 h-4" aria-hidden="true" /> Рекорды лиги
+        </CardTitle>
+      </CardHeader>
+      <CardContent class="pt-0">
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div
+            v-for="r in leagueRecords"
+            :key="r.label"
+            class="bg-secondary/40 rounded-lg p-2.5"
+          >
+            <div class="text-[10px] text-muted-foreground">{{ r.label }}</div>
+            <div class="font-display text-xl font-bold text-foreground mt-0.5">{{ r.value }}</div>
+            <div class="text-[10px] text-muted-foreground/70 mt-0.5 truncate">{{ r.detail }}</div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+
     <TeamStatsPanel v-if="selected" :standing="selected" @close="selected = null" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { Info, ChevronRight } from "lucide-vue-next";
+import { Info, ChevronRight, Trophy } from "lucide-vue-next";
 import { calcStandings, getTeamMatches, type TeamStanding } from "@/lib/standings";
 import { matches, totalGameweeks } from "@/data/league";
+import { getStreaks } from "@/lib/stats";
+import { getLeagueRecords } from "@/lib/records";
 import TeamStatsPanel from "@/components/TeamStatsPanel.vue";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -195,6 +239,9 @@ const selected = ref<TeamStanding | null>(null);
 const playedCount = matches.filter((m) => m.played).length;
 const playedGameweeks = new Set(matches.filter((m) => m.played).map((m) => m.gameweek)).size;
 const progressPercent = Math.round((playedCount / matches.length) * 100);
+
+const streakMap = Object.fromEntries(standings.map((s) => [s.team.id, getStreaks(s.team.id)]));
+const leagueRecords = getLeagueRecords();
 
 function rowHighlight(pos: number) {
   if (pos === 1) return "border-l-[3px] border-l-amber-400 bg-amber-400/5";

@@ -98,17 +98,100 @@
             </div>
           </div>
         </div>
+
+        <template v-if="comebackStats.totalDecisive > 0">
+          <Separator />
+          <div>
+            <p class="text-xs text-muted-foreground mb-2">Решающие партии (3-я партия)</p>
+            <div class="flex flex-wrap gap-3 text-sm">
+              <div class="flex items-center gap-1.5">
+                <span class="font-display text-base font-bold text-sport-win">{{ comebackStats.thirdSetWon }}</span>
+                <span class="text-[10px] text-muted-foreground">побед</span>
+                <span class="text-muted-foreground/30 mx-0.5">/</span>
+                <span class="font-display text-base font-bold text-sport-loss">{{ comebackStats.thirdSetLost }}</span>
+                <span class="text-[10px] text-muted-foreground">поражений</span>
+              </div>
+              <div v-if="comebackStats.comebacks > 0" class="flex items-center gap-1.5">
+                <span class="text-[10px] bg-sport-win/15 text-sport-win px-2 py-0.5 rounded font-semibold">
+                  {{ comebackStats.comebacks }} камбэк{{ comebackStats.comebacks > 1 ? 'а' : '' }}
+                </span>
+              </div>
+              <div v-if="comebackStats.blownLeads > 0" class="flex items-center gap-1.5">
+                <span class="text-[10px] bg-sport-loss/15 text-sport-loss px-2 py-0.5 rounded font-semibold">
+                  {{ comebackStats.blownLeads }} упущ. победа
+                </span>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <template v-if="scoringPatterns.totalSets > 0">
+          <Separator />
+          <div class="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
+            <span>
+              <span class="font-semibold text-foreground">{{ scoringPatterns.closeSets }}</span>
+              напряжённых (≤3 очка)
+            </span>
+            <span>
+              <span class="font-semibold text-foreground">{{ scoringPatterns.dominantSets }}</span>
+              разгромных (≥10)
+            </span>
+            <span>
+              разница в партии: ≈<span class="font-semibold text-foreground">{{ scoringPatterns.avgMargin.toFixed(1) }}</span>
+            </span>
+          </div>
+        </template>
+      </CardContent>
+    </Card>
+
+    <!-- Set-by-set performance -->
+    <Card v-if="standing && standing.played > 0">
+      <CardHeader class="pb-2">
+        <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Игра по партиям</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div class="grid grid-cols-3 gap-3">
+          <div
+            v-for="sp in setPerf"
+            :key="sp.setNum"
+            class="text-center bg-secondary/40 rounded-lg p-3"
+          >
+            <div class="text-[10px] text-muted-foreground mb-1.5">Партия {{ sp.setNum }}</div>
+            <div
+              :class="[
+                'font-display text-2xl font-bold',
+                sp.won > sp.lost ? 'text-sport-win' : sp.won < sp.lost ? 'text-sport-loss' : 'text-muted-foreground',
+              ]"
+            >
+              {{ sp.won + sp.lost > 0 ? Math.round((sp.won / (sp.won + sp.lost)) * 100) : 0 }}%
+            </div>
+            <div class="text-[10px] text-muted-foreground mt-0.5 mb-2">выиграно</div>
+            <div class="text-[11px] font-mono">
+              <span class="text-sport-win">{{ sp.avgScored.toFixed(1) }}</span>
+              <span class="text-muted-foreground/40 mx-0.5">:</span>
+              <span class="text-sport-loss">{{ sp.avgConceded.toFixed(1) }}</span>
+            </div>
+            <div class="text-[9px] text-muted-foreground mt-0.5">avg</div>
+          </div>
+        </div>
       </CardContent>
     </Card>
 
     <!-- Form strip -->
     <Card v-if="playedMatches.length > 0">
       <CardHeader class="pb-2">
-        <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">
-          Форма (последние {{ Math.min(playedMatches.length, 7) }})
-        </CardTitle>
+        <div class="flex items-center justify-between">
+          <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">
+            Форма (последние {{ Math.min(playedMatches.length, 7) }})
+          </CardTitle>
+          <span v-if="streaks.current" class="text-xs font-bold px-2 py-0.5 rounded"
+            :class="streaks.current.type === 'win' ? 'bg-sport-win/20 text-sport-win' : 'bg-sport-loss/20 text-sport-loss'"
+          >
+            {{ streaks.current.count }}{{ streaks.current.type === 'win' ? 'В' : 'П' }} серия
+          </span>
+        </div>
       </CardHeader>
-      <CardContent>
+      <CardContent class="space-y-3">
         <div class="flex gap-1.5">
           <span
             v-for="m in playedMatches.slice(-7)"
@@ -118,6 +201,40 @@
           >
             {{ matchWon(m) ? "В" : "П" }}
           </span>
+        </div>
+        <div v-if="streaks.longestWin > 0 || streaks.longestLoss > 0" class="flex gap-4 text-[11px] text-muted-foreground">
+          <span v-if="streaks.longestWin > 0">
+            Лучшая серия: <span class="font-semibold text-sport-win">{{ streaks.longestWin }}В</span>
+          </span>
+          <span v-if="streaks.longestLoss > 0">
+            Худшая серия: <span class="font-semibold text-sport-loss">{{ streaks.longestLoss }}П</span>
+          </span>
+        </div>
+      </CardContent>
+    </Card>
+
+    <!-- Position history -->
+    <Card v-if="posHistory.length > 1">
+      <CardHeader class="pb-2">
+        <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Позиция по турам</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div class="flex gap-2 flex-wrap">
+          <div
+            v-for="ph in posHistory"
+            :key="ph.gameweek"
+            class="text-center"
+          >
+            <div
+              :class="[
+                'w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold font-display',
+                ph.position === 1 ? 'bg-amber-400/20 text-amber-400' : ph.position <= 4 ? 'bg-sky-500/20 text-sky-500' : 'bg-secondary text-muted-foreground',
+              ]"
+            >
+              {{ ph.position }}
+            </div>
+            <div class="text-[9px] text-muted-foreground mt-0.5">Т{{ ph.gameweek }}</div>
+          </div>
         </div>
       </CardContent>
     </Card>
@@ -146,6 +263,9 @@
               <span class="text-sport-win">{{ record.won }}</span>
               <span class="text-muted-foreground/40 mx-0.5 text-sm font-sans">:</span>
               <span class="text-sport-loss">{{ record.lost }}</span>
+            </div>
+            <div class="text-[9px] text-muted-foreground mt-0.5">
+              Партии: <span class="text-sport-win">{{ record.setsWon }}</span>-<span class="text-sport-loss">{{ record.setsLost }}</span>
             </div>
           </div>
         </div>
@@ -197,6 +317,7 @@ import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getTeam } from "@/data/league";
 import { calcStandings, getTeamMatches, isMatchPast } from "@/lib/standings";
+import { getStreaks, getSetPerformance, getPositionHistory, getComebackStats, getScoringPatterns } from "@/lib/stats";
 import MatchCard from "@/components/MatchCard.vue";
 import StatBox from "@/components/StatBox.vue";
 import { ArrowLeft, MapPin, Clock } from "lucide-vue-next";
@@ -231,12 +352,21 @@ const pos = standingIdx + 1;
 const allMatches = getTeamMatches(teamId);
 const playedMatches = allMatches.filter((m) => m.played);
 
-const h2h = playedMatches.reduce<Record<number, { won: number; lost: number }>>((acc, m) => {
+const streaks = getStreaks(teamId);
+const setPerf = getSetPerformance(teamId);
+const posHistory = getPositionHistory(teamId);
+const comebackStats = getComebackStats(teamId);
+const scoringPatterns = getScoringPatterns(teamId);
+
+const h2h = playedMatches.reduce<Record<number, { won: number; lost: number; setsWon: number; setsLost: number }>>((acc, m) => {
   const oppId = m.homeId === teamId ? m.awayId : m.homeId;
-  if (!acc[oppId]) acc[oppId] = { won: 0, lost: 0 };
+  if (!acc[oppId]) acc[oppId] = { won: 0, lost: 0, setsWon: 0, setsLost: 0 };
   const r = m.result!;
-  const won = m.homeId === teamId ? r.setsHome > r.setsAway : r.setsAway > r.setsHome;
-  if (won) acc[oppId].won++; else acc[oppId].lost++;
+  const mySets = m.homeId === teamId ? r.setsHome : r.setsAway;
+  const oppSets = m.homeId === teamId ? r.setsAway : r.setsHome;
+  if (mySets > oppSets) acc[oppId].won++; else acc[oppId].lost++;
+  acc[oppId].setsWon += mySets;
+  acc[oppId].setsLost += oppSets;
   return acc;
 }, {});
 

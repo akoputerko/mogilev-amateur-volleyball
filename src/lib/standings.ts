@@ -16,7 +16,7 @@ export interface TeamStanding {
   awayLost: number;
 }
 
-export function calcStandings(): TeamStanding[] {
+export function calcStandingsFromMatches(matchList: Match[]): TeamStanding[] {
   const map: Record<number, TeamStanding> = {};
   teams.forEach((t) => {
     map[t.id] = {
@@ -29,7 +29,7 @@ export function calcStandings(): TeamStanding[] {
     };
   });
 
-  matches.filter((m) => m.played && m.result).forEach((m) => {
+  matchList.filter((m) => m.played && m.result).forEach((m) => {
     const r = m.result!;
     const home = map[m.homeId];
     const away = map[m.awayId];
@@ -50,15 +50,15 @@ export function calcStandings(): TeamStanding[] {
     });
 
     const homeWon = r.setsHome > r.setsAway;
-    const loserSets = homeWon ? r.setsAway : r.setsHome; // 0 = clean sweep (3-0), 1 = contested (2-1)
+    const loserSets = homeWon ? r.setsAway : r.setsHome;
 
     if (homeWon) {
       home.won++; away.lost++;
       home.homeWon++;
       away.awayLost++;
-      if (loserSets === 0) { // 3-0
+      if (loserSets === 0) {
         home.points += 3;
-      } else { // 2-1
+      } else {
         home.points += 2;
         away.points += 1;
       }
@@ -66,9 +66,9 @@ export function calcStandings(): TeamStanding[] {
       away.won++; home.lost++;
       away.awayWon++;
       home.homeLost++;
-      if (loserSets === 0) { // 0-3
+      if (loserSets === 0) {
         away.points += 3;
-      } else { // 1-2
+      } else {
         away.points += 2;
         home.points += 1;
       }
@@ -87,6 +87,10 @@ export function calcStandings(): TeamStanding[] {
   });
 
   return standings;
+}
+
+export function calcStandings(): TeamStanding[] {
+  return calcStandingsFromMatches(matches);
 }
 
 export function getTeamMatches(teamId: number): Match[] {
