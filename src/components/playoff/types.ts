@@ -5,11 +5,11 @@ export type SlotData =
   | { kind: "adv"; label: string };
 
 export type BracketTheme = "upper" | "lower";
-export type BracketCardVariant = "semifinal" | "final" | "third";
+export type BracketCardVariant = "semifinal" | "final" | "third" | "finalist";
 
 export const THEME = {
   upper: {
-    section: "bg-amber-400/5 border border-amber-400/20 rounded-xl p-4 sm:p-6",
+    section: "bg-amber-400/5 border border-amber-400/20 rounded-xl p-4 md:p-6",
     accentBar: "bg-amber-400",
     titleText: "text-amber-500 dark:text-amber-400",
     cardBorder: "border-amber-400/30 border-l-2 border-l-amber-400/50",
@@ -22,9 +22,12 @@ export const THEME = {
     finalBorder: "border-amber-400/50 shadow-lg shadow-amber-400/10",
     roundLabelBg: "bg-amber-400/10",
     roundLabelText: "text-amber-600 dark:text-amber-300",
+    finalistBorder: "border-amber-400/30",
+    finalistBg: "bg-amber-400/5",
+    trophyText: "text-amber-400",
   },
   lower: {
-    section: "bg-sky-500/5 border border-sky-500/20 rounded-xl p-4 sm:p-6",
+    section: "bg-sky-500/5 border border-sky-500/20 rounded-xl p-4 md:p-6",
     accentBar: "bg-sky-500",
     titleText: "text-sky-600 dark:text-sky-400",
     cardBorder: "border-sky-500/30 border-l-2 border-l-sky-500/50",
@@ -37,5 +40,8 @@ export const THEME = {
     finalBorder: "border-sky-500/50 shadow-lg shadow-sky-500/10",
     roundLabelBg: "bg-sky-500/10",
     roundLabelText: "text-sky-600 dark:text-sky-300",
+    finalistBorder: "border-sky-500/30",
+    finalistBg: "bg-sky-500/5",
+    trophyText: "text-sky-500",
   },
 } as const;

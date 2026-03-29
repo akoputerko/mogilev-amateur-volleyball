@@ -1,7 +1,8 @@
 <template>
   <template v-if="data.kind === 'adv'">
     <div class="flex items-center gap-2.5 px-3 py-2.5 min-h-[44px]">
-      <span class="text-sm text-muted-foreground/40 italic">{{ data.label }}</span>
+      <span class="text-sm text-muted-foreground/40 italic flex-1">{{ data.label }}</span>
+      <span class="font-display font-bold text-sm text-muted-foreground/40 shrink-0 min-w-[18px] text-right" aria-hidden="true">-</span>
     </div>
   </template>
 
@@ -9,7 +10,7 @@
     <RouterLink
       v-if="data.team"
       :to="`/teams/${data.team.id}`"
-      class="block hover:bg-secondary/50 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent"
+      class="group block hover:bg-secondary/60 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent"
       :aria-label="`${data.team.name}, место ${data.pos}`"
     >
       <div class="flex items-center gap-2.5 px-3 py-2.5 min-h-[44px]">
@@ -27,7 +28,8 @@
           :style="{ backgroundColor: `hsl(${data.team.color})` }"
           aria-hidden="true"
         />
-        <span class="text-sm font-medium text-foreground truncate">{{ data.team.name }}</span>
+        <span class="text-sm font-medium text-foreground truncate flex-1 min-w-0 group-hover:text-accent transition-colors">{{ data.team.name }}</span>
+        <span class="font-display font-bold text-sm text-muted-foreground/40 shrink-0 min-w-[18px] text-right" aria-hidden="true">-</span>
       </div>
     </RouterLink>
 
@@ -42,7 +44,8 @@
         >
           {{ data.pos }}
         </span>
-        <span class="text-sm text-muted-foreground/40 italic">TBD</span>
+        <span class="text-sm text-muted-foreground/40 italic flex-1">TBD</span>
+        <span class="font-display font-bold text-sm text-muted-foreground/40 shrink-0 min-w-[18px] text-right" aria-hidden="true">-</span>
       </div>
     </div>
   </template>

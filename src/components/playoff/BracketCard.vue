@@ -55,6 +55,13 @@ const cardClasses = computed(() => {
   if (v === "third") {
     return ["bg-card/70 rounded-lg overflow-hidden border border-border opacity-80"];
   }
+  if (v === "finalist") {
+    return [
+      "bg-card rounded-lg overflow-hidden border",
+      theme.value.finalistBorder,
+      theme.value.finalistBg,
+    ];
+  }
   return ["bg-card rounded-lg overflow-hidden border", theme.value.cardBorder];
 });
 </script>

@@ -10,17 +10,17 @@
     </div>
 
     <Bracket
-      title="Верхняя сетка"
+      title="Основная сетка"
       subtitle="Места 1–4"
       theme-name="upper"
       :sf1="[seed(1), seed(4)]"
       :sf2="[seed(2), seed(3)]"
-      final-label="Финал — за чемпионство"
+      final-label="Финал"
       third-label="Матч за 3-е место"
     />
 
     <Bracket
-      title="Нижняя сетка"
+      title="Утешительная сетка"
       subtitle="Места 5–8"
       theme-name="lower"
       :sf1="[seed(5), seed(8)]"
@@ -43,19 +43,19 @@
         <li class="flex gap-2.5">
           <span class="w-1 shrink-0 rounded-full bg-amber-400 mt-1" aria-hidden="true" />
           <span class="text-muted-foreground">
-            <span class="font-semibold text-amber-500 dark:text-amber-400">Верхняя сетка</span> — команды 1–4 по итогам регулярного сезона.
-            Полуфинал: 1-е vs 4-е, 2-е vs 3-е. Победители играют за чемпионство.
+            <span class="font-semibold text-amber-500 dark:text-amber-400">Основная сетка</span> — команды 1–4 по итогам регулярного сезона.
+            Полуфинал: 1-е vs 4-е, 2-е vs 3-е. Победители разыгрывают чемпионство в финале.
           </span>
         </li>
         <li class="flex gap-2.5">
           <span class="w-1 shrink-0 rounded-full bg-sky-500 mt-1" aria-hidden="true" />
           <span class="text-muted-foreground">
-            <span class="font-semibold text-sky-600 dark:text-sky-400">Нижняя сетка</span> — команды 5–8. Полуфинал: 5-е vs 8-е, 6-е vs 7-е.
+            <span class="font-semibold text-sky-600 dark:text-sky-400">Утешительная сетка</span> — команды 5–8. Полуфинал: 5-е vs 8-е, 6-е vs 7-е.
           </span>
         </li>
         <li class="flex gap-2.5">
           <span class="w-1 shrink-0 rounded-full bg-border mt-1" aria-hidden="true" />
-          <span class="text-muted-foreground">Проигравшие полуфиналов играют за 3-е (7-е) место.</span>
+          <span class="text-muted-foreground">Проигравшие полуфиналов играют за 3-е место (в основной сетке) и за 7-е место (в утешительной).</span>
         </li>
       </ul>
     </div>
