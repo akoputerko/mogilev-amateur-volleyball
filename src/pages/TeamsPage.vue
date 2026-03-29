@@ -1,7 +1,7 @@
 <template>
   <div class="animate-fade-in grid gap-4 sm:grid-cols-2">
     <Card
-      v-for="team in teams"
+      v-for="team in sortedTeams"
       :key="team.id"
       role="button"
       :tabindex="0"
@@ -46,4 +46,6 @@ const standings = calcStandings();
 const standingMap = Object.fromEntries(
   standings.map((s, i) => [s.team.id, { s, pos: i + 1 }]),
 );
+
+const sortedTeams = [...teams].sort((a, b) => a.name.localeCompare(b.name, "ru"));
 </script>
