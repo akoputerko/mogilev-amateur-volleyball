@@ -284,6 +284,9 @@
       <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
         <div class="flex items-center gap-3">
           <h4 class="font-display text-sm text-muted-foreground">Матчи</h4>
+          <span class="text-xs font-medium text-muted-foreground">
+            осталось <span class="text-foreground font-bold">{{ remainingCount }}</span>
+          </span>
           <label class="flex items-center gap-1.5 cursor-pointer select-none">
             <input
               type="checkbox"
@@ -349,7 +352,7 @@ onMounted(() => {
 });
 
 const filter = ref<Filter>("all");
-const showPast = ref(true);
+const showPast = ref(false);
 
 const standings = calcStandings();
 const standingIdx = standings.findIndex((s) => s.team.id === teamId);
@@ -413,6 +416,15 @@ const filteredMatches = computed(() =>
     if (filter.value === "away") return m.awayId === teamId;
     return true;
   }),
+);
+
+const remainingCount = computed(() =>
+  allMatches.filter((m) => {
+    if (m.played || isMatchPast(m)) return false;
+    if (filter.value === "home") return m.homeId === teamId;
+    if (filter.value === "away") return m.awayId === teamId;
+    return true;
+  }).length,
 );
 
 function matchWon(m: Match) {

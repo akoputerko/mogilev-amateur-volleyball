@@ -90,7 +90,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { CalendarDays, LayoutGrid, Users, Trophy, Sun, Moon, Medal } from "lucide-vue-next";
+import { CalendarDays, LayoutGrid, Users, Trophy, Sun, Moon, Medal, BarChart3 } from "lucide-vue-next";
 import { teams, seasonStart, seasonEnd } from "@/data/league";
 import { Button } from "@/components/ui/button";
 
@@ -116,6 +116,7 @@ const tabs = [
   { label: "Календарь", icon: LayoutGrid,  path: "/calendar"   },
   { label: "Туры",      icon: CalendarDays, path: "/tours"     },
   { label: "Команды",   icon: Users,       path: "/teams"      },
+  { label: "Аналитика", icon: BarChart3,   path: "/analytics"  },
   { label: "Плей-офф",  icon: Medal,       path: "/playoff"    },
 ];
 

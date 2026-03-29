@@ -17,6 +17,7 @@ const router = createRouter({
         { path: "tours", component: () => import("./pages/ToursPage.vue"), meta: { title: "Туры" } },
         { path: "teams", component: () => import("./pages/TeamsPage.vue"), meta: { title: "Команды" } },
         { path: "teams/:id", component: () => import("./pages/TeamPage.vue"), meta: { title: "Команда" } },
+        { path: "analytics", component: () => import("./pages/AnalyticsPage.vue"), meta: { title: "Аналитика" } },
         { path: "playoff", component: () => import("./pages/PlayoffPage.vue"), meta: { title: "Плей-офф" } },
         { path: "playground", component: () => import("./pages/PlaygroundPage.vue"), meta: { title: "Площадка" } },
         { path: "calendar", component: () => import("./pages/Calendar.vue"), meta: { title: "Календарь" } },
