@@ -40,6 +40,10 @@
       <span class="flex items-center gap-1.5">
         <span class="w-3 h-1.5 rounded-sm bg-sky-500" aria-hidden="true" /> Плей-офф
       </span>
+      <span v-if="hasPlayedDisparity" class="flex items-center gap-1.5">
+        <span class="w-4 h-4 rounded bg-accent/15 border border-accent/30 text-[8px] text-accent font-bold flex items-center justify-center" aria-hidden="true">N</span>
+        Меньше матчей
+      </span>
     </div>
 
     <!-- Table -->
@@ -96,7 +100,7 @@
             @keydown.enter.prevent="selected = selected?.team.id === s.team.id ? null : s"
             @keydown.space.prevent="selected = selected?.team.id === s.team.id ? null : s"
             :tabindex="0"
-            :aria-label="`${s.team.name}, место ${i + 1}, очков ${s.points}`"
+            :aria-label="`${s.team.name}, место ${i + 1}, очков ${s.points}${s.played < maxPlayed ? `, сыграно ${s.played} из ${maxPlayed} матчей` : ''}`"
             :class="[
               'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent',
               rowHighlight(i + 1),
@@ -119,6 +123,12 @@
                   </AvatarFallback>
                 </Avatar>
                 <span class="font-semibold sm:hidden">{{ s.team.short }}</span>
+                <Tooltip v-if="s.played < maxPlayed">
+                  <TooltipTrigger as-child>
+                    <span class="sm:hidden text-[10px] text-accent font-medium -ml-0.5">({{ s.played }}и)</span>
+                  </TooltipTrigger>
+                  <TooltipContent>Сыграно {{ s.played }} из {{ maxPlayed }} матчей</TooltipContent>
+                </Tooltip>
                 <span class="font-semibold hidden sm:inline">{{ s.team.name }}</span>
               </div>
             </TableCell>
@@ -129,7 +139,17 @@
               <span class="text-sport-loss font-semibold">{{ s.lost }}</span>
             </TableCell>
             <!-- desktop columns -->
-            <TableCell class="text-center text-muted-foreground hidden sm:table-cell">{{ s.played }}</TableCell>
+            <TableCell class="text-center hidden sm:table-cell">
+              <Tooltip v-if="s.played < maxPlayed">
+                <TooltipTrigger as-child>
+                  <span class="bg-accent/15 text-accent border border-accent/30 rounded px-1.5 py-0.5 text-xs font-semibold inline-flex items-center justify-center cursor-help">
+                    {{ s.played }}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>Сыграно {{ s.played }} из {{ maxPlayed }} матчей</TooltipContent>
+              </Tooltip>
+              <span v-else class="text-muted-foreground">{{ s.played }}</span>
+            </TableCell>
             <TableCell class="text-center text-sport-win font-semibold hidden sm:table-cell">{{ s.won }}</TableCell>
             <TableCell class="text-center text-sport-loss font-semibold hidden sm:table-cell">{{ s.lost }}</TableCell>
             <TableCell class="text-center text-muted-foreground hidden sm:table-cell">{{ s.setsWon }}-{{ s.setsLost }}</TableCell>
@@ -235,6 +255,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const standings = calcStandings();
 const selected = ref<TeamStanding | null>(null);
+
+const maxPlayed = Math.max(...standings.map((s) => s.played));
+const hasPlayedDisparity = standings.some((s) => s.played < maxPlayed);
 
 const playedCount = matches.filter((m) => m.played).length;
 const playedGameweeks = new Set(matches.filter((m) => m.played).map((m) => m.gameweek)).size;
