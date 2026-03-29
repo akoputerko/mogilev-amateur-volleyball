@@ -78,12 +78,15 @@ export function calcStandingsFromMatches(matchList: Match[]): TeamStanding[] {
   const standings = Object.values(map);
   standings.sort((a, b) => {
     if (b.points !== a.points) return b.points - a.points;
-    const setRatioA = a.setsLost ? a.setsWon / a.setsLost : a.setsWon;
-    const setRatioB = b.setsLost ? b.setsWon / b.setsLost : b.setsWon;
-    if (setRatioB !== setRatioA) return setRatioB - setRatioA;
-    const ptRatioA = a.pointsLost ? a.pointsWon / a.pointsLost : a.pointsWon;
-    const ptRatioB = b.pointsLost ? b.pointsWon / b.pointsLost : b.pointsWon;
-    return ptRatioB - ptRatioA;
+    if (b.won !== a.won) return b.won - a.won;
+    const setDiffA = a.setsWon - a.setsLost;
+    const setDiffB = b.setsWon - b.setsLost;
+    if (setDiffB !== setDiffA) return setDiffB - setDiffA;
+    if (b.setsWon !== a.setsWon) return b.setsWon - a.setsWon;
+    const ptDiffA = a.pointsWon - a.pointsLost;
+    const ptDiffB = b.pointsWon - b.pointsLost;
+    if (ptDiffB !== ptDiffA) return ptDiffB - ptDiffA;
+    return b.pointsWon - a.pointsWon;
   });
 
   return standings;

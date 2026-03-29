@@ -194,16 +194,6 @@ export const rawSchedule: RawGameweek[] = [
     {
         gameweek: 5, matches: [
             {
-                id: 17,
-                home: "Макиато",
-                away: "Могилевгражданпроект",
-                hall: "ФОК Орловского",
-                address: "ул. Орловского, 24а",
-                day: "Четверг",
-                time: "20:00-22:00",
-                date: "26.03.2026"
-            },
-            {
                 id: 18,
                 home: "Серволюкс",
                 away: "Могилевгипрозем",
@@ -282,6 +272,16 @@ export const rawSchedule: RawGameweek[] = [
     {
         gameweek: 7, matches: [
             {
+                id: 17,
+                home: "Макиато",
+                away: "Могилевгражданпроект",
+                hall: "ФОК Орловского",
+                address: "ул. Орловского, 24а",
+                day: "Вторник",
+                time: "20:00-22:00",
+                date: "07.04.2026"
+            },
+            {
                 id: 25,
                 home: "Макиато",
                 away: "Серволюкс",
@@ -359,11 +359,11 @@ export const rawSchedule: RawGameweek[] = [
                 id: 32,
                 home: "Могилевгипрозем",
                 away: "33",
-                hall: "Спутник",
-                address: "ул. Якубовского, 20",
-                day: "Воскресенье",
-                time: "10:30-12:00",
-                date: "19.04.2026"
+                hall: "Зал МГУП",
+                address: "ул. Шмидта, 5",
+                day: "Пятница",
+                time: "18:00-20:00",
+                date: "17.04.2026"
             },
         ]
     },

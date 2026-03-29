@@ -5,7 +5,7 @@ import { getLeagueRecords } from "@/lib/records";
 // Team IDs from league.ts:
 // 0 = Макиато, 1 = Серволюкс, 2 = МГП, 3 = МГЗ, 4 = Отцы и дети, 5 = 33, 6 = Сетка 37, 7 = Dream Team
 
-// Matches played (tours 1-4):
+// Matches played (tours 1-5):
 // Match 1:  Макиато (0)  vs Dream Team (7)  -> 2:1 (home wins)
 // Match 2:  Серволюкс (1) vs Сетка 37 (6) -> 2:1 (home wins)
 // Match 3:  МГП (2) vs Отцы и дети (4)    -> 2:1 (home wins)
@@ -22,6 +22,9 @@ import { getLeagueRecords } from "@/lib/records";
 // Match 14: МГЗ (3) vs Сетка 37 (6)         -> 2:1 (home wins)
 // Match 15: Отцы и дети (4) vs Макиато (0)  -> 3:0 (home wins)
 // Match 16: 33 (5) vs Серволюкс (1)          -> 3:0 (home wins)
+// Match 18: Серволюкс (1) vs МГЗ (3)         -> 1:2 (away wins)
+// Match 19: Dream Team (7) vs 33 (5)          -> 3:0 (home wins)
+// Match 20: Сетка 37 (6) vs Отцы и дети (4)  -> 1:2 (away wins)
 
 describe("getStreaks", () => {
   it("returns null current streak for team with no played matches", () => {
@@ -41,22 +44,22 @@ describe("getStreaks", () => {
   });
 
   it("returns correct streak for Dream Team (id=7)", () => {
-    // Matches: L(1-2 vs Макиато), W(3-0 vs Серволюкс), W(2-1 vs МГЗ), L(1-2 vs МГП)
-    // Current streak: L1, longestWin: 2, longestLoss: 1
+    // Matches: L(1-2 vs Макиато), W(3-0 vs Серволюкс), W(2-1 vs МГЗ), L(1-2 vs МГП), W(3-0 vs 33)
+    // Current streak: W1, longestWin: 2, longestLoss: 1
     const result = getStreaks(7);
-    expect(result.current?.type).toBe("loss");
+    expect(result.current?.type).toBe("win");
     expect(result.current?.count).toBe(1);
     expect(result.longestWin).toBe(2);
     expect(result.longestLoss).toBe(1);
   });
 
   it("returns correct streak for Отцы и дети (id=4)", () => {
-    // Matches in order: M3 L(1-2 away), M7 L(0-3 home), M10 W(3-0 away), M15 W(3-0 home)
-    // Current streak: W2, longestWin: 2, longestLoss: 2
+    // Matches in order: M3 L(1-2 away), M7 L(0-3 home), M10 W(3-0 away), M15 W(3-0 home), M20 W(2-1 away)
+    // Current streak: W3, longestWin: 3, longestLoss: 2
     const result = getStreaks(4);
     expect(result.current?.type).toBe("win");
-    expect(result.current?.count).toBe(2);
-    expect(result.longestWin).toBe(2);
+    expect(result.current?.count).toBe(3);
+    expect(result.longestWin).toBe(3);
     expect(result.longestLoss).toBe(2);
   });
 
@@ -184,9 +187,9 @@ describe("getScoringPatterns", () => {
 describe("getPositionHistory", () => {
   it("returns one entry per played gameweek", () => {
     const result = getPositionHistory(0);
-    // Tours 1-4 have played matches, so 4 entries
-    expect(result.length).toBe(4);
-    expect(result.map((p) => p.gameweek)).toEqual([1, 2, 3, 4]);
+    // Tours 1-5 have played matches, so 5 entries
+    expect(result.length).toBe(5);
+    expect(result.map((p) => p.gameweek)).toEqual([1, 2, 3, 4, 5]);
   });
 
   it("all positions are between 1 and 8", () => {
@@ -200,7 +203,7 @@ describe("getPositionHistory", () => {
   it("returns same structure for all teams", () => {
     for (let id = 0; id < 8; id++) {
       const result = getPositionHistory(id);
-      expect(result.length).toBe(4);
+      expect(result.length).toBe(5);
       result.forEach((p) => {
         expect(p.position).toBeGreaterThanOrEqual(1);
         expect(p.position).toBeLessThanOrEqual(8);
@@ -231,19 +234,15 @@ describe("getLeagueRecords", () => {
     expect(Number(maxMatch!.value)).toBeGreaterThan(100);
   });
 
-  it("closest set detail shows winner team first (С37 before МАК for 27:25 set)", () => {
+  it("closest set detail shows home team first (МАК before С37 for 25:27 set)", () => {
     const result = getLeagueRecords();
     const closest = result.find((r) => r.label === "Самая напряжённая");
     expect(closest).toBeDefined();
-    // The 27:25 set (margin 2) is one of the first margin-2 sets found.
-    // Regardless of which occurrence lands first, no occurrence should show МАК - С37
-    // for the 27:25 set (С37 scored 27 and won that set).
-    const occurrences = closest!.detail.split(" · ");
-    const mak_c37_entry = occurrences.find((o) => o.includes("МАК") && o.includes("С37") && o.includes("Тур 3"));
-    if (mak_c37_entry) {
-      // The winner (С37) must come before the loser (МАК)
-      expect(mak_c37_entry.indexOf("С37")).toBeLessThan(mak_c37_entry.indexOf("МАК"));
-    }
+    // Match 9: Макиато (home, МАК) vs Сетка 37 (away, С37). Set 1 score: 25:27 (home:away).
+    // Detail format is always home - away, so МАК appears before С37.
+    expect(closest!.detail).toContain("МАК");
+    expect(closest!.detail).toContain("С37");
+    expect(closest!.detail.indexOf("МАК")).toBeLessThan(closest!.detail.indexOf("С37"));
   });
 
   it("closest set is uniquely 25:27 (tour 3, highest total among margin-2 sets)", () => {
