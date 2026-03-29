@@ -53,7 +53,11 @@ teams.forEach((t) => { teamByName[t.name] = t.id; });
 // Handle case variation used in schedule
 teamByName["Dream team"] = 7;
 
-export const getTeam = (id: number) => teams.find((t) => t.id === id)!;
+export const getTeam = (id: number): Team => {
+  const team = teams.find((t) => t.id === id);
+  if (!team) throw new Error(`Team with id ${id} not found`);
+  return team;
+};
 
 function parseDateDMY(date: string): string {
   const [dd, mm, yyyy] = date.split(".");
@@ -64,6 +68,8 @@ function buildMatches(): Match[] {
   const result: Match[] = [];
   for (const gw of rawSchedule) {
     for (const m of gw.matches) {
+      if (teamByName[m.home] === undefined) throw new Error(`Unknown team name in schedule: "${m.home}"`);
+      if (teamByName[m.away] === undefined) throw new Error(`Unknown team name in schedule: "${m.away}"`);
       const entry = matchResults[m.id];
       result.push({
         id: m.id,
@@ -90,7 +96,7 @@ function buildMatches(): Match[] {
 }
 
 export const matches = buildMatches();
-export const totalGameweeks = 14;
+export const totalGameweeks = rawSchedule.length;
 
 const allDates = matches.map((m) => m.date).sort();
 export const seasonStart = allDates[0];

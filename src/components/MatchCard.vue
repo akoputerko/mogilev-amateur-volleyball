@@ -93,7 +93,7 @@
       </Badge>
       <span class="inline-flex items-center gap-1">
         <Calendar class="w-3 h-3" aria-hidden="true" />
-        {{ new Date(match.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short", weekday: "short" }) }}
+        <time :datetime="match.date">{{ new Date(match.date).toLocaleDateString("ru-RU", { day: "numeric", month: "short", weekday: "short" }) }}</time>
       </span>
       <span class="inline-flex items-center gap-1">
         <Clock class="w-3 h-3" aria-hidden="true" />
@@ -101,7 +101,14 @@
       </span>
       <span class="inline-flex items-center gap-1">
         <MapPin class="w-3 h-3" aria-hidden="true" />
-        {{ match.venue }} · {{ match.address }}
+        {{ match.venue }} ·
+        <a
+          :href="`https://maps.google.com/?q=${encodeURIComponent(match.address + ', Могилёв')}`"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="underline hover:text-foreground transition-colors"
+          @click.stop
+        >{{ match.address }}</a>
       </span>
     </CardFooter>
   </Card>

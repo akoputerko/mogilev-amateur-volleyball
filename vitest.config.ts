@@ -9,6 +9,11 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
     include: ["src/**/*.{test,spec}.{ts,vue}"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "lcov"],
+      include: ["src/lib/**", "src/data/**"],
+    },
   },
   resolve: {
     alias: { "@": path.resolve(__dirname, "./src") },

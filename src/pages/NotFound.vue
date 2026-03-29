@@ -1,9 +1,9 @@
 <template>
-  <div class="flex min-h-screen items-center justify-center bg-muted">
+  <div class="flex min-h-screen items-center justify-center bg-background">
     <div class="text-center">
       <h1 class="mb-4 font-display text-6xl font-bold text-accent">404</h1>
       <p class="mb-4 text-xl text-muted-foreground">Страница не найдена</p>
-      <a href="/" class="text-accent underline hover:text-accent/80">На главную</a>
+      <RouterLink to="/" class="text-accent underline hover:text-accent/80">На главную</RouterLink>
     </div>
   </div>
 </template>

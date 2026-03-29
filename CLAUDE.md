@@ -14,13 +14,13 @@ npm run test         # Run tests once
 npm run test:watch   # Run tests in watch mode
 ```
 
-To run a single test file: `npx vitest run src/test/example.test.ts`
+To run a single test file: `npx vitest run src/test/stats.test.ts`
 
 ## Architecture
 
-Static React/TypeScript SPA for the Mogilev Amateur Volleyball League. No backend — all data lives in `src/data/league.ts`.
+Static Vue 3/TypeScript SPA for the Mogilev Amateur Volleyball League. No backend — all data lives in `src/data/league.ts`.
 
-**Routing:** `HashRouter`. `Index.tsx` is the layout shell with tab navigation; route content renders via `<Outlet />`. All route-level pages are in `src/pages/`:
+**Routing:** `createWebHashHistory`. `Index.vue` is the layout shell with tab navigation; route content renders via `<RouterView />`. All route-level pages are in `src/pages/`:
 
 | Path | Component |
 |---|---|
@@ -29,13 +29,14 @@ Static React/TypeScript SPA for the Mogilev Amateur Volleyball League. No backen
 | `/tours` | `ToursPage` |
 | `/teams` | `TeamsPage` |
 | `/teams/:id` | `TeamPage` |
+| `/playoff` | `PlayoffPage` |
 | `/playground` | `PlaygroundPage` |
 
 `src/components/` contains only reusable sub-components (`MatchCard`, shadcn/ui primitives, etc.).
 
 **Data flow:** Data is split across three files:
 - `src/data/schedule.ts` — `rawSchedule` (56 matches, 14 gameweeks, explicit `DD.MM.YYYY` dates)
-- `src/data/results.ts` — `matchResults` record, keyed `"GW{n}: {home} - {away}"` using names exactly as in schedule
+- `src/data/results.ts` — `matchResults` record, keyed by numeric match `id` from schedule
 - `src/data/league.ts` — imports both, exports `teams`, `matches`, `totalGameweeks`, `seasonStart`, `seasonEnd`
 
 `buildMatches()` in `league.ts` looks up each match by key in `matchResults`; presence of an entry sets `played: true` and populates `result`. `seasonStart`/`seasonEnd` are computed from match dates (`seasonEnd` = last match + 7 days for playoffs). `src/lib/standings.ts` derives standings via `calcStandings()`.
@@ -61,18 +62,20 @@ Static React/TypeScript SPA for the Mogilev Amateur Volleyball League. No backen
 
 **MatchCard props:** `teamId?: number` enables home/away left-border coloring and Дома/В гостях badge. `linkTeams?: boolean` makes team names clickable links to `/teams/:id`. The card uses `flex flex-col` with `flex-1 justify-center` on the content area so the footer always pins to the bottom regardless of whether a score or VS is shown — prevents layout breakage in two-column grids when adjacent cards have different content heights.
 
-**Theme toggle:** `Index.tsx` manages dark/light mode via `useState` + `useEffect` that toggles `.dark` on `document.documentElement` and persists to `localStorage`. Reads `prefers-color-scheme` as the default on first load. Icons: `Moon` (light mode) / `Sun` (dark mode) from lucide-react, shown in the header top-right.
+**Theme toggle:** `Index.vue` manages dark/light mode via `ref` + `watch` that toggles `.dark` on `document.documentElement` and persists to `localStorage`. Reads `prefers-color-scheme` as the default on first load. Icons: `Moon` (light mode) / `Sun` (dark mode) from lucide-vue-next, shown in the header top-right.
 
 **Accessibility (WCAG 2.1 AA):**
-- Tab bar is wrapped in `<nav aria-label="Основная навигация">` with `aria-current="page"` on the active button
-- All lucide-react icons that are purely decorative carry `aria-hidden="true"`
-- Clickable `<div>` elements that navigate to team pages have `role="button"`, `tabIndex={0}`, `onKeyDown` (Enter/Space) and a descriptive `aria-label`
-- `StandingsPage`: table `<th>` elements have `scope="col"`; rows have `tabIndex`, `onKeyDown`, and `aria-label`
+- Tab bar is wrapped in `<nav aria-label="Основная навигация">` with `aria-current="page"` on the active link
+- All lucide-vue-next icons that are purely decorative carry `aria-hidden="true"`
+- Clickable `<div>` elements that navigate to team pages have `role="button"`, `:tabindex="0"`, `@keydown` (Enter/Space) and a descriptive `aria-label`
+- `StandingsPage`: table `<th>` elements have `scope="col"`; rows have `:tabindex`, `@keydown`, `role="button"`, and `aria-label`
 - `TeamPage`: filter button group has `role="group"` + `aria-label`; each filter button has `aria-pressed`; form badges use `aria-label` instead of `title`
 - `Calendar`: prev/next month buttons have `aria-label`; match chips have `aria-label` with full match details
 - `PlaygroundPage`: game overlay has `role="alert"`; board has `role="application"`; reset button has `aria-label` (no `title`)
 - `ToursPage`: `<select>` has `aria-label`
 - `index.css`: `@media (prefers-reduced-motion: reduce)` disables `animate-fade-in` / `animate-slide-up` and collapses all transition durations
+- Skip-to-content link in `Index.vue` (`.sr-only`, visible on focus)
+- `<main id="main-content">` receives focus on route change for screen reader announcements
 
 **Component library:** shadcn/ui components in `src/components/ui/`. Path alias `@/` maps to `src/`.
 
@@ -104,8 +107,11 @@ setsAway = setScores.filter(s => s.away > s.home).length
 
 Сортировка по убыванию, тай-брейки по порядку:
 1. **Очки** (league points)
-2. **Партии** — `setsWon / setsLost` (если `setsLost = 0`, берётся `setsWon` как есть)
-3. **Мячи** — `pointsWon / pointsLost` (сумма очков во всех партиях; если `pointsLost = 0`, берётся `pointsWon`)
+2. **Победы** (`won`)
+3. **Разница партий** (`setsWon - setsLost`)
+4. **Партий выиграно** (`setsWon`)
+5. **Разница мячей** (`pointsWon - pointsLost`)
+6. **Мячей забито** (`pointsWon`)
 
 `pointsWon`/`pointsLost` — сумма счётов во всех партиях всех матчей (например, если команда сыграла сет 25:20, она получает +25 в `pointsWon` и +20 в `pointsLost`).
 

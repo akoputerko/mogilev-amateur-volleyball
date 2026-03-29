@@ -4,6 +4,9 @@
     <div class="flex items-center justify-between mb-4">
       <h2 class="font-display text-xl font-semibold">{{ MONTH_NAMES[month] }} {{ year }}</h2>
       <div class="flex gap-1">
+        <Button v-if="!isCurrentMonth" variant="outline" size="sm" @click="goToToday" aria-label="Перейти к текущему месяцу" class="h-10 px-3 text-xs">
+          Сегодня
+        </Button>
         <Button variant="outline" size="icon" @click="prevMonth" aria-label="Предыдущий месяц" class="w-10 h-10">
           <ChevronLeft class="w-4 h-4" aria-hidden="true" />
         </Button>
@@ -46,7 +49,7 @@
                 @click="selectedMatch = m"
                 :aria-label="`${teamById[m.homeId].name} — ${teamById[m.awayId].name}${m.played && m.result ? `, счёт ${m.result.setsHome}:${m.result.setsAway}` : getMatchStatus(m) === 'past-no-result' ? ', нет результата' : `, начало ${m.time.split('-')[0]}`}, ${m.venue}`"
                 :class="[
-                  'w-full text-left text-[10px] leading-snug px-1 py-0.5 rounded transition-opacity hover:opacity-70',
+                  'w-full text-left text-[11px] leading-snug px-1 py-0.5 rounded transition-opacity hover:opacity-70',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
                   chipClass(m),
                 ]"
@@ -108,6 +111,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+
 import { ChevronLeft, ChevronRight } from "lucide-vue-next";
 import { matches, teams } from "@/data/league";
 import type { Match } from "@/data/league";
@@ -148,12 +152,15 @@ function getMonthGrid(y: number, m: number): Date[] {
 }
 
 const today = new Date();
-const year = ref(today.getFullYear());
-const month = ref(today.getMonth());
+const todayYear = today.getFullYear();
+const todayMonth = today.getMonth();
+const year = ref(todayYear);
+const month = ref(todayMonth);
 const selectedMatch = ref<Match | null>(null);
 
 const grid = computed(() => getMonthGrid(year.value, month.value));
-const todayKey = toKey(new Date());
+const todayKey = toKey(today);
+const isCurrentMonth = computed(() => year.value === todayYear && month.value === todayMonth);
 
 function prevMonth() {
   if (month.value === 0) { month.value = 11; year.value--; }
@@ -162,6 +169,10 @@ function prevMonth() {
 function nextMonth() {
   if (month.value === 11) { month.value = 0; year.value++; }
   else month.value++;
+}
+function goToToday() {
+  year.value = todayYear;
+  month.value = todayMonth;
 }
 function sortedMatches(date: Date) {
   return [...(matchesByDate[toKey(date)] ?? [])].sort((a, b) => a.time.localeCompare(b.time));

@@ -22,7 +22,14 @@
         <h2 class="text-xl text-primary-foreground truncate">{{ team.name }}</h2>
         <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1">
           <span class="flex items-center gap-1 text-primary-foreground/60 text-xs">
-            <MapPin class="w-3 h-3" aria-hidden="true" /> {{ team.hall }} · {{ team.hallAddress }}
+            <MapPin class="w-3 h-3" aria-hidden="true" />
+            {{ team.hall }} ·
+            <a
+              :href="`https://maps.google.com/?q=${encodeURIComponent(team.hallAddress + ', Могилёв')}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="underline hover:text-primary-foreground/90 transition-colors"
+            >{{ team.hallAddress }}</a>
           </span>
           <span class="flex items-center gap-1 text-primary-foreground/60 text-xs">
             <Clock class="w-3 h-3" aria-hidden="true" /> {{ team.trainDays.join(", ") }} · {{ team.trainTime }}
@@ -247,7 +254,7 @@
       <CardContent>
         <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
           <div
-            v-for="[oppIdStr, record] in Object.entries(h2h)"
+            v-for="[oppIdStr, record] in sortedH2h"
             :key="oppIdStr"
             class="bg-secondary/40 rounded-lg p-2 text-center"
           >
@@ -342,7 +349,7 @@ onMounted(() => {
 });
 
 const filter = ref<Filter>("all");
-const showPast = ref(false);
+const showPast = ref(true);
 
 const standings = calcStandings();
 const standingIdx = standings.findIndex((s) => s.team.id === teamId);
@@ -369,6 +376,10 @@ const h2h = playedMatches.reduce<Record<number, { won: number; lost: number; set
   acc[oppId].setsLost += oppSets;
   return acc;
 }, {});
+
+const sortedH2h = Object.entries(h2h).sort(([aId], [bId]) =>
+  getTeam(Number(aId)).name.localeCompare(getTeam(Number(bId)).name, "ru"),
+);
 
 const totalSets = (standing?.played ?? 0) * 3;
 const totalPts  = (standing?.pointsWon ?? 0) + (standing?.pointsLost ?? 0);

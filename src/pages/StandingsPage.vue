@@ -96,9 +96,10 @@
           <TableRow
             v-for="(s, i) in standings"
             :key="s.team.id"
-            @click="selected = selected?.team.id === s.team.id ? null : s"
-            @keydown.enter.prevent="selected = selected?.team.id === s.team.id ? null : s"
-            @keydown.space.prevent="selected = selected?.team.id === s.team.id ? null : s"
+            role="button"
+            @click="toggleSelected(s)"
+            @keydown.enter.prevent="toggleSelected(s)"
+            @keydown.space.prevent="toggleSelected(s)"
             :tabindex="0"
             :aria-label="`${s.team.name}, место ${i + 1}, очков ${s.points}${s.played < maxPlayed ? `, сыграно ${s.played} из ${maxPlayed} матчей` : ''}`"
             :class="[
@@ -235,12 +236,12 @@
       </CardContent>
     </Card>
 
-    <TeamStatsPanel v-if="selected" :standing="selected" @close="selected = null" />
+    <TeamStatsPanel ref="statsPanelRef" v-if="selected" :standing="selected" @close="selected = null" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch, nextTick } from "vue";
 import { Info, ChevronRight, Trophy } from "lucide-vue-next";
 import { calcStandings, getTeamMatches, type TeamStanding } from "@/lib/standings";
 import { matches, totalGameweeks } from "@/data/league";
@@ -255,6 +256,18 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const standings = calcStandings();
 const selected = ref<TeamStanding | null>(null);
+const statsPanelRef = ref<HTMLElement | null>(null);
+
+function toggleSelected(s: TeamStanding) {
+  selected.value = selected.value?.team.id === s.team.id ? null : s;
+}
+
+watch(selected, async (val) => {
+  if (val) {
+    await nextTick();
+    (statsPanelRef.value as unknown as { $el?: HTMLElement } | null)?.$el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+});
 
 const maxPlayed = Math.max(...standings.map((s) => s.played));
 const hasPlayedDisparity = standings.some((s) => s.played < maxPlayed);
