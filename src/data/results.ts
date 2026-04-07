@@ -185,4 +185,13 @@ export const matchResults: Record<number, ResultEntry> = {
             {home: 22, away: 25},
         ],
     },
+
+    // --- Тур 7 ---
+    17: { // Макиато - Могилевгражданпроект
+        setScores: [
+            {home: 25, away: 10},
+            {home: 25, away: 21},
+            {home: 25, away: 19},
+        ],
+    },
 };
