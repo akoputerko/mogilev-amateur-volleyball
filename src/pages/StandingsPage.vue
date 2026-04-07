@@ -29,6 +29,9 @@
         <p class="text-[11px] text-muted-foreground/70 text-center">
           Всегда 3 партии в матче · Плей-офф: топ-4 команды
         </p>
+        <p class="text-[11px] text-muted-foreground/50 text-center">
+          Тай-брейк: очки → победы → разница партий → партий выиграно → разница мячей → мячей забито
+        </p>
       </CardContent>
     </Card>
 
