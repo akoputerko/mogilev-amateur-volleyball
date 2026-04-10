@@ -17,9 +17,9 @@
           : 'text-muted-foreground hover:text-foreground'"
       >{{ tab.label }}</button>
       <div class="ml-auto">
-        <Button variant="ghost" size="sm" @click="showExportModal = true" class="gap-1.5">
+        <Button variant="ghost" size="sm" @click="showExportModal = true" class="gap-1.5 text-muted-foreground hover:text-foreground">
           <Share2 class="w-4 h-4" aria-hidden="true" />
-          <span class="hidden sm:inline">Экспорт</span>
+          <span class="hidden sm:inline text-xs">Экспорт {{ activeTab === 'summary' ? 'Сводки' : activeTab === 'stats' ? 'Статистики' : 'Команд' }}</span>
         </Button>
       </div>
     </div>
