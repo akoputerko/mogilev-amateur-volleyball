@@ -34,31 +34,31 @@ describe("getStreaks", () => {
   });
 
   it("returns correct streak for Макиато (id=0)", () => {
-    // Matches in order: W(2-1), W(2-1), W(2-1), L(0-3)
-    // Current streak: L1, longestWin: 3, longestLoss: 1
+    // Matches in order: W W W L W W W (tours 1-7: M1 M8 M9 M15 M22 M17 M25)
+    // Current streak: W3, longestWin: 3, longestLoss: 1
     const result = getStreaks(0);
-    expect(result.current?.type).toBe("loss");
-    expect(result.current?.count).toBe(1);
+    expect(result.current?.type).toBe("win");
+    expect(result.current?.count).toBe(3);
     expect(result.longestWin).toBe(3);
     expect(result.longestLoss).toBe(1);
   });
 
   it("returns correct streak for Dream Team (id=7)", () => {
-    // Matches: L(1-2 vs Макиато), W(3-0 vs Серволюкс), W(2-1 vs МГЗ), L(1-2 vs МГП), W(3-0 vs 33)
-    // Current streak: W1, longestWin: 2, longestLoss: 1
+    // Matches: L W W L W W W (tours 1-7: M1 M5 M12 M13 M19 M24 M26)
+    // Current streak: W3, longestWin: 3, longestLoss: 1
     const result = getStreaks(7);
     expect(result.current?.type).toBe("win");
-    expect(result.current?.count).toBe(1);
-    expect(result.longestWin).toBe(2);
+    expect(result.current?.count).toBe(3);
+    expect(result.longestWin).toBe(3);
     expect(result.longestLoss).toBe(1);
   });
 
   it("returns correct streak for Отцы и дети (id=4)", () => {
-    // Matches in order: M3 L(1-2 away), M7 L(0-3 home), M10 W(3-0 away), M15 W(3-0 home), M20 W(2-1 away)
-    // Current streak: W3, longestWin: 3, longestLoss: 2
+    // Matches: L L W W W L L (tours 1-7: M3 M7 M10 M15 M20 M24 M27)
+    // Current streak: L2, longestWin: 3, longestLoss: 2
     const result = getStreaks(4);
-    expect(result.current?.type).toBe("win");
-    expect(result.current?.count).toBe(3);
+    expect(result.current?.type).toBe("loss");
+    expect(result.current?.count).toBe(2);
     expect(result.longestWin).toBe(3);
     expect(result.longestLoss).toBe(2);
   });
@@ -81,9 +81,9 @@ describe("getSetPerformance", () => {
   });
 
   it("returns zeros for set win/loss totals that add up to played matches", () => {
-    const result = getSetPerformance(0); // Макиато played 4 matches
+    const result = getSetPerformance(0); // Макиато played 7 matches (tours 1-7)
     result.forEach((s) => {
-      expect(s.won + s.lost).toBe(4);
+      expect(s.won + s.lost).toBe(7);
     });
   });
 
@@ -97,11 +97,11 @@ describe("getSetPerformance", () => {
     });
   });
 
-  it("Макиато set 3 has 3 wins and 1 loss", () => {
-    // Set 3 results: M1(25>23 W), M8(25>20 W), M9(25>16 W), M15(15<25 L)
+  it("Макиато set 3 has 6 wins and 1 loss", () => {
+    // M1 W, M8 W, M9 W, M15 L (0:3 sweep — Макиато lost set3 15<25), M22 W, M17 W, M25 W
     const result = getSetPerformance(0);
     const set3 = result.find((s) => s.setNum === 3)!;
-    expect(set3.won).toBe(3);
+    expect(set3.won).toBe(6);
     expect(set3.lost).toBe(1);
   });
 });
@@ -154,8 +154,8 @@ describe("getComebackStats", () => {
 
 describe("getScoringPatterns", () => {
   it("returns correct totalSets as played * 3", () => {
-    const result = getScoringPatterns(0); // Макиато played 4 matches
-    expect(result.totalSets).toBe(12);
+    const result = getScoringPatterns(0); // Макиато played 7 matches (tours 1-7)
+    expect(result.totalSets).toBe(21);
   });
 
   it("closeSets + dominantSets <= totalSets", () => {
@@ -168,28 +168,26 @@ describe("getScoringPatterns", () => {
     expect(result.avgMargin).toBeGreaterThan(0);
   });
 
-  it("Макиато has 4 close sets (margin<=3)", () => {
-    // M1: 5,8,2 -> 1 close
-    // M8: 5,2,5 -> 1 close
-    // M9: 2,2,9 -> 2 close
-    // M15: 10,6,10 -> 0 close
+  it("Макиато has 5 close sets (margin<=3)", () => {
+    // M1: margins 5,8,2 -> 1 close; M8: 5,2,5 -> 1 close; M9: 2,2,9 -> 2 close
+    // M15: 10,6,10 -> 0; M22: 7,4,5 -> 0; M17: 15,4,6 -> 0; M25: 8,16,2 -> 1 close
     const result = getScoringPatterns(0);
-    expect(result.closeSets).toBe(4);
+    expect(result.closeSets).toBe(5);
   });
 
-  it("Макиато has 2 dominant sets (margin>=10)", () => {
-    // M15: |25-15|=10, |25-19|=6, |25-15|=10 -> 2 dominant
+  it("Макиато has 4 dominant sets (margin>=10)", () => {
+    // M15: |25-15|=10 and |25-15|=10 -> 2; M17: |25-10|=15 -> 1; M25: |25-9|=16 -> 1
     const result = getScoringPatterns(0);
-    expect(result.dominantSets).toBe(2);
+    expect(result.dominantSets).toBe(4);
   });
 });
 
 describe("getPositionHistory", () => {
   it("returns one entry per played gameweek", () => {
     const result = getPositionHistory(0);
-    // Tours 1-5 have played matches, so 5 entries
-    expect(result.length).toBe(5);
-    expect(result.map((p) => p.gameweek)).toEqual([1, 2, 3, 4, 5]);
+    // Tours 1-7 have played matches, so 7 entries
+    expect(result.length).toBe(7);
+    expect(result.map((p) => p.gameweek)).toEqual([1, 2, 3, 4, 5, 6, 7]);
   });
 
   it("all positions are between 1 and 8", () => {
@@ -203,7 +201,7 @@ describe("getPositionHistory", () => {
   it("returns same structure for all teams", () => {
     for (let id = 0; id < 8; id++) {
       const result = getPositionHistory(id);
-      expect(result.length).toBe(5);
+      expect(result.length).toBe(7);
       result.forEach((p) => {
         expect(p.position).toBeGreaterThanOrEqual(1);
         expect(p.position).toBeLessThanOrEqual(8);
@@ -234,24 +232,24 @@ describe("getLeagueRecords", () => {
     expect(Number(maxMatch!.value)).toBeGreaterThan(100);
   });
 
-  it("closest set detail shows home team first (МАК before С37 for 25:27 set)", () => {
+  it("closest set detail shows home team first (33 before С37 for 29:31 set)", () => {
     const result = getLeagueRecords();
     const closest = result.find((r) => r.label === "Самая напряжённая");
     expect(closest).toBeDefined();
-    // Match 9: Макиато (home, МАК) vs Сетка 37 (away, С37). Set 1 score: 25:27 (home:away).
-    // Detail format is always home - away, so МАК appears before С37.
-    expect(closest!.detail).toContain("МАК");
+    // Match 23: 33 (home) vs Сетка 37 (away, С37). Set 3 score: 29:31 (home:away), margin=2, total=60.
+    // Detail format is always home - away, so 33 appears before С37.
+    expect(closest!.detail).toContain("33");
     expect(closest!.detail).toContain("С37");
-    expect(closest!.detail.indexOf("МАК")).toBeLessThan(closest!.detail.indexOf("С37"));
+    expect(closest!.detail.indexOf("33")).toBeLessThan(closest!.detail.indexOf("С37"));
   });
 
-  it("closest set is uniquely 25:27 (tour 3, highest total among margin-2 sets)", () => {
+  it("closest set is uniquely 29:31 (tour 6, highest total among margin-2 sets)", () => {
     const result = getLeagueRecords();
     const closest = result.find((r) => r.label === "Самая напряжённая");
     expect(closest).toBeDefined();
-    // 25:27 has margin=2 and total=52 — uniquely highest total among all margin-2 sets
+    // 29:31 has margin=2 and total=60 — uniquely highest total among all margin-2 sets
     // so no ×N count suffix, and detail is just the one occurrence
     expect(closest!.detail).not.toMatch(/×\d+/);
-    expect(closest!.detail).toContain("Тур 3");
+    expect(closest!.detail).toContain("Тур 6");
   });
 });
