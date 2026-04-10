@@ -34,6 +34,8 @@ export interface SummaryExportData {
 
 // ── Matrix helper ──────────────────────────────────────────────────────────
 
+// Uses t.short for header and row labels because W=4 is too narrow for full team names.
+// Full name replacement happens separately in export-image.ts for DOM-based exports.
 function formatMatrix(matrix: MatrixCell[][], teams: Team[]): string {
   const W = 4;
   const LABEL_W = 5;

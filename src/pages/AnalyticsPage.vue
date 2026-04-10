@@ -576,7 +576,7 @@
 
 <script setup lang="ts">
 import { ref, type ComponentPublicInstance } from "vue";
-import { teams, matches, getTeam } from "@/data/league";
+import { teams, matches } from "@/data/league";
 import { calcStandings } from "@/lib/standings";
 import { getStreaks, getComebackStats, getScoringPatterns, getForm, getSetPerformance, getPositionHistory, getAvgSetScore } from "@/lib/stats";
 import { getLeagueRecords } from "@/lib/records";
