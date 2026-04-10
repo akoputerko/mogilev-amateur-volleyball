@@ -70,6 +70,8 @@ export async function renderSectionToImage(
   const wrapper = buildWrapper(clone, title);
   document.body.appendChild(wrapper);
   try {
+    // First call triggers external CSS inlining; second call captures the fully styled result.
+    await toPng(wrapper, { pixelRatio: 2 });
     return await toPng(wrapper, { pixelRatio: 2 });
   } finally {
     document.body.removeChild(wrapper);

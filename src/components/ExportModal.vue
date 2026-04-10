@@ -29,7 +29,7 @@
             {{ copied ? "Скопировано!" : "Скопировать всё" }}
           </Button>
         </div>
-        <ScrollArea class="flex-1 rounded border border-border" style="max-height: 55vh">
+        <ScrollArea class="h-[55vh] rounded border border-border">
           <pre class="p-4 text-xs font-mono whitespace-pre-wrap break-words text-foreground leading-relaxed">{{ formattedText }}</pre>
         </ScrollArea>
       </div>
@@ -52,7 +52,7 @@
               Скачать все
             </Button>
           </div>
-          <ScrollArea style="max-height: 55vh">
+          <ScrollArea class="h-[55vh]">
             <div class="space-y-3 pr-4">
               <div
                 v-for="img in renderedImages"
