@@ -93,3 +93,145 @@ describe("formatSummaryText", () => {
     expect(text).toContain("0:3");
   });
 });
+
+import {
+  formatStatsText, formatTeamsText,
+  type StatsExportData, type TeamsExportData,
+} from "@/lib/export-text";
+
+const mogilevgiprozem = teams[3]; // name: "Могилевгипрозем"
+
+const mockStatsData: StatsExportData = {
+  leagueCloseSets: 12,
+  leagueDomSets: 8,
+  leagueAvgMargin: "5.4",
+  pctClose: 14,
+  pctDom: 10,
+  mostCloseTeams: [{ team: makiato,   closeSets: 5    }],
+  mostDomTeams:   [{ team: dreamTeam, dominantSets: 4 }],
+  leagueSetStats: [
+    { setNum: 1, homeWinRate: 0.64, avgPoints: "47.2", avgMargin: "5.1" },
+    { setNum: 2, homeWinRate: 0.57, avgPoints: "47.5", avgMargin: "5.2" },
+    { setNum: 3, homeWinRate: 0.54, avgPoints: "48.6", avgMargin: "5.8" },
+  ],
+  decisiveCount: 13,
+  decisivePct: 46,
+  totalComebacks: 6,
+  totalBlownLeads: 7,
+  comebackRate: 46,
+  mostComebackTeams: [{ team: dreamTeam, comebacks: 2   }],
+  mostBlownTeams:    [{ team: makiato,   blownLeads: 3  }],
+  longestWinStreaks:  [{ team: makiato,         longestWin: 5  }],
+  longestLossStreaks: [{ team: mogilevgiprozem, longestLoss: 4 }],
+  currentStreaks: [
+    { team: makiato,   current: { type: "win",  count: 3 } },
+    { team: dreamTeam, current: { type: "loss", count: 2 } },
+  ],
+  scoreDistribution: [["25:20", 8], ["25:17", 6]],
+};
+
+describe("formatStatsText", () => {
+  it("includes the stats header", () => {
+    expect(formatStatsText(mockStatsData)).toContain("🏐 АНАЛИТИКА ЛИГИ: СТАТИСТИКА");
+  });
+
+  it("includes set character counts and percentages", () => {
+    const text = formatStatsText(mockStatsData);
+    expect(text).toContain("12");
+    expect(text).toContain("14%");
+    expect(text).toContain("5.4");
+  });
+
+  it("uses full team names for leaders", () => {
+    const text = formatStatsText(mockStatsData);
+    expect(text).toContain("Макиато");
+    expect(text).toContain("Dream Team");
+    expect(text).toContain("Могилевгипрозем");
+  });
+
+  it("includes per-set stats for all 3 sets", () => {
+    const text = formatStatsText(mockStatsData);
+    expect(text).toContain("Партия 1");
+    expect(text).toContain("Партия 2");
+    expect(text).toContain("Партия 3");
+    expect(text).toContain("64%");
+  });
+
+  it("includes score distribution", () => {
+    const text = formatStatsText(mockStatsData);
+    expect(text).toContain("25:20");
+    expect(text).toContain("8 раз");
+  });
+
+  it("includes current streaks with full names", () => {
+    const text = formatStatsText(mockStatsData);
+    expect(text).toContain("Макиато");
+    expect(text).toContain("3В");
+    expect(text).toContain("Dream Team");
+    expect(text).toContain("2П");
+  });
+});
+
+const mockTeamsData: TeamsExportData = {
+  teamForms: [
+    { team: makiato,   form: [{ won: true }, { won: true }, { won: false }, { won: true }, { won: true  }] },
+    { team: dreamTeam, form: [{ won: false}, { won: true }, { won: true  }, { won: false}, { won: true  }] },
+  ],
+  teamSetEfficiency: [
+    {
+      team: makiato,
+      sets: [
+        { setNum: 1, won: 5, lost: 2 },
+        { setNum: 2, won: 4, lost: 3 },
+        { setNum: 3, won: 3, lost: 4 },
+      ],
+    },
+  ],
+  teamPositionHistory: [
+    { team: makiato, history: [{ gameweek: 1, position: 1 }, { gameweek: 2, position: 2 }] },
+  ],
+  teamAvgSetScores: [
+    {
+      team: makiato,
+      avg: { avgScoredWon: 25.3, avgConcededWon: 19.1, avgScoredLost: 18.4, avgConcededLost: 24.7 },
+    },
+  ],
+};
+
+describe("formatTeamsText", () => {
+  it("includes the teams header", () => {
+    expect(formatTeamsText(mockTeamsData)).toContain("🏐 АНАЛИТИКА ЛИГИ: КОМАНДЫ");
+  });
+
+  it("uses full team names in form section", () => {
+    const text = formatTeamsText(mockTeamsData);
+    expect(text).toContain("Макиато");
+    expect(text).toContain("Dream Team");
+  });
+
+  it("renders form as В/П chips separated by spaces", () => {
+    expect(formatTeamsText(mockTeamsData)).toContain("В В П В В");
+  });
+
+  it("includes set efficiency percentages", () => {
+    const text = formatTeamsText(mockTeamsData);
+    expect(text).toContain("71%"); // 5/(5+2) rounded
+    expect(text).toContain("П1");
+    expect(text).toContain("П2");
+    expect(text).toContain("П3");
+  });
+
+  it("includes position history in Т{n}→{pos} format", () => {
+    const text = formatTeamsText(mockTeamsData);
+    expect(text).toContain("Т1→1");
+    expect(text).toContain("Т2→2");
+  });
+
+  it("includes avg set scores with correct values", () => {
+    const text = formatTeamsText(mockTeamsData);
+    expect(text).toContain("25.3");
+    expect(text).toContain("19.1");
+    expect(text).toContain("18.4");
+    expect(text).toContain("24.7");
+  });
+});
