@@ -434,6 +434,7 @@
           </CardHeader>
           <CardContent>
             <VChart :option="scoreDistChartOption" style="height: 260px" autoresize />
+            <p class="text-[10px] text-muted-foreground mt-2">Счёт указан как хозяева:гости. Зелёный — победа хозяев в партии, красный — победа гостей.</p>
           </CardContent>
         </Card>
 
