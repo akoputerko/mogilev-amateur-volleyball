@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getStreaks, getSetPerformance, getComebackStats, getScoringPatterns, getPositionHistory, getForm } from "@/lib/stats";
+import { getStreaks, getSetPerformance, getComebackStats, getScoringPatterns, getPositionHistory, getForm, getAvgSetScore } from "@/lib/stats";
 import { getLeagueRecords } from "@/lib/records";
 
 // Team IDs from league.ts:
@@ -295,5 +295,43 @@ describe("getForm", () => {
     // Last 5: M9 W, M15 L, M22 W, M17 W, M25 W
     const result = getForm(0, 5);
     expect(result.map((f) => f.won)).toEqual([true, false, true, true, true]);
+  });
+});
+
+describe("getAvgSetScore", () => {
+  it("returns object with all four required fields", () => {
+    const result = getAvgSetScore(0);
+    expect(result).toHaveProperty("avgScoredWon");
+    expect(result).toHaveProperty("avgConcededWon");
+    expect(result).toHaveProperty("avgScoredLost");
+    expect(result).toHaveProperty("avgConcededLost");
+  });
+
+  it("avgScoredWon > avgConcededWon for a winning team", () => {
+    // By definition: in a won set, scored > conceded
+    const result = getAvgSetScore(0);
+    expect(result.avgScoredWon).toBeGreaterThan(result.avgConcededWon);
+  });
+
+  it("avgScoredLost < avgConcededLost for a team with losses", () => {
+    // By definition: in a lost set, conceded > scored
+    const result = getAvgSetScore(0);
+    expect(result.avgScoredLost).toBeLessThan(result.avgConcededLost);
+  });
+
+  it("avgScoredWon is exactly 25.0 for Макиато (id=0)", () => {
+    // All 15 of Макиато's won sets end with Макиато scoring exactly 25
+    const result = getAvgSetScore(0);
+    expect(result.avgScoredWon).toBeCloseTo(25.0, 1);
+  });
+
+  it("all values are non-negative for all teams", () => {
+    for (let id = 0; id < 8; id++) {
+      const result = getAvgSetScore(id);
+      expect(result.avgScoredWon).toBeGreaterThanOrEqual(0);
+      expect(result.avgConcededWon).toBeGreaterThanOrEqual(0);
+      expect(result.avgScoredLost).toBeGreaterThanOrEqual(0);
+      expect(result.avgConcededLost).toBeGreaterThanOrEqual(0);
+    }
   });
 });

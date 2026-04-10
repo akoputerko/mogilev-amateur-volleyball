@@ -171,3 +171,40 @@ export function getForm(teamId: number, n: number): FormEntry[] {
     return { won };
   });
 }
+
+export interface AvgSetScore {
+  avgScoredWon: number;
+  avgConcededWon: number;
+  avgScoredLost: number;
+  avgConcededLost: number;
+}
+
+export function getAvgSetScore(teamId: number): AvgSetScore {
+  const played = getTeamMatches(teamId).filter((m) => m.played);
+  let wonScored = 0, wonConceded = 0, wonCount = 0;
+  let lostScored = 0, lostConceded = 0, lostCount = 0;
+
+  for (const m of played) {
+    const isHome = m.homeId === teamId;
+    for (const s of m.result!.setScores) {
+      const scored = isHome ? s.home : s.away;
+      const conceded = isHome ? s.away : s.home;
+      if (scored > conceded) {
+        wonScored += scored;
+        wonConceded += conceded;
+        wonCount++;
+      } else {
+        lostScored += scored;
+        lostConceded += conceded;
+        lostCount++;
+      }
+    }
+  }
+
+  return {
+    avgScoredWon: wonCount > 0 ? wonScored / wonCount : 0,
+    avgConcededWon: wonCount > 0 ? wonConceded / wonCount : 0,
+    avgScoredLost: lostCount > 0 ? lostScored / lostCount : 0,
+    avgConcededLost: lostCount > 0 ? lostConceded / lostCount : 0,
+  };
+}
