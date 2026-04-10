@@ -1,357 +1,409 @@
 <template>
   <div class="animate-fade-in space-y-6">
 
-    <!-- 1. Обзор лиги -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      <div class="bg-secondary/40 rounded-lg p-3 text-center">
-        <div class="font-display text-3xl font-bold text-foreground">{{ playedCount }}</div>
-        <div class="text-[10px] text-muted-foreground mt-0.5">из {{ matches.length }} матчей</div>
-      </div>
-      <div class="bg-secondary/40 rounded-lg p-3 text-center">
-        <div class="font-display text-3xl font-bold text-foreground">{{ playedCount * 3 }}</div>
-        <div class="text-[10px] text-muted-foreground mt-0.5">партий сыграно</div>
-      </div>
-      <div class="bg-secondary/40 rounded-lg p-3 text-center">
-        <div class="font-display text-3xl font-bold text-foreground">{{ totalPoints }}</div>
-        <div class="text-[10px] text-muted-foreground mt-0.5">очков разыграно</div>
-      </div>
-      <div class="bg-secondary/40 rounded-lg p-3 text-center">
-        <div class="font-display text-3xl font-bold text-foreground">{{ avgPointsPerSet }}</div>
-        <div class="text-[10px] text-muted-foreground mt-0.5">очков в партии (avg)</div>
-      </div>
+    <!-- Tab bar -->
+    <div class="flex gap-1 border-b border-border">
+      <button
+        v-for="tab in [
+          { id: 'summary', label: 'Сводка' },
+          { id: 'stats', label: 'Статистика' },
+          { id: 'teams', label: 'Команды' },
+        ]"
+        :key="tab.id"
+        @click="activeTab = tab.id as typeof activeTab.value"
+        class="px-4 py-2 text-sm font-medium transition-colors relative -mb-px"
+        :class="activeTab === tab.id
+          ? 'text-foreground border-b-2 border-primary'
+          : 'text-muted-foreground hover:text-foreground'"
+      >{{ tab.label }}</button>
     </div>
 
-    <template v-if="playedCount > 0">
+    <!-- ══════════ СВОДКА ══════════ -->
+    <template v-if="activeTab === 'summary'">
 
-      <!-- 2. Результаты матчей -->
-      <Card>
-        <CardHeader class="pb-2">
-          <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Результаты матчей</CardTitle>
-        </CardHeader>
-        <CardContent class="space-y-3">
-          <div class="grid grid-cols-2 gap-3">
-            <div class="bg-sport-win/10 rounded-lg p-3 text-center">
-              <div class="text-[10px] font-semibold text-sport-win mb-0.5">Разгром</div>
-              <div class="font-display text-3xl font-bold text-foreground">{{ count30 }}</div>
-              <div class="text-xs font-mono font-bold text-sport-win/70 mt-0.5">3:0</div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">{{ pct30 }}% матчей</div>
-            </div>
-            <div class="bg-secondary/40 rounded-lg p-3 text-center">
-              <div class="text-[10px] font-semibold text-muted-foreground mb-0.5">Борьба</div>
-              <div class="font-display text-3xl font-bold text-foreground">{{ count21 }}</div>
-              <div class="text-xs font-mono font-bold text-muted-foreground/70 mt-0.5">2:1</div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">{{ pct21 }}% матчей</div>
-            </div>
-          </div>
-          <Progress :model-value="pct30" class="h-1.5 [&>div]:bg-sport-win" />
-          <div class="flex justify-between text-[10px] text-muted-foreground">
-            <span>Разгромы {{ pct30 }}%</span>
-            <span>Борьба {{ pct21 }}%</span>
-          </div>
-        </CardContent>
-      </Card>
+      <!-- 1. Обзор лиги -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-secondary/40 rounded-lg p-3 text-center">
+          <div class="font-display text-3xl font-bold text-foreground">{{ playedCount }}</div>
+          <div class="text-[10px] text-muted-foreground mt-0.5">из {{ matches.length }} матчей</div>
+        </div>
+        <div class="bg-secondary/40 rounded-lg p-3 text-center">
+          <div class="font-display text-3xl font-bold text-foreground">{{ playedCount * 3 }}</div>
+          <div class="text-[10px] text-muted-foreground mt-0.5">партий сыграно</div>
+        </div>
+        <div class="bg-secondary/40 rounded-lg p-3 text-center">
+          <div class="font-display text-3xl font-bold text-foreground">{{ totalPoints }}</div>
+          <div class="text-[10px] text-muted-foreground mt-0.5">очков разыграно</div>
+        </div>
+        <div class="bg-secondary/40 rounded-lg p-3 text-center">
+          <div class="font-display text-3xl font-bold text-foreground">{{ avgPointsPerSet }}</div>
+          <div class="text-[10px] text-muted-foreground mt-0.5">очков в партии (avg)</div>
+        </div>
+      </div>
 
-      <!-- 3. Дома / В гостях -->
-      <Card>
-        <CardHeader class="pb-2">
-          <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Дома / В гостях</CardTitle>
-        </CardHeader>
-        <CardContent class="space-y-3">
-          <div class="flex items-end gap-4 flex-wrap mb-1">
-            <div class="text-center">
-              <div class="font-display text-3xl font-bold text-sport-win">{{ homeWins }}</div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">побед хозяев</div>
-            </div>
-            <div class="text-xl text-muted-foreground/30 mb-1 font-sans">:</div>
-            <div class="text-center">
-              <div class="font-display text-3xl font-bold text-accent">{{ awayWins }}</div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">побед гостей</div>
-            </div>
-            <div class="flex-1" />
-            <div class="text-center">
-              <div class="font-display text-xl font-bold text-foreground">{{ homeWinPct }}%</div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">преимущество дома</div>
-            </div>
-          </div>
-          <Progress :model-value="homeWinPct" class="h-1.5 [&>div]:bg-sport-win" />
-          <div class="flex justify-between text-[10px] text-muted-foreground">
-            <span>Хозяева {{ homeWinPct }}%</span>
-            <span>Гости {{ 100 - homeWinPct }}%</span>
-          </div>
+      <template v-if="playedCount > 0">
 
-          <Separator />
-
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <div class="bg-sport-win/10 rounded-lg p-2.5 text-center">
-              <div class="text-[10px] text-sport-win font-semibold">Хозяева 3:0</div>
-              <div class="font-display text-2xl font-bold text-foreground mt-0.5">{{ home30 }}</div>
-            </div>
-            <div class="bg-sport-win/5 rounded-lg p-2.5 text-center">
-              <div class="text-[10px] text-sport-win font-semibold">Хозяева 2:1</div>
-              <div class="font-display text-2xl font-bold text-foreground mt-0.5">{{ home21 }}</div>
-            </div>
-            <div class="bg-accent/5 rounded-lg p-2.5 text-center">
-              <div class="text-[10px] text-accent font-semibold">Гости 2:1</div>
-              <div class="font-display text-2xl font-bold text-foreground mt-0.5">{{ away21 }}</div>
-            </div>
-            <div class="bg-accent/10 rounded-lg p-2.5 text-center">
-              <div class="text-[10px] text-accent font-semibold">Гости 3:0</div>
-              <div class="font-display text-2xl font-bold text-foreground mt-0.5">{{ away30 }}</div>
-            </div>
-          </div>
-
-          <Separator />
-
-          <div class="flex justify-between text-[11px] text-muted-foreground">
-            <span>Ср. очков за партию хозяев: <span class="font-semibold text-foreground">{{ avgHomePtsPerSet }}</span></span>
-            <span>гостей: <span class="font-semibold text-foreground">{{ avgAwayPtsPerSet }}</span></span>
-          </div>
-        </CardContent>
-      </Card>
-
-      <!-- 4. Характер партий -->
-      <Card>
-        <CardHeader class="pb-2">
-          <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Характер партий</CardTitle>
-        </CardHeader>
-        <CardContent class="space-y-3">
-          <div class="grid grid-cols-3 gap-3">
-            <div class="bg-secondary/40 rounded-lg p-3 text-center">
-              <div class="font-display text-2xl font-bold text-foreground">{{ leagueCloseSets }}</div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">напряжённых</div>
-              <div class="text-[10px] text-muted-foreground">≤3 очка ({{ pctClose }}%)</div>
-            </div>
-            <div class="bg-secondary/40 rounded-lg p-3 text-center">
-              <div class="font-display text-2xl font-bold text-foreground">{{ leagueDomSets }}</div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">разгромных</div>
-              <div class="text-[10px] text-muted-foreground">≥10 очков ({{ pctDom }}%)</div>
-            </div>
-            <div class="bg-secondary/40 rounded-lg p-3 text-center">
-              <div class="font-display text-2xl font-bold text-foreground">{{ leagueAvgMargin }}</div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">средняя разница</div>
-              <div class="text-[10px] text-muted-foreground">в партии</div>
-            </div>
-          </div>
-
-          <Separator />
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <div class="flex items-center gap-2 bg-secondary/30 rounded-lg px-3 py-2">
-              <div class="text-[10px] text-muted-foreground flex-1">Больше всего напряжённых</div>
-              <Avatar shape="square" class="w-5 h-5 text-[8px] flex-shrink-0" :style="{ backgroundColor: `hsl(${mostCloseTeam.team.color})` }">
-                <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ mostCloseTeam.team.short.slice(0,1) }}</AvatarFallback>
-              </Avatar>
-              <span class="text-xs font-medium">{{ mostCloseTeam.team.short }}</span>
-              <span class="font-display text-sm font-bold text-foreground">{{ mostCloseTeam.closeSets }}</span>
-            </div>
-            <div class="flex items-center gap-2 bg-secondary/30 rounded-lg px-3 py-2">
-              <div class="text-[10px] text-muted-foreground flex-1">Больше всего разгромных</div>
-              <Avatar shape="square" class="w-5 h-5 text-[8px] flex-shrink-0" :style="{ backgroundColor: `hsl(${mostDomTeam.team.color})` }">
-                <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ mostDomTeam.team.short.slice(0,1) }}</AvatarFallback>
-              </Avatar>
-              <span class="text-xs font-medium">{{ mostDomTeam.team.short }}</span>
-              <span class="font-display text-sm font-bold text-foreground">{{ mostDomTeam.dominantSets }}</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <!-- 5. Игра по партиям -->
-      <Card>
-        <CardHeader class="pb-2">
-          <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Игра по партиям (лига)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div class="grid grid-cols-3 gap-3">
-            <div
-              v-for="s in leagueSetStats"
-              :key="s.setNum"
-              class="text-center bg-secondary/40 rounded-lg p-3"
-            >
-              <div class="text-[10px] text-muted-foreground mb-1.5">Партия {{ s.setNum }}</div>
-              <div
-                :class="['font-display text-2xl font-bold', s.homeWinRate >= 0.5 ? 'text-sport-win' : 'text-sport-loss']"
-              >
-                {{ Math.round(s.homeWinRate * 100) }}%
+        <!-- 2. Результаты матчей -->
+        <Card>
+          <CardHeader class="pb-2">
+            <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Результаты матчей</CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-sport-win/10 rounded-lg p-3 text-center">
+                <div class="text-[10px] font-semibold text-sport-win mb-0.5">Разгром</div>
+                <div class="font-display text-3xl font-bold text-foreground">{{ count30 }}</div>
+                <div class="text-xs font-mono font-bold text-sport-win/70 mt-0.5">3:0</div>
+                <div class="text-[10px] text-muted-foreground mt-0.5">{{ pct30 }}% матчей</div>
               </div>
-              <div class="text-[10px] text-muted-foreground mt-0.5 mb-2">хозяев</div>
-              <div class="text-[11px] font-mono">
-                <span class="text-foreground">{{ s.avgPoints }}</span>
+              <div class="bg-secondary/40 rounded-lg p-3 text-center">
+                <div class="text-[10px] font-semibold text-muted-foreground mb-0.5">Борьба</div>
+                <div class="font-display text-3xl font-bold text-foreground">{{ count21 }}</div>
+                <div class="text-xs font-mono font-bold text-muted-foreground/70 mt-0.5">2:1</div>
+                <div class="text-[10px] text-muted-foreground mt-0.5">{{ pct21 }}% матчей</div>
               </div>
-              <div class="text-[9px] text-muted-foreground mt-0.5">avg очков</div>
-              <div class="text-[11px] font-mono mt-1">
-                <span class="text-muted-foreground">±{{ s.avgMargin }}</span>
+            </div>
+            <Progress :model-value="pct30" class="h-1.5 [&>div]:bg-sport-win" />
+            <div class="flex justify-between text-[10px] text-muted-foreground">
+              <span>Разгромы {{ pct30 }}%</span>
+              <span>Борьба {{ pct21 }}%</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <!-- 3. Дома / В гостях -->
+        <Card>
+          <CardHeader class="pb-2">
+            <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Дома / В гостях</CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-3">
+            <div class="flex items-end gap-4 flex-wrap mb-1">
+              <div class="text-center">
+                <div class="font-display text-3xl font-bold text-sport-win">{{ homeWins }}</div>
+                <div class="text-[10px] text-muted-foreground mt-0.5">побед хозяев</div>
               </div>
-              <div class="text-[9px] text-muted-foreground mt-0.5">avg разница</div>
+              <div class="text-xl text-muted-foreground/30 mb-1 font-sans">:</div>
+              <div class="text-center">
+                <div class="font-display text-3xl font-bold text-accent">{{ awayWins }}</div>
+                <div class="text-[10px] text-muted-foreground mt-0.5">побед гостей</div>
+              </div>
+              <div class="flex-1" />
+              <div class="text-center">
+                <div class="font-display text-xl font-bold text-foreground">{{ homeWinPct }}%</div>
+                <div class="text-[10px] text-muted-foreground mt-0.5">преимущество дома</div>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <!-- 6. Решающие партии -->
-      <Card>
-        <CardHeader class="pb-2">
-          <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Решающие партии</CardTitle>
-        </CardHeader>
-        <CardContent class="space-y-3">
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div class="bg-secondary/40 rounded-lg p-3 text-center">
-              <div class="font-display text-2xl font-bold text-foreground">{{ decisiveCount }}</div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">матчей 2:1</div>
-              <div class="text-[10px] text-muted-foreground">{{ decisivePct }}% всех</div>
+            <Progress :model-value="homeWinPct" class="h-1.5 [&>div]:bg-sport-win" />
+            <div class="flex justify-between text-[10px] text-muted-foreground">
+              <span>Хозяева {{ homeWinPct }}%</span>
+              <span>Гости {{ 100 - homeWinPct }}%</span>
             </div>
-            <div class="bg-sport-win/10 rounded-lg p-3 text-center">
-              <div class="font-display text-2xl font-bold text-sport-win">{{ totalComebacks }}</div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">камбэков</div>
-              <div class="text-[10px] text-muted-foreground">по лиге</div>
-            </div>
-            <div class="bg-sport-loss/10 rounded-lg p-3 text-center">
-              <div class="font-display text-2xl font-bold text-sport-loss">{{ totalBlownLeads }}</div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">упущ. побед</div>
-              <div class="text-[10px] text-muted-foreground">по лиге</div>
-            </div>
-            <div class="bg-secondary/40 rounded-lg p-3 text-center">
-              <div class="font-display text-2xl font-bold text-foreground">{{ comebackRate }}%</div>
-              <div class="text-[10px] text-muted-foreground mt-0.5">камбэков</div>
-              <div class="text-[10px] text-muted-foreground">от матчей 2:1</div>
-            </div>
-          </div>
-
-          <template v-if="decisiveCount > 0">
             <Separator />
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div class="bg-sport-win/10 rounded-lg p-2.5 text-center">
+                <div class="text-[10px] text-sport-win font-semibold">Хозяева 3:0</div>
+                <div class="font-display text-2xl font-bold text-foreground mt-0.5">{{ home30 }}</div>
+              </div>
+              <div class="bg-sport-win/5 rounded-lg p-2.5 text-center">
+                <div class="text-[10px] text-sport-win font-semibold">Хозяева 2:1</div>
+                <div class="font-display text-2xl font-bold text-foreground mt-0.5">{{ home21 }}</div>
+              </div>
+              <div class="bg-accent/5 rounded-lg p-2.5 text-center">
+                <div class="text-[10px] text-accent font-semibold">Гости 2:1</div>
+                <div class="font-display text-2xl font-bold text-foreground mt-0.5">{{ away21 }}</div>
+              </div>
+              <div class="bg-accent/10 rounded-lg p-2.5 text-center">
+                <div class="text-[10px] text-accent font-semibold">Гости 3:0</div>
+                <div class="font-display text-2xl font-bold text-foreground mt-0.5">{{ away30 }}</div>
+              </div>
+            </div>
+            <Separator />
+            <div class="flex justify-between text-[11px] text-muted-foreground">
+              <span>Ср. очков за партию хозяев: <span class="font-semibold text-foreground">{{ avgHomePtsPerSet }}</span></span>
+              <span>гостей: <span class="font-semibold text-foreground">{{ avgAwayPtsPerSet }}</span></span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <!-- 4. Лидеры лиги -->
+        <Card>
+          <CardHeader class="pb-2">
+            <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Лидеры лиги</CardTitle>
+          </CardHeader>
+          <CardContent>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <div v-if="mostComebackTeam" class="flex items-center gap-2 bg-sport-win/10 rounded-lg px-3 py-2">
-                <div class="text-[10px] text-muted-foreground flex-1">Лидер по камбэкам</div>
-                <Avatar shape="square" class="w-5 h-5 text-[8px] flex-shrink-0" :style="{ backgroundColor: `hsl(${mostComebackTeam.team.color})` }">
-                  <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ mostComebackTeam.team.short.slice(0,1) }}</AvatarFallback>
-                </Avatar>
-                <span class="text-xs font-medium">{{ mostComebackTeam.team.short }}</span>
-                <span class="font-display text-sm font-bold text-sport-win">{{ mostComebackTeam.comebacks }}</span>
-              </div>
-              <div v-if="mostBlownTeam" class="flex items-center gap-2 bg-sport-loss/10 rounded-lg px-3 py-2">
-                <div class="text-[10px] text-muted-foreground flex-1">Больше всех упущено</div>
-                <Avatar shape="square" class="w-5 h-5 text-[8px] flex-shrink-0" :style="{ backgroundColor: `hsl(${mostBlownTeam.team.color})` }">
-                  <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ mostBlownTeam.team.short.slice(0,1) }}</AvatarFallback>
-                </Avatar>
-                <span class="text-xs font-medium">{{ mostBlownTeam.team.short }}</span>
-                <span class="font-display text-sm font-bold text-sport-loss">{{ mostBlownTeam.blownLeads }}</span>
-              </div>
-            </div>
-          </template>
-        </CardContent>
-      </Card>
-
-      <!-- 7. Серии -->
-      <Card>
-        <CardHeader class="pb-2">
-          <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Серии сезона</CardTitle>
-        </CardHeader>
-        <CardContent class="space-y-3">
-          <div class="grid grid-cols-2 gap-3">
-            <div class="bg-sport-win/10 rounded-lg p-3 text-center">
-              <div class="text-[10px] text-sport-win font-semibold mb-1">Лучшая серия побед</div>
-              <div class="font-display text-2xl font-bold text-sport-win">{{ longestWinStreak.longestWin }}В</div>
-              <div class="flex items-center gap-1.5 justify-center mt-1.5">
-                <Avatar shape="square" class="w-4 h-4 text-[7px]" :style="{ backgroundColor: `hsl(${longestWinStreak.team.color})` }">
-                  <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ longestWinStreak.team.short.slice(0,1) }}</AvatarFallback>
-                </Avatar>
-                <span class="text-xs text-muted-foreground">{{ longestWinStreak.team.short }}</span>
-              </div>
-            </div>
-            <div class="bg-sport-loss/10 rounded-lg p-3 text-center">
-              <div class="text-[10px] text-sport-loss font-semibold mb-1">Худшая серия поражений</div>
-              <div class="font-display text-2xl font-bold text-sport-loss">{{ longestLossStreak.longestLoss }}П</div>
-              <div class="flex items-center gap-1.5 justify-center mt-1.5">
-                <Avatar shape="square" class="w-4 h-4 text-[7px]" :style="{ backgroundColor: `hsl(${longestLossStreak.team.color})` }">
-                  <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ longestLossStreak.team.short.slice(0,1) }}</AvatarFallback>
-                </Avatar>
-                <span class="text-xs text-muted-foreground">{{ longestLossStreak.team.short }}</span>
-              </div>
-            </div>
-          </div>
-
-          <template v-if="currentStreaks.length > 0">
-            <Separator />
-            <p class="text-xs text-muted-foreground">Текущие серии</p>
-            <div class="space-y-1.5">
               <div
-                v-for="s in currentStreaks"
-                :key="s.team.id"
-                class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary/30"
+                v-for="leader in leagueLeaders"
+                :key="leader.label"
+                class="flex items-center gap-2 bg-secondary/30 rounded-lg px-3 py-2"
               >
-                <Avatar shape="square" class="w-5 h-5 text-[8px] flex-shrink-0" :style="{ backgroundColor: `hsl(${s.team.color})` }">
-                  <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ s.team.short.slice(0,1) }}</AvatarFallback>
-                </Avatar>
-                <span class="text-xs font-medium flex-1 truncate">{{ s.team.short }}</span>
-                <span
-                  class="text-xs font-bold px-2 py-0.5 rounded"
-                  :class="s.current!.type === 'win' ? 'bg-sport-win/20 text-sport-win' : 'bg-sport-loss/20 text-sport-loss'"
-                >
-                  {{ s.current!.count }}{{ s.current!.type === 'win' ? 'В' : 'П' }} серия
-                </span>
+                <span class="text-[10px] text-muted-foreground flex-1 min-w-0">{{ leader.label }}</span>
+                <div class="flex flex-col gap-0.5 items-end">
+                  <div v-for="t in leader.teams" :key="t.id" class="flex items-center gap-1.5">
+                    <Avatar shape="square" class="w-5 h-5 text-[8px] flex-shrink-0" :style="{ backgroundColor: `hsl(${t.color})` }">
+                      <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ t.short.slice(0,1) }}</AvatarFallback>
+                    </Avatar>
+                    <span class="text-xs font-medium">{{ t.short }}</span>
+                  </div>
+                </div>
+                <span class="font-display text-base font-bold text-foreground flex-shrink-0">{{ leader.value }}</span>
               </div>
             </div>
-          </template>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      <!-- 8. Лидеры лиги -->
-      <Card>
-        <CardHeader class="pb-2">
-          <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Лидеры лиги</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <div
-              v-for="leader in leagueLeaders"
-              :key="leader.label"
-              class="flex items-center gap-2 bg-secondary/30 rounded-lg px-3 py-2"
-            >
-              <span class="text-[10px] text-muted-foreground flex-1 min-w-0">{{ leader.label }}</span>
-              <Avatar shape="square" class="w-5 h-5 text-[8px] flex-shrink-0" :style="{ backgroundColor: `hsl(${leader.team.color})` }">
-                <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ leader.team.short.slice(0,1) }}</AvatarFallback>
-              </Avatar>
-              <span class="text-xs font-medium flex-shrink-0">{{ leader.team.short }}</span>
-              <span class="font-display text-base font-bold text-foreground flex-shrink-0">{{ leader.value }}</span>
+        <!-- 5. Рекорды лиги -->
+        <Card v-if="leagueRecords.length > 0">
+          <CardHeader class="pb-3">
+            <CardTitle class="text-sm font-display text-muted-foreground flex items-center gap-2 normal-case tracking-normal">
+              <Trophy class="w-4 h-4" aria-hidden="true" /> Рекорды лиги
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="pt-0">
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <div
+                v-for="r in leagueRecords"
+                :key="r.label"
+                class="bg-secondary/40 rounded-lg p-2.5"
+              >
+                <div class="text-[10px] text-muted-foreground">{{ r.label }}</div>
+                <div class="font-display text-xl font-bold text-foreground mt-0.5">{{ r.value }}</div>
+                <div class="text-[10px] text-muted-foreground/70 mt-0.5 leading-tight">{{ r.detail }}</div>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      <!-- 9. Рекорды лиги -->
-      <Card v-if="leagueRecords.length > 0">
-        <CardHeader class="pb-3">
-          <CardTitle class="text-sm font-display text-muted-foreground flex items-center gap-2 normal-case tracking-normal">
-            <Trophy class="w-4 h-4" aria-hidden="true" /> Рекорды лиги
-          </CardTitle>
-        </CardHeader>
-        <CardContent class="pt-0">
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <div
-              v-for="r in leagueRecords"
-              :key="r.label"
-              class="bg-secondary/40 rounded-lg p-2.5"
-            >
-              <div class="text-[10px] text-muted-foreground">{{ r.label }}</div>
-              <div class="font-display text-xl font-bold text-foreground mt-0.5">{{ r.value }}</div>
-              <div class="text-[10px] text-muted-foreground/70 mt-0.5 leading-tight">{{ r.detail }}</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        <!-- 6. Матрица результатов — added in Task 7 -->
+
+      </template>
+      <template v-else>
+        <div class="text-center py-16 text-muted-foreground text-sm">Матчи ещё не сыграны</div>
+      </template>
 
     </template>
 
+    <!-- ══════════ СТАТИСТИКА ══════════ -->
+    <template v-else-if="activeTab === 'stats'">
+      <template v-if="playedCount > 0">
+
+        <!-- 1. Характер партий -->
+        <Card>
+          <CardHeader class="pb-2">
+            <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Характер партий</CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-3">
+            <div class="grid grid-cols-3 gap-3">
+              <div class="bg-secondary/40 rounded-lg p-3 text-center">
+                <div class="font-display text-2xl font-bold text-foreground">{{ leagueCloseSets }}</div>
+                <div class="text-[10px] text-muted-foreground mt-0.5">напряжённых</div>
+                <div class="text-[10px] text-muted-foreground">≤3 очка ({{ pctClose }}%)</div>
+              </div>
+              <div class="bg-secondary/40 rounded-lg p-3 text-center">
+                <div class="font-display text-2xl font-bold text-foreground">{{ leagueDomSets }}</div>
+                <div class="text-[10px] text-muted-foreground mt-0.5">разгромных</div>
+                <div class="text-[10px] text-muted-foreground">≥10 очков ({{ pctDom }}%)</div>
+              </div>
+              <div class="bg-secondary/40 rounded-lg p-3 text-center">
+                <div class="font-display text-2xl font-bold text-foreground">{{ leagueAvgMargin }}</div>
+                <div class="text-[10px] text-muted-foreground mt-0.5">средняя разница</div>
+                <div class="text-[10px] text-muted-foreground">в партии</div>
+              </div>
+            </div>
+            <Separator />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div class="flex items-center gap-2 bg-secondary/30 rounded-lg px-3 py-2">
+                <div class="text-[10px] text-muted-foreground flex-1">Больше всего напряжённых</div>
+                <div class="flex flex-col gap-0.5 items-end">
+                  <div v-for="t in mostCloseTeams" :key="t.team.id" class="flex items-center gap-1.5">
+                    <Avatar shape="square" class="w-5 h-5 text-[8px] flex-shrink-0" :style="{ backgroundColor: `hsl(${t.team.color})` }">
+                      <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ t.team.short.slice(0,1) }}</AvatarFallback>
+                    </Avatar>
+                    <span class="text-xs font-medium">{{ t.team.short }}</span>
+                  </div>
+                </div>
+                <span class="font-display text-sm font-bold text-foreground">{{ mostCloseTeams[0].closeSets }}</span>
+              </div>
+              <div class="flex items-center gap-2 bg-secondary/30 rounded-lg px-3 py-2">
+                <div class="text-[10px] text-muted-foreground flex-1">Больше всего разгромных</div>
+                <div class="flex flex-col gap-0.5 items-end">
+                  <div v-for="t in mostDomTeams" :key="t.team.id" class="flex items-center gap-1.5">
+                    <Avatar shape="square" class="w-5 h-5 text-[8px] flex-shrink-0" :style="{ backgroundColor: `hsl(${t.team.color})` }">
+                      <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ t.team.short.slice(0,1) }}</AvatarFallback>
+                    </Avatar>
+                    <span class="text-xs font-medium">{{ t.team.short }}</span>
+                  </div>
+                </div>
+                <span class="font-display text-sm font-bold text-foreground">{{ mostDomTeams[0].dominantSets }}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <!-- 2. Игра по партиям (лига) -->
+        <Card>
+          <CardHeader class="pb-2">
+            <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Игра по партиям (лига)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="grid grid-cols-3 gap-3">
+              <div
+                v-for="s in leagueSetStats"
+                :key="s.setNum"
+                class="text-center bg-secondary/40 rounded-lg p-3"
+              >
+                <div class="text-[10px] text-muted-foreground mb-1.5">Партия {{ s.setNum }}</div>
+                <div :class="['font-display text-2xl font-bold', s.homeWinRate >= 0.5 ? 'text-sport-win' : 'text-sport-loss']">
+                  {{ Math.round(s.homeWinRate * 100) }}%
+                </div>
+                <div class="text-[10px] text-muted-foreground mt-0.5 mb-2">хозяев</div>
+                <div class="text-[11px] font-mono">
+                  <span class="text-foreground">{{ s.avgPoints }}</span>
+                </div>
+                <div class="text-[9px] text-muted-foreground mt-0.5">avg очков</div>
+                <div class="text-[11px] font-mono mt-1">
+                  <span class="text-muted-foreground">±{{ s.avgMargin }}</span>
+                </div>
+                <div class="text-[9px] text-muted-foreground mt-0.5">avg разница</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <!-- 3. Решающие партии -->
+        <Card>
+          <CardHeader class="pb-2">
+            <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Решающие партии</CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-3">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div class="bg-secondary/40 rounded-lg p-3 text-center">
+                <div class="font-display text-2xl font-bold text-foreground">{{ decisiveCount }}</div>
+                <div class="text-[10px] text-muted-foreground mt-0.5">матчей 2:1</div>
+                <div class="text-[10px] text-muted-foreground">{{ decisivePct }}% всех</div>
+              </div>
+              <div class="bg-sport-win/10 rounded-lg p-3 text-center">
+                <div class="font-display text-2xl font-bold text-sport-win">{{ totalComebacks }}</div>
+                <div class="text-[10px] text-muted-foreground mt-0.5">камбэков</div>
+                <div class="text-[10px] text-muted-foreground">по лиге</div>
+              </div>
+              <div class="bg-sport-loss/10 rounded-lg p-3 text-center">
+                <div class="font-display text-2xl font-bold text-sport-loss">{{ totalBlownLeads }}</div>
+                <div class="text-[10px] text-muted-foreground mt-0.5">упущ. побед</div>
+                <div class="text-[10px] text-muted-foreground">по лиге</div>
+              </div>
+              <div class="bg-secondary/40 rounded-lg p-3 text-center">
+                <div class="font-display text-2xl font-bold text-foreground">{{ comebackRate }}%</div>
+                <div class="text-[10px] text-muted-foreground mt-0.5">камбэков</div>
+                <div class="text-[10px] text-muted-foreground">от матчей 2:1</div>
+              </div>
+            </div>
+            <template v-if="decisiveCount > 0">
+              <Separator />
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div v-if="mostComebackTeams.length" class="flex items-center gap-2 bg-sport-win/10 rounded-lg px-3 py-2">
+                  <div class="text-[10px] text-muted-foreground flex-1">Лидер по камбэкам</div>
+                  <div class="flex flex-col gap-0.5 items-end">
+                    <div v-for="t in mostComebackTeams" :key="t.team.id" class="flex items-center gap-1.5">
+                      <Avatar shape="square" class="w-5 h-5 text-[8px] flex-shrink-0" :style="{ backgroundColor: `hsl(${t.team.color})` }">
+                        <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ t.team.short.slice(0,1) }}</AvatarFallback>
+                      </Avatar>
+                      <span class="text-xs font-medium">{{ t.team.short }}</span>
+                    </div>
+                  </div>
+                  <span class="font-display text-sm font-bold text-sport-win">{{ mostComebackTeams[0].comebacks }}</span>
+                </div>
+                <div v-if="mostBlownTeams.length" class="flex items-center gap-2 bg-sport-loss/10 rounded-lg px-3 py-2">
+                  <div class="text-[10px] text-muted-foreground flex-1">Больше всех упущено</div>
+                  <div class="flex flex-col gap-0.5 items-end">
+                    <div v-for="t in mostBlownTeams" :key="t.team.id" class="flex items-center gap-1.5">
+                      <Avatar shape="square" class="w-5 h-5 text-[8px] flex-shrink-0" :style="{ backgroundColor: `hsl(${t.team.color})` }">
+                        <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ t.team.short.slice(0,1) }}</AvatarFallback>
+                      </Avatar>
+                      <span class="text-xs font-medium">{{ t.team.short }}</span>
+                    </div>
+                  </div>
+                  <span class="font-display text-sm font-bold text-sport-loss">{{ mostBlownTeams[0].blownLeads }}</span>
+                </div>
+              </div>
+            </template>
+          </CardContent>
+        </Card>
+
+        <!-- 4. Серии сезона -->
+        <Card>
+          <CardHeader class="pb-2">
+            <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Серии сезона</CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-sport-win/10 rounded-lg p-3 text-center">
+                <div class="text-[10px] text-sport-win font-semibold mb-1">Лучшая серия побед</div>
+                <div class="font-display text-2xl font-bold text-sport-win">{{ longestWinStreaks[0].longestWin }}В</div>
+                <div v-for="s in longestWinStreaks" :key="s.team.id" class="flex items-center gap-1.5 justify-center mt-1.5">
+                  <Avatar shape="square" class="w-4 h-4 text-[7px]" :style="{ backgroundColor: `hsl(${s.team.color})` }">
+                    <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ s.team.short.slice(0,1) }}</AvatarFallback>
+                  </Avatar>
+                  <span class="text-xs text-muted-foreground">{{ s.team.short }}</span>
+                </div>
+              </div>
+              <div class="bg-sport-loss/10 rounded-lg p-3 text-center">
+                <div class="text-[10px] text-sport-loss font-semibold mb-1">Худшая серия поражений</div>
+                <div class="font-display text-2xl font-bold text-sport-loss">{{ longestLossStreaks[0].longestLoss }}П</div>
+                <div v-for="s in longestLossStreaks" :key="s.team.id" class="flex items-center gap-1.5 justify-center mt-1.5">
+                  <Avatar shape="square" class="w-4 h-4 text-[7px]" :style="{ backgroundColor: `hsl(${s.team.color})` }">
+                    <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ s.team.short.slice(0,1) }}</AvatarFallback>
+                  </Avatar>
+                  <span class="text-xs text-muted-foreground">{{ s.team.short }}</span>
+                </div>
+              </div>
+            </div>
+            <template v-if="currentStreaks.length > 0">
+              <Separator />
+              <p class="text-xs text-muted-foreground">Текущие серии</p>
+              <div class="space-y-1.5">
+                <div
+                  v-for="s in currentStreaks"
+                  :key="s.team.id"
+                  class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary/30"
+                >
+                  <Avatar shape="square" class="w-5 h-5 text-[8px] flex-shrink-0" :style="{ backgroundColor: `hsl(${s.team.color})` }">
+                    <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ s.team.short.slice(0,1) }}</AvatarFallback>
+                  </Avatar>
+                  <span class="text-xs font-medium flex-1 truncate">{{ s.team.short }}</span>
+                  <span
+                    class="text-xs font-bold px-2 py-0.5 rounded"
+                    :class="s.current!.type === 'win' ? 'bg-sport-win/20 text-sport-win' : 'bg-sport-loss/20 text-sport-loss'"
+                  >{{ s.current!.count }}{{ s.current!.type === 'win' ? 'В' : 'П' }} серия</span>
+                </div>
+              </div>
+            </template>
+          </CardContent>
+        </Card>
+
+        <!-- 5. Распределение счётов — added in Task 8 -->
+
+      </template>
+      <template v-else>
+        <div class="text-center py-16 text-muted-foreground text-sm">Матчи ещё не сыграны</div>
+      </template>
+    </template>
+
+    <!-- ══════════ КОМАНДЫ ══════════ -->
     <template v-else>
-      <div class="text-center py-16 text-muted-foreground text-sm">
-        Матчи ещё не сыграны
-      </div>
+      <template v-if="playedCount > 0">
+        <!-- sections 1–4 added in Tasks 9–12 -->
+      </template>
+      <template v-else>
+        <div class="text-center py-16 text-muted-foreground text-sm">Матчи ещё не сыграны</div>
+      </template>
     </template>
 
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { teams, matches, getTeam } from "@/data/league";
 import { calcStandings } from "@/lib/standings";
 import { getStreaks, getComebackStats, getScoringPatterns } from "@/lib/stats";
@@ -421,8 +473,8 @@ const leagueAvgMargin = totalSets > 0 ? (leagueTotalMargin / totalSets).toFixed(
 
 // Лидеры: команда с наибольшим кол-вом напряжённых / разгромных партий
 const teamScoringPatterns = teams.map((t) => ({ team: t, ...getScoringPatterns(t.id) }));
-const mostCloseTeam = teamScoringPatterns.reduce((a, b) => b.closeSets > a.closeSets ? b : a);
-const mostDomTeam = teamScoringPatterns.reduce((a, b) => b.dominantSets > a.dominantSets ? b : a);
+const mostCloseTeams = findLeaders(teamScoringPatterns, (t) => t.closeSets);
+const mostDomTeams = findLeaders(teamScoringPatterns, (t) => t.dominantSets);
 
 // ── 5. Игра по партиям (лига) ───────────────────────────────────────────────
 
@@ -454,14 +506,14 @@ const totalBlownLeads = teamComebacks.reduce((s, c) => s + c.blownLeads, 0);
 const decisivePct = playedCount > 0 ? Math.round((decisiveCount / playedCount) * 100) : 0;
 const comebackRate = decisiveCount > 0 ? Math.round((totalComebacks / decisiveCount) * 100) : 0;
 
-const mostComebackTeam = teamComebacks.reduce((a, b) => b.comebacks > a.comebacks ? b : a, teamComebacks[0]);
-const mostBlownTeam = teamComebacks.reduce((a, b) => b.blownLeads > a.blownLeads ? b : a, teamComebacks[0]);
+const mostComebackTeams = findLeaders(teamComebacks.filter((t) => t.comebacks > 0), (t) => t.comebacks);
+const mostBlownTeams = findLeaders(teamComebacks.filter((t) => t.blownLeads > 0), (t) => t.blownLeads);
 
 // ── 7. Серии ────────────────────────────────────────────────────────────────
 
 const teamStreaks = teams.map((t) => ({ team: t, ...getStreaks(t.id) }));
-const longestWinStreak = teamStreaks.reduce((a, b) => b.longestWin > a.longestWin ? b : a);
-const longestLossStreak = teamStreaks.reduce((a, b) => b.longestLoss > a.longestLoss ? b : a);
+const longestWinStreaks = findLeaders(teamStreaks, (s) => s.longestWin);
+const longestLossStreaks = findLeaders(teamStreaks, (s) => s.longestLoss);
 const currentStreaks = teamStreaks
   .filter((s) => s.current !== null)
   .sort((a, b) => b.current!.count - a.current!.count);
@@ -470,32 +522,49 @@ const currentStreaks = teamStreaks
 
 const standings = calcStandings();
 
-function standingsLeader(key: "won" | "points" | "homeWon" | "awayWon") {
-  return standings.reduce((a, b) => b[key] > a[key] ? b : a);
+function findLeaders<T>(items: T[], getValue: (item: T) => number): T[] {
+  const max = Math.max(...items.map(getValue));
+  return items.filter((item) => getValue(item) === max);
 }
 
-const setDiffLeader = standings.reduce((a, b) =>
-  (b.setsWon - b.setsLost) > (a.setsWon - a.setsLost) ? b : a,
-);
-const ptEffLeader = standings
-  .filter((s) => s.pointsWon + s.pointsLost > 0)
-  .reduce((a, b) =>
-    (b.pointsWon / (b.pointsWon + b.pointsLost)) > (a.pointsWon / (a.pointsWon + a.pointsLost)) ? b : a,
-  );
-const thirdSetLeader = teamComebacks.reduce((a, b) => b.thirdSetWon > a.thirdSetWon ? b : a);
+function standingsLeaders(key: "won" | "points" | "homeWon" | "awayWon") {
+  const max = Math.max(...standings.map((s) => s[key]));
+  return standings.filter((s) => s[key] === max);
+}
+
+const setDiffLeaders = (() => {
+  const max = Math.max(...standings.map((s) => s.setsWon - s.setsLost));
+  return standings.filter((s) => s.setsWon - s.setsLost === max);
+})();
+
+const ptEffLeaders = (() => {
+  const eligible = standings.filter((s) => s.pointsWon + s.pointsLost > 0);
+  const getEff = (s: typeof standings[0]) => Math.round(s.pointsWon / (s.pointsWon + s.pointsLost) * 100);
+  const max = Math.max(...eligible.map(getEff));
+  return eligible.filter((s) => getEff(s) === max);
+})();
+
+const thirdSetLeaders = findLeaders(teamComebacks, (t) => t.thirdSetWon);
+
+const winsLeaders = standingsLeaders("won");
+const pointsLeaders = standingsLeaders("points");
+const homeWonLeaders = standingsLeaders("homeWon");
+const awayWonLeaders = standingsLeaders("awayWon");
 
 const leagueLeaders = [
-  { label: "Больше всего побед",           team: standingsLeader("won").team,   value: String(standingsLeader("won").won) },
-  { label: "Больше всего очков",           team: standingsLeader("points").team, value: String(standingsLeader("points").points) },
-  { label: "Лучшая разница партий",        team: setDiffLeader.team,            value: `+${setDiffLeader.setsWon - setDiffLeader.setsLost}` },
-  { label: "Лучшая эффективность (очки)",  team: ptEffLeader.team,              value: `${Math.round(ptEffLeader.pointsWon / (ptEffLeader.pointsWon + ptEffLeader.pointsLost) * 100)}%` },
-  { label: "Лучшая домашняя серия",        team: standingsLeader("homeWon").team, value: `${standingsLeader("homeWon").homeWon}В` },
-  { label: "Лучшая гостевая серия",        team: standingsLeader("awayWon").team, value: `${standingsLeader("awayWon").awayWon}В` },
-  { label: "Лучшая серия побед сезона",    team: longestWinStreak.team,         value: `${longestWinStreak.longestWin}В` },
-  { label: "Больше побед в 3-й партии",    team: thirdSetLeader.team,           value: String(thirdSetLeader.thirdSetWon) },
+  { label: "Больше всего побед",           teams: winsLeaders.map((s) => s.team),     value: String(winsLeaders[0].won) },
+  { label: "Больше всего очков",           teams: pointsLeaders.map((s) => s.team),   value: String(pointsLeaders[0].points) },
+  { label: "Лучшая разница партий",        teams: setDiffLeaders.map((s) => s.team),  value: `+${setDiffLeaders[0].setsWon - setDiffLeaders[0].setsLost}` },
+  { label: "Лучшая эффективность (очки)",  teams: ptEffLeaders.map((s) => s.team),    value: `${Math.round(ptEffLeaders[0].pointsWon / (ptEffLeaders[0].pointsWon + ptEffLeaders[0].pointsLost) * 100)}%` },
+  { label: "Лучшая домашняя серия",        teams: homeWonLeaders.map((s) => s.team),  value: `${homeWonLeaders[0].homeWon}В` },
+  { label: "Лучшая гостевая серия",        teams: awayWonLeaders.map((s) => s.team),  value: `${awayWonLeaders[0].awayWon}В` },
+  { label: "Лучшая серия побед сезона",    teams: longestWinStreaks.map((s) => s.team), value: `${longestWinStreaks[0].longestWin}В` },
+  { label: "Больше побед в 3-й партии",    teams: thirdSetLeaders.map((t) => t.team), value: String(thirdSetLeaders[0].thirdSetWon) },
 ];
 
 // ── 9. Рекорды лиги ─────────────────────────────────────────────────────────
 
 const leagueRecords = getLeagueRecords();
+
+const activeTab = ref<"summary" | "stats" | "teams">("summary");
 </script>
