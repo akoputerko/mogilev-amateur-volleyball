@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getStreaks, getSetPerformance, getComebackStats, getScoringPatterns, getPositionHistory } from "@/lib/stats";
+import { getStreaks, getSetPerformance, getComebackStats, getScoringPatterns, getPositionHistory, getForm } from "@/lib/stats";
 import { getLeagueRecords } from "@/lib/records";
 
 // Team IDs from league.ts:
@@ -260,5 +260,36 @@ describe("getLeagueRecords", () => {
     // so no ×N count suffix, and detail is just the one occurrence
     expect(closest!.detail).not.toMatch(/×\d+/);
     expect(closest!.detail).toContain("Тур 6");
+  });
+});
+
+describe("getForm", () => {
+  it("returns exactly n entries when team has more played matches than n", () => {
+    const result = getForm(0, 3);
+    expect(result).toHaveLength(3);
+  });
+
+  it("returns all played matches when n exceeds played count", () => {
+    // Макиато played 7 matches in tours 1-7
+    const result = getForm(0, 20);
+    expect(result).toHaveLength(7);
+  });
+
+  it("each entry has a boolean won field", () => {
+    const result = getForm(0, 5);
+    result.forEach((f) => expect(typeof f.won).toBe("boolean"));
+  });
+
+  it("returns correct last 3 results for Макиато (id=0)", () => {
+    // Last 3 matches: M22 T6 away W 3:0, M17 T7 home W 3:0, M25 T7 home W 3:0
+    const result = getForm(0, 3);
+    expect(result.map((f) => f.won)).toEqual([true, true, true]);
+  });
+
+  it("returns correct last 5 results for Макиато (id=0)", () => {
+    // All 7: M1 W, M8 W, M9 W, M15 L, M22 W, M17 W, M25 W
+    // Last 5: M9 W, M15 L, M22 W, M17 W, M25 W
+    const result = getForm(0, 5);
+    expect(result.map((f) => f.won)).toEqual([true, false, true, true, true]);
   });
 });

@@ -157,3 +157,16 @@ export function getScoringPatterns(teamId: number): ScoringPatterns {
     avgMargin: totalSets > 0 ? totalMargin / totalSets : 0,
   };
 }
+
+export interface FormEntry {
+  won: boolean;
+}
+
+export function getForm(teamId: number, n: number): FormEntry[] {
+  const played = getTeamMatches(teamId).filter((m) => m.played);
+  return played.slice(-n).map((m) => {
+    const r = m.result!;
+    const won = m.homeId === teamId ? r.setsHome > r.setsAway : r.setsAway > r.setsHome;
+    return { won };
+  });
+}
