@@ -130,8 +130,12 @@ export function formatStatsText(data: StatsExportData): string {
   lines.push(`Напряжённых (≤3 очка): ${data.leagueCloseSets} (${data.pctClose}%)`);
   lines.push(`Разгромных (≥10 очков): ${data.leagueDomSets} (${data.pctDom}%)`);
   lines.push(`Средняя разница: ${data.leagueAvgMargin}`);
-  lines.push(`Больше всего напряжённых: ${data.mostCloseTeams.map((t) => t.team.name).join(", ")} — ${data.mostCloseTeams[0].closeSets}`);
-  lines.push(`Больше всего разгромных: ${data.mostDomTeams.map((t) => t.team.name).join(", ")} — ${data.mostDomTeams[0].dominantSets}`);
+  if (data.mostCloseTeams.length > 0) {
+    lines.push(`Больше всего напряжённых: ${data.mostCloseTeams.map((t) => t.team.name).join(", ")} — ${data.mostCloseTeams[0].closeSets}`);
+  }
+  if (data.mostDomTeams.length > 0) {
+    lines.push(`Больше всего разгромных: ${data.mostDomTeams.map((t) => t.team.name).join(", ")} — ${data.mostDomTeams[0].dominantSets}`);
+  }
   lines.push("");
 
   lines.push("📊 Игра по партиям (лига)");
@@ -153,8 +157,12 @@ export function formatStatsText(data: StatsExportData): string {
   lines.push("");
 
   lines.push("📈 Серии сезона");
-  lines.push(`Лучшая серия побед: ${data.longestWinStreaks.map((s) => s.team.name).join(", ")} — ${data.longestWinStreaks[0].longestWin}В`);
-  lines.push(`Худшая серия поражений: ${data.longestLossStreaks.map((s) => s.team.name).join(", ")} — ${data.longestLossStreaks[0].longestLoss}П`);
+  if (data.longestWinStreaks.length > 0) {
+    lines.push(`Лучшая серия побед: ${data.longestWinStreaks.map((s) => s.team.name).join(", ")} — ${data.longestWinStreaks[0].longestWin}В`);
+  }
+  if (data.longestLossStreaks.length > 0) {
+    lines.push(`Худшая серия поражений: ${data.longestLossStreaks.map((s) => s.team.name).join(", ")} — ${data.longestLossStreaks[0].longestLoss}П`);
+  }
   if (data.currentStreaks.length > 0) {
     lines.push("Текущие серии:");
     for (const s of data.currentStreaks) {

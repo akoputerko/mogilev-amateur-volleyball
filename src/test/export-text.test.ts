@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { formatSummaryText, type SummaryExportData } from "@/lib/export-text";
+import {
+  formatSummaryText, formatStatsText, formatTeamsText,
+  type SummaryExportData, type StatsExportData, type TeamsExportData,
+} from "@/lib/export-text";
 import { teams } from "@/data/league";
 
 const makiato = teams[0];   // name: "Макиато",   short: "МАК"
@@ -93,11 +96,6 @@ describe("formatSummaryText", () => {
     expect(text).toContain("0:3");
   });
 });
-
-import {
-  formatStatsText, formatTeamsText,
-  type StatsExportData, type TeamsExportData,
-} from "@/lib/export-text";
 
 const mogilevgiprozem = teams[3]; // name: "Могилевгипрозем"
 
