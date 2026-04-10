@@ -21,22 +21,29 @@ function replaceShortNames(element: HTMLElement, teamMap: Record<string, string>
   }
 }
 
+function getBgColor(): string {
+  return `hsl(${getComputedStyle(document.documentElement).getPropertyValue("--background").trim()})`;
+}
+
+/**
+ * Primes html-to-image's internal CSS/font cache by doing one throwaway render.
+ * Call once before rendering multiple sections so all subsequent renders are fast.
+ */
+export async function warmupRenderer(element: HTMLElement): Promise<void> {
+  await toPng(element, { pixelRatio: 1, backgroundColor: getBgColor() });
+}
+
 /**
  * Renders an HTML section element to a PNG data URL (2x pixel ratio).
  * Uses html-to-image's onclone callback to add a header strip and replace
- * short team names with full names in the internally-managed clone, so the
- * original DOM is never modified.
- *
- * The first toPng call warms up external CSS inlining; the second captures
- * the fully styled result.
+ * short team names with full names — the original DOM is never modified.
+ * Assumes warmupRenderer has already been called.
  */
 export async function renderSectionToImage(
   element: HTMLElement,
   title: string,
   teamMap: Record<string, string>,
 ): Promise<string> {
-  const bg = getComputedStyle(document.documentElement).getPropertyValue("--background").trim();
-
   const onclone = (_doc: Document, clone: HTMLElement) => {
     replaceShortNames(clone, teamMap);
 
@@ -53,9 +60,7 @@ export async function renderSectionToImage(
     clone.parentElement?.insertBefore(header, clone);
   };
 
-  const options = { pixelRatio: 2, backgroundColor: `hsl(${bg})`, onclone };
-  await toPng(element, options);
-  return toPng(element, options);
+  return toPng(element, { pixelRatio: 2, backgroundColor: getBgColor(), onclone });
 }
 
 /**

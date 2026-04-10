@@ -62,7 +62,7 @@
                 <img
                   :src="img.dataUrl"
                   :alt="img.title"
-                  class="h-16 w-auto rounded object-cover flex-shrink-0"
+                  class="h-16 w-28 rounded object-cover object-left-top flex-shrink-0"
                 />
                 <span class="text-xs font-medium flex-1 truncate min-w-0">{{ img.title }}</span>
                 <Button
@@ -89,7 +89,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatSummaryText, formatStatsText, formatTeamsText } from "@/lib/export-text";
-import { renderSectionToImage, downloadImage } from "@/lib/export-image";
+import { warmupRenderer, renderSectionToImage, downloadImage } from "@/lib/export-image";
 import { teams } from "@/data/league";
 import type { SummaryExportData, StatsExportData, TeamsExportData } from "@/lib/export-text";
 
@@ -193,16 +193,27 @@ const sectionDefs = computed(() => {
 async function generateImages(): Promise<void> {
   imagesLoading.value = true;
   renderedImages.value = [];
-  const results: RenderedImage[] = [];
   try {
-    for (const def of sectionDefs.value) {
-      const el = props.sectionRefs[def.refKey];
-      if (el) {
+    const defs = sectionDefs.value;
+    const refs = props.sectionRefs;
+
+    // Prime CSS/font cache once before parallel rendering
+    const firstEl = defs.map((d) => refs[d.refKey]).find(Boolean);
+    if (firstEl) await warmupRenderer(firstEl);
+
+    // Render all sections in parallel
+    const settled = await Promise.allSettled(
+      defs.map(async (def) => {
+        const el = refs[def.refKey];
+        if (!el) return null;
         const dataUrl = await renderSectionToImage(el, def.title, teamMap);
-        results.push({ title: def.title, filename: def.filename, dataUrl });
-      }
-    }
-    renderedImages.value = results;
+        return { title: def.title, filename: def.filename, dataUrl } as RenderedImage;
+      }),
+    );
+
+    renderedImages.value = settled
+      .filter((r): r is PromiseFulfilledResult<RenderedImage> => r.status === "fulfilled" && r.value !== null)
+      .map((r) => r.value);
   } finally {
     imagesLoading.value = false;
   }
