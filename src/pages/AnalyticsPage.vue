@@ -854,13 +854,18 @@ const posHistoryChartOption = (() => {
         type: "line",
         data: history.map((p) => p.position),
         smooth: true,
-        lineStyle: { color: `hsl(${t.color})`, width: 2 },
-        itemStyle: { color: `hsl(${t.color})` },
+        lineStyle: { color: `hsl(${t.color})`, width: 2, opacity: 1 },
+        itemStyle: { color: `hsl(${t.color})`, opacity: 1 },
         symbolSize: 5,
         emphasis: {
           focus: "series",
-          lineStyle: { width: 3, opacity: 1 },
-          itemStyle: { opacity: 1 },
+          scale: false,
+          lineStyle: { color: `hsl(${t.color})`, width: 3, opacity: 1 },
+          itemStyle: { color: `hsl(${t.color})`, opacity: 1 },
+        },
+        blur: {
+          lineStyle: { opacity: 0.1 },
+          itemStyle: { opacity: 0.1 },
         },
       };
     }),
