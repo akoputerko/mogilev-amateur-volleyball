@@ -2,7 +2,7 @@
   <div class="animate-fade-in space-y-6">
 
     <!-- Tab bar -->
-    <div class="flex gap-1 border-b border-border">
+    <div class="flex items-center gap-1 border-b border-border">
       <button
         v-for="tab in [
           { id: 'summary', label: 'Сводка' },
@@ -16,13 +16,19 @@
           ? 'text-foreground border-b-2 border-primary'
           : 'text-muted-foreground hover:text-foreground'"
       >{{ tab.label }}</button>
+      <div class="ml-auto">
+        <Button variant="ghost" size="sm" @click="showExportModal = true" class="gap-1.5">
+          <Share2 class="w-4 h-4" aria-hidden="true" />
+          <span class="hidden sm:inline">Экспорт</span>
+        </Button>
+      </div>
     </div>
 
     <!-- ══════════ СВОДКА ══════════ -->
     <template v-if="activeTab === 'summary'">
 
       <!-- 1. Обзор лиги -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div ref="sectionSummary1" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div class="bg-secondary/40 rounded-lg p-3 text-center">
           <div class="font-display text-3xl font-bold text-foreground">{{ playedCount }}</div>
           <div class="text-[10px] text-muted-foreground mt-0.5">из {{ matches.length }} матчей</div>
@@ -44,7 +50,7 @@
       <template v-if="playedCount > 0">
 
         <!-- 2. Результаты матчей -->
-        <Card>
+        <Card ref="sectionSummary2">
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Результаты матчей</CardTitle>
           </CardHeader>
@@ -72,7 +78,7 @@
         </Card>
 
         <!-- 3. Дома / В гостях -->
-        <Card>
+        <Card ref="sectionSummary3">
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Дома / В гостях</CardTitle>
           </CardHeader>
@@ -126,7 +132,7 @@
         </Card>
 
         <!-- 4. Лидеры лиги -->
-        <Card>
+        <Card ref="sectionSummary4">
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Лидеры лиги</CardTitle>
           </CardHeader>
@@ -153,7 +159,7 @@
         </Card>
 
         <!-- 5. Рекорды лиги -->
-        <Card v-if="leagueRecords.length > 0">
+        <Card v-if="leagueRecords.length > 0" ref="sectionSummary5">
           <CardHeader class="pb-3">
             <CardTitle class="text-sm font-display text-muted-foreground flex items-center gap-2 normal-case tracking-normal">
               <Trophy class="w-4 h-4" aria-hidden="true" /> Рекорды лиги
@@ -175,7 +181,7 @@
         </Card>
 
         <!-- 6. Матрица результатов -->
-        <Card>
+        <Card ref="sectionSummary6">
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Матрица результатов</CardTitle>
           </CardHeader>
@@ -228,7 +234,7 @@
       <template v-if="playedCount > 0">
 
         <!-- 1. Характер партий -->
-        <Card>
+        <Card ref="sectionStats1">
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Характер партий</CardTitle>
           </CardHeader>
@@ -281,7 +287,7 @@
         </Card>
 
         <!-- 2. Игра по партиям (лига) -->
-        <Card>
+        <Card ref="sectionStats2">
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Игра по партиям (лига)</CardTitle>
           </CardHeader>
@@ -311,7 +317,7 @@
         </Card>
 
         <!-- 3. Решающие партии -->
-        <Card>
+        <Card ref="sectionStats3">
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Решающие партии</CardTitle>
           </CardHeader>
@@ -371,7 +377,7 @@
         </Card>
 
         <!-- 4. Серии сезона -->
-        <Card>
+        <Card ref="sectionStats4">
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Серии сезона</CardTitle>
           </CardHeader>
@@ -422,7 +428,7 @@
         </Card>
 
         <!-- 5. Распределение счётов партий -->
-        <Card v-if="scoreDistribution.length > 0">
+        <Card v-if="scoreDistribution.length > 0" ref="sectionStats5">
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Распределение счётов партий</CardTitle>
           </CardHeader>
@@ -441,7 +447,7 @@
     <template v-else>
       <template v-if="playedCount > 0">
         <!-- 1. Форма команд -->
-        <Card>
+        <Card ref="sectionTeams1">
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Форма команд</CardTitle>
           </CardHeader>
@@ -468,7 +474,7 @@
         </Card>
 
         <!-- 2. Эффективность по партиям -->
-        <Card>
+        <Card ref="sectionTeams2">
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Эффективность по партиям</CardTitle>
           </CardHeader>
@@ -506,7 +512,7 @@
         </Card>
 
         <!-- 3. Динамика позиций -->
-        <Card>
+        <Card ref="sectionTeams3">
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Динамика позиций</CardTitle>
           </CardHeader>
@@ -516,7 +522,7 @@
         </Card>
 
         <!-- 4. Средний счёт в партиях -->
-        <Card>
+        <Card ref="sectionTeams4">
           <CardHeader class="pb-2">
             <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Средний счёт в партиях</CardTitle>
           </CardHeader>
@@ -555,11 +561,21 @@
       </template>
     </template>
 
+    <!-- Export modal -->
+    <ExportModal
+      v-model:open="showExportModal"
+      :tab-id="activeTab"
+      :tab-label="activeTab === 'summary' ? 'Сводка' : activeTab === 'stats' ? 'Статистика' : 'Команды'"
+      :summary-data="summaryExportData"
+      :stats-data="statsExportData"
+      :teams-data="teamsExportData"
+      :section-refs="getExportSectionRefs()"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, type ComponentPublicInstance } from "vue";
 import { teams, matches, getTeam } from "@/data/league";
 import { calcStandings } from "@/lib/standings";
 import { getStreaks, getComebackStats, getScoringPatterns, getForm, getSetPerformance, getPositionHistory, getAvgSetScore } from "@/lib/stats";
@@ -568,12 +584,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Trophy } from "lucide-vue-next";
+import { Trophy, Share2 } from "lucide-vue-next";
 import { use } from "echarts/core";
 import { BarChart, LineChart } from "echarts/charts";
 import { GridComponent, LegendComponent, TooltipComponent } from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
 import VChart from "vue-echarts";
+import { Button } from "@/components/ui/button";
+import ExportModal from "@/components/ExportModal.vue";
+import { type SummaryExportData, type StatsExportData, type TeamsExportData, type MatrixCell } from "@/lib/export-text";
 
 use([BarChart, LineChart, GridComponent, LegendComponent, TooltipComponent, CanvasRenderer]);
 
@@ -730,7 +749,6 @@ const leagueLeaders = [
 const leagueRecords = getLeagueRecords();
 
 // ── Матрица результатов ──────────────────────────────────────────────────────
-type MatrixCell = { homeWon: boolean; score: string } | null | "self";
 
 const resultMatrix: MatrixCell[][] = teams.map((homeTeam) =>
   teams.map((awayTeam): MatrixCell => {
@@ -851,4 +869,106 @@ const teamAvgSetScores = standings.map((s) => ({
 }));
 
 const activeTab = ref<"summary" | "stats" | "teams">("summary");
+
+// ── Export ────────────────────────────────────────────────────────────────
+
+const showExportModal = ref(false);
+
+// Section refs — sectionSummary1 is a native HTMLElement; all Card sections are ComponentPublicInstance
+const sectionSummary1 = ref<HTMLElement | null>(null);
+const sectionSummary2 = ref<ComponentPublicInstance | null>(null);
+const sectionSummary3 = ref<ComponentPublicInstance | null>(null);
+const sectionSummary4 = ref<ComponentPublicInstance | null>(null);
+const sectionSummary5 = ref<ComponentPublicInstance | null>(null);
+const sectionSummary6 = ref<ComponentPublicInstance | null>(null);
+const sectionStats1   = ref<ComponentPublicInstance | null>(null);
+const sectionStats2   = ref<ComponentPublicInstance | null>(null);
+const sectionStats3   = ref<ComponentPublicInstance | null>(null);
+const sectionStats4   = ref<ComponentPublicInstance | null>(null);
+const sectionStats5   = ref<ComponentPublicInstance | null>(null);
+const sectionTeams1   = ref<ComponentPublicInstance | null>(null);
+const sectionTeams2   = ref<ComponentPublicInstance | null>(null);
+const sectionTeams3   = ref<ComponentPublicInstance | null>(null);
+const sectionTeams4   = ref<ComponentPublicInstance | null>(null);
+
+function getEl(r: ComponentPublicInstance | HTMLElement | null): HTMLElement | null {
+  if (!r) return null;
+  if (r instanceof HTMLElement) return r;
+  return (r as ComponentPublicInstance).$el as HTMLElement ?? null;
+}
+
+function getExportSectionRefs(): Record<string, HTMLElement | null> {
+  return {
+    sectionSummary1: getEl(sectionSummary1.value),
+    sectionSummary2: getEl(sectionSummary2.value),
+    sectionSummary3: getEl(sectionSummary3.value),
+    sectionSummary4: getEl(sectionSummary4.value),
+    sectionSummary5: getEl(sectionSummary5.value),
+    sectionSummary6: getEl(sectionSummary6.value),
+    sectionStats1:   getEl(sectionStats1.value),
+    sectionStats2:   getEl(sectionStats2.value),
+    sectionStats3:   getEl(sectionStats3.value),
+    sectionStats4:   getEl(sectionStats4.value),
+    sectionStats5:   getEl(sectionStats5.value),
+    sectionTeams1:   getEl(sectionTeams1.value),
+    sectionTeams2:   getEl(sectionTeams2.value),
+    sectionTeams3:   getEl(sectionTeams3.value),
+    sectionTeams4:   getEl(sectionTeams4.value),
+  };
+}
+
+// Export data objects — all values are static const, not reactive
+const summaryExportData: SummaryExportData = {
+  playedCount,
+  totalMatches: matches.length,
+  totalSets,
+  totalPoints,
+  avgPointsPerSet,
+  count30,
+  count21,
+  pct30,
+  pct21,
+  homeWins,
+  awayWins,
+  homeWinPct,
+  home30,
+  home21,
+  away21,
+  away30,
+  avgHomePtsPerSet,
+  avgAwayPtsPerSet,
+  leagueLeaders,
+  leagueRecords,
+  resultMatrix,
+  teams,
+};
+
+const statsExportData: StatsExportData = {
+  leagueCloseSets,
+  leagueDomSets,
+  leagueAvgMargin,
+  pctClose,
+  pctDom,
+  mostCloseTeams,
+  mostDomTeams,
+  leagueSetStats,
+  decisiveCount,
+  decisivePct,
+  totalComebacks,
+  totalBlownLeads,
+  comebackRate,
+  mostComebackTeams,
+  mostBlownTeams,
+  longestWinStreaks,
+  longestLossStreaks,
+  currentStreaks: currentStreaks as StatsExportData["currentStreaks"],
+  scoreDistribution,
+};
+
+const teamsExportData: TeamsExportData = {
+  teamForms,
+  teamSetEfficiency,
+  teamPositionHistory: teams.map((t) => ({ team: t, history: getPositionHistory(t.id) })),
+  teamAvgSetScores,
+};
 </script>
