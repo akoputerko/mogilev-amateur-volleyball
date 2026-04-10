@@ -280,6 +280,10 @@ describe("getForm", () => {
     result.forEach((f) => expect(typeof f.won).toBe("boolean"));
   });
 
+  it("returns empty array when n is 0", () => {
+    expect(getForm(0, 0)).toHaveLength(0);
+  });
+
   it("returns correct last 3 results for Макиато (id=0)", () => {
     // Last 3 matches: M22 T6 away W 3:0, M17 T7 home W 3:0, M25 T7 home W 3:0
     const result = getForm(0, 3);

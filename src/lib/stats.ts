@@ -163,6 +163,7 @@ export interface FormEntry {
 }
 
 export function getForm(teamId: number, n: number): FormEntry[] {
+  if (n <= 0) return [];
   const played = getTeamMatches(teamId).filter((m) => m.played);
   return played.slice(-n).map((m) => {
     const r = m.result!;
