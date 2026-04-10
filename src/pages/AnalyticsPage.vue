@@ -495,7 +495,7 @@
                     v-for="s in te.sets"
                     :key="s.setNum"
                     class="py-1.5 px-2 text-center font-bold text-[11px]"
-                    :class="s.won >= s.lost ? 'text-sport-win' : 'text-sport-loss'"
+                    :class="s.won + s.lost === 0 ? 'text-muted-foreground' : s.won >= s.lost ? 'text-sport-win' : 'text-sport-loss'"
                   >
                     {{ s.won + s.lost > 0 ? Math.round((s.won / (s.won + s.lost)) * 100) : 0 }}%
                   </td>
