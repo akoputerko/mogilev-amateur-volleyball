@@ -174,7 +174,47 @@
           </CardContent>
         </Card>
 
-        <!-- 6. Матрица результатов — added in Task 7 -->
+        <!-- 6. Матрица результатов -->
+        <Card>
+          <CardHeader class="pb-2">
+            <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Матрица результатов</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs border-collapse">
+                <thead>
+                  <tr>
+                    <th class="p-1 text-muted-foreground text-left font-normal text-[10px] min-w-[40px]">↓ Хоз / Гость →</th>
+                    <th
+                      v-for="t in teams"
+                      :key="t.id"
+                      class="p-1 text-center font-semibold text-[10px] min-w-[40px]"
+                      :style="{ color: `hsl(${t.color})` }"
+                    >{{ t.short }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, ri) in resultMatrix" :key="ri">
+                    <td
+                      class="p-1 font-semibold text-[10px]"
+                      :style="{ color: `hsl(${teams[ri].color})` }"
+                    >{{ teams[ri].short }}</td>
+                    <td v-for="(cell, ci) in row" :key="ci" class="p-1 text-center">
+                      <span v-if="cell === 'self'" class="text-muted-foreground/30 text-[11px]">—</span>
+                      <span v-else-if="cell === null" class="text-muted-foreground/20 text-[11px]">·</span>
+                      <span
+                        v-else
+                        class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold font-mono"
+                        :class="cell.homeWon ? 'bg-sport-win/20 text-sport-win' : 'bg-sport-loss/20 text-sport-loss'"
+                      >{{ cell.score }}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-[10px] text-muted-foreground mt-2">Строка = хозяева, столбец = гости. Зелёный = победа хозяев.</p>
+          </CardContent>
+        </Card>
 
       </template>
       <template v-else>
@@ -565,6 +605,21 @@ const leagueLeaders = [
 // ── 9. Рекорды лиги ─────────────────────────────────────────────────────────
 
 const leagueRecords = getLeagueRecords();
+
+// ── Матрица результатов ──────────────────────────────────────────────────────
+type MatrixCell = { homeWon: boolean; score: string } | null | "self";
+
+const resultMatrix: MatrixCell[][] = teams.map((homeTeam) =>
+  teams.map((awayTeam): MatrixCell => {
+    if (homeTeam.id === awayTeam.id) return "self";
+    const m = played.find(
+      (match) => match.homeId === homeTeam.id && match.awayId === awayTeam.id,
+    );
+    if (!m) return null;
+    const r = m.result!;
+    return { homeWon: r.setsHome > r.setsAway, score: `${r.setsHome}:${r.setsAway}` };
+  }),
+);
 
 const activeTab = ref<"summary" | "stats" | "teams">("summary");
 </script>
