@@ -7,10 +7,12 @@
       </DialogHeader>
 
       <!-- Inner tab switcher -->
-      <div class="flex gap-1 border-b border-border px-6">
+      <div role="tablist" aria-label="Формат экспорта" class="flex gap-1 border-b border-border px-6">
         <button
           v-for="t in innerTabs"
           :key="t.id"
+          role="tab"
+          :aria-selected="innerTab === t.id"
           @click="switchInnerTab(t.id)"
           class="px-4 py-2 text-sm font-medium transition-colors relative -mb-px"
           :class="innerTab === t.id
@@ -138,9 +140,13 @@ const formattedText = computed(() => {
 const copied = ref(false);
 
 async function copyText(): Promise<void> {
-  await navigator.clipboard.writeText(formattedText.value);
-  copied.value = true;
-  setTimeout(() => { copied.value = false; }, 2000);
+  try {
+    await navigator.clipboard.writeText(formattedText.value);
+    copied.value = true;
+    setTimeout(() => { copied.value = false; }, 2000);
+  } catch {
+    // clipboard unavailable — ignore silently
+  }
 }
 
 // ── Images tab ─────────────────────────────────────────────────────────────
@@ -188,17 +194,18 @@ async function generateImages(): Promise<void> {
   imagesLoading.value = true;
   renderedImages.value = [];
   const results: RenderedImage[] = [];
-
-  for (const def of sectionDefs.value) {
-    const el = props.sectionRefs[def.refKey];
-    if (el) {
-      const dataUrl = await renderSectionToImage(el, def.title, teamMap);
-      results.push({ title: def.title, filename: def.filename, dataUrl });
+  try {
+    for (const def of sectionDefs.value) {
+      const el = props.sectionRefs[def.refKey];
+      if (el) {
+        const dataUrl = await renderSectionToImage(el, def.title, teamMap);
+        results.push({ title: def.title, filename: def.filename, dataUrl });
+      }
     }
+    renderedImages.value = results;
+  } finally {
+    imagesLoading.value = false;
   }
-
-  renderedImages.value = results;
-  imagesLoading.value = false;
 }
 
 async function downloadAll(): Promise<void> {
