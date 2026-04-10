@@ -421,7 +421,15 @@
           </CardContent>
         </Card>
 
-        <!-- 5. Распределение счётов — added in Task 8 -->
+        <!-- 5. Распределение счётов партий -->
+        <Card v-if="scoreDistribution.length > 0">
+          <CardHeader class="pb-2">
+            <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Распределение счётов партий</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <VChart :option="scoreDistChartOption" style="height: 260px" autoresize />
+          </CardContent>
+        </Card>
 
       </template>
       <template v-else>
@@ -453,6 +461,13 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Trophy } from "lucide-vue-next";
+import { use } from "echarts/core";
+import { BarChart, LineChart } from "echarts/charts";
+import { GridComponent, LegendComponent, TooltipComponent } from "echarts/components";
+import { CanvasRenderer } from "echarts/renderers";
+import VChart from "vue-echarts";
+
+use([BarChart, LineChart, GridComponent, LegendComponent, TooltipComponent, CanvasRenderer]);
 
 // ── 1. Базовые агрегаты ─────────────────────────────────────────────────────
 
@@ -620,6 +635,53 @@ const resultMatrix: MatrixCell[][] = teams.map((homeTeam) =>
     return { homeWon: r.setsHome > r.setsAway, score: `${r.setsHome}:${r.setsAway}` };
   }),
 );
+
+// ── Распределение счётов ─────────────────────────────────────────────────────
+const scoreDistribution = (() => {
+  const counts: Record<string, number> = {};
+  for (const m of played) {
+    for (const s of m.result!.setScores) {
+      const key = `${s.home}:${s.away}`;
+      counts[key] = (counts[key] || 0) + 1;
+    }
+  }
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10);
+})();
+
+const scoreDistChartOption = {
+  backgroundColor: "transparent",
+  grid: { left: 10, right: 16, top: 8, bottom: 8, containLabel: true },
+  xAxis: {
+    type: "value",
+    axisLabel: { color: "#888", fontSize: 10 },
+    splitLine: { lineStyle: { color: "#2a2a3a" } },
+  },
+  yAxis: {
+    type: "category",
+    data: scoreDistribution.map(([score]) => score).reverse(),
+    axisLabel: { color: "#aaa", fontSize: 10, fontFamily: "monospace" },
+    axisLine: { lineStyle: { color: "#333" } },
+  },
+  series: [
+    {
+      type: "bar",
+      data: scoreDistribution
+        .map(([score, count]) => ({
+          value: count,
+          itemStyle: {
+            color:
+              Number(score.split(":")[0]) > Number(score.split(":")[1])
+                ? "hsl(142, 70%, 50%)"
+                : "hsl(0, 70%, 62%)",
+          },
+        }))
+        .reverse(),
+    },
+  ],
+  tooltip: { trigger: "axis" },
+};
 
 const activeTab = ref<"summary" | "stats" | "teams">("summary");
 </script>
