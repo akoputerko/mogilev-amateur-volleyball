@@ -857,6 +857,7 @@ const posHistoryChartOption = (() => {
         lineStyle: { color: `hsl(${t.color})`, width: 2 },
         itemStyle: { color: `hsl(${t.color})` },
         symbolSize: 5,
+        emphasis: { focus: "series" },
       };
     }),
     tooltip: { trigger: "axis" },
