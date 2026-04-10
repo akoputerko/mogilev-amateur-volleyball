@@ -5,7 +5,7 @@ import { getLeagueRecords } from "@/lib/records";
 // Team IDs from league.ts:
 // 0 = Макиато, 1 = Серволюкс, 2 = МГП, 3 = МГЗ, 4 = Отцы и дети, 5 = 33, 6 = Сетка 37, 7 = Dream Team
 
-// Matches played (tours 1-5):
+// Matches played (tours 1-7):
 // Match 1:  Макиато (0)  vs Dream Team (7)  -> 2:1 (home wins)
 // Match 2:  Серволюкс (1) vs Сетка 37 (6) -> 2:1 (home wins)
 // Match 3:  МГП (2) vs Отцы и дети (4)    -> 2:1 (home wins)
@@ -22,9 +22,18 @@ import { getLeagueRecords } from "@/lib/records";
 // Match 14: МГЗ (3) vs Сетка 37 (6)         -> 2:1 (home wins)
 // Match 15: Отцы и дети (4) vs Макиато (0)  -> 3:0 (home wins)
 // Match 16: 33 (5) vs Серволюкс (1)          -> 3:0 (home wins)
+// Match 17: Макиато (0) vs МГП (2)           -> 3:0 (home wins)
 // Match 18: Серволюкс (1) vs МГЗ (3)         -> 1:2 (away wins)
 // Match 19: Dream Team (7) vs 33 (5)          -> 3:0 (home wins)
 // Match 20: Сетка 37 (6) vs Отцы и дети (4)  -> 1:2 (away wins)
+// Match 21: МГП (2) vs Серволюкс (1)          -> 2:1 (home wins)
+// Match 22: МГЗ (3) vs Макиато (0)            -> 0:3 (away wins)
+// Match 23: 33 (5) vs Сетка 37 (6)            -> 1:2 (away wins)
+// Match 24: Отцы и дети (4) vs Dream Team (7) -> 1:2 (away wins)
+// Match 25: Макиато (0) vs Серволюкс (1)      -> 3:0 (home wins)
+// Match 26: Dream Team (7) vs Сетка 37 (6)    -> 3:0 (home wins)
+// Match 27: 33 (5) vs Отцы и дети (4)         -> 2:1 (home wins)
+// Match 28: МГЗ (3) vs МГП (2)                -> 1:2 (away wins)
 
 describe("getStreaks", () => {
   it("returns null current streak for team with no played matches", () => {
