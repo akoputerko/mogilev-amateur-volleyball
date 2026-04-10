@@ -440,7 +440,115 @@
     <!-- ══════════ КОМАНДЫ ══════════ -->
     <template v-else>
       <template v-if="playedCount > 0">
-        <!-- sections 1–4 added in Tasks 9–12 -->
+        <!-- 1. Форма команд -->
+        <Card>
+          <CardHeader class="pb-2">
+            <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Форма команд</CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-2">
+            <div
+              v-for="tf in teamForms"
+              :key="tf.team.id"
+              class="flex items-center gap-3 px-2 py-1.5 rounded-lg bg-secondary/20"
+            >
+              <Avatar shape="square" class="w-6 h-6 text-[9px] flex-shrink-0" :style="{ backgroundColor: `hsl(${tf.team.color})` }">
+                <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ tf.team.short.slice(0, 2) }}</AvatarFallback>
+              </Avatar>
+              <span class="text-xs font-medium w-10 flex-shrink-0">{{ tf.team.short }}</span>
+              <div class="flex gap-1">
+                <span
+                  v-for="(f, i) in tf.form"
+                  :key="i"
+                  class="inline-flex items-center justify-center w-6 h-6 rounded text-[10px] font-bold"
+                  :class="f.won ? 'bg-sport-win/20 text-sport-win' : 'bg-sport-loss/20 text-sport-loss'"
+                >{{ f.won ? 'В' : 'П' }}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <!-- 2. Эффективность по партиям -->
+        <Card>
+          <CardHeader class="pb-2">
+            <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Эффективность по партиям</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <table class="w-full text-xs">
+              <thead>
+                <tr>
+                  <th class="text-left py-1 pr-2 text-[10px] text-muted-foreground font-normal">Команда</th>
+                  <th class="text-center py-1 px-2 text-[10px] text-muted-foreground font-normal">П1</th>
+                  <th class="text-center py-1 px-2 text-[10px] text-muted-foreground font-normal">П2</th>
+                  <th class="text-center py-1 px-2 text-[10px] text-muted-foreground font-normal">П3</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="te in teamSetEfficiency"
+                  :key="te.team.id"
+                  class="border-t border-border/30"
+                >
+                  <td class="py-1.5 pr-2 font-medium text-[11px]" :style="{ color: `hsl(${te.team.color})` }">
+                    {{ te.team.short }}
+                  </td>
+                  <td
+                    v-for="s in te.sets"
+                    :key="s.setNum"
+                    class="py-1.5 px-2 text-center font-bold text-[11px]"
+                    :class="s.won >= s.lost ? 'text-sport-win' : 'text-sport-loss'"
+                  >
+                    {{ s.won + s.lost > 0 ? Math.round((s.won / (s.won + s.lost)) * 100) : 0 }}%
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+
+        <!-- 3. Динамика позиций -->
+        <Card>
+          <CardHeader class="pb-2">
+            <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Динамика позиций</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <VChart :option="posHistoryChartOption" style="height: 300px" autoresize />
+          </CardContent>
+        </Card>
+
+        <!-- 4. Средний счёт в партиях -->
+        <Card>
+          <CardHeader class="pb-2">
+            <CardTitle class="text-sm font-display text-muted-foreground normal-case tracking-normal">Средний счёт в партиях</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div
+                v-for="ts in teamAvgSetScores"
+                :key="ts.team.id"
+                class="bg-secondary/30 rounded-lg px-3 py-2.5 space-y-1"
+              >
+                <div class="flex items-center gap-1.5 mb-1.5">
+                  <Avatar shape="square" class="w-5 h-5 text-[8px] flex-shrink-0" :style="{ backgroundColor: `hsl(${ts.team.color})` }">
+                    <AvatarFallback class="bg-transparent text-primary-foreground font-bold">{{ ts.team.short.slice(0, 2) }}</AvatarFallback>
+                  </Avatar>
+                  <span class="text-xs font-semibold">{{ ts.team.short }}</span>
+                </div>
+                <div class="text-[11px] text-muted-foreground">
+                  В выигранных:
+                  <span class="font-bold text-sport-win">{{ ts.avg.avgScoredWon.toFixed(1) }}</span>
+                  :
+                  <span class="text-foreground">{{ ts.avg.avgConcededWon.toFixed(1) }}</span>
+                </div>
+                <div class="text-[11px] text-muted-foreground">
+                  В проигранных:
+                  <span class="text-foreground">{{ ts.avg.avgScoredLost.toFixed(1) }}</span>
+                  :
+                  <span class="font-bold text-sport-loss">{{ ts.avg.avgConcededLost.toFixed(1) }}</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </template>
       <template v-else>
         <div class="text-center py-16 text-muted-foreground text-sm">Матчи ещё не сыграны</div>
@@ -454,7 +562,7 @@
 import { ref } from "vue";
 import { teams, matches, getTeam } from "@/data/league";
 import { calcStandings } from "@/lib/standings";
-import { getStreaks, getComebackStats, getScoringPatterns } from "@/lib/stats";
+import { getStreaks, getComebackStats, getScoringPatterns, getForm, getSetPerformance, getPositionHistory, getAvgSetScore } from "@/lib/stats";
 import { getLeagueRecords } from "@/lib/records";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -682,6 +790,65 @@ const scoreDistChartOption = {
   ],
   tooltip: { trigger: "axis" },
 };
+
+// ── Форма команд ─────────────────────────────────────────────────────────────
+const teamForms = standings.map((s) => ({
+  team: s.team,
+  form: getForm(s.team.id, 5),
+}));
+
+// ── Эффективность по партиям ─────────────────────────────────────────────────
+const teamSetEfficiency = standings.map((s) => ({
+  team: s.team,
+  sets: getSetPerformance(s.team.id),
+}));
+
+// ── Динамика позиций ─────────────────────────────────────────────────────────
+const posHistoryChartOption = (() => {
+  const playedGws = [...new Set(played.map((m) => m.gameweek))].sort((a, b) => a - b);
+  return {
+    backgroundColor: "transparent",
+    legend: {
+      data: teams.map((t) => t.short),
+      textStyle: { color: "#888", fontSize: 10 },
+      top: 0,
+    },
+    grid: { left: 20, right: 10, top: 36, bottom: 20, containLabel: true },
+    xAxis: {
+      type: "category",
+      data: playedGws.map((g) => `Т${g}`),
+      axisLabel: { color: "#666", fontSize: 10 },
+      axisLine: { lineStyle: { color: "#333" } },
+    },
+    yAxis: {
+      inverse: true,
+      min: 1,
+      max: 8,
+      interval: 1,
+      axisLabel: { color: "#666", fontSize: 9 },
+      splitLine: { lineStyle: { color: "#2a2a3a" } },
+    },
+    series: teams.map((t) => {
+      const history = getPositionHistory(t.id);
+      return {
+        name: t.short,
+        type: "line",
+        data: history.map((p) => p.position),
+        smooth: true,
+        lineStyle: { color: `hsl(${t.color})`, width: 2 },
+        itemStyle: { color: `hsl(${t.color})` },
+        symbolSize: 5,
+      };
+    }),
+    tooltip: { trigger: "axis" },
+  };
+})();
+
+// ── Средний счёт в партиях ───────────────────────────────────────────────────
+const teamAvgSetScores = standings.map((s) => ({
+  team: s.team,
+  avg: getAvgSetScore(s.team.id),
+}));
 
 const activeTab = ref<"summary" | "stats" | "teams">("summary");
 </script>
