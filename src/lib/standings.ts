@@ -103,6 +103,7 @@ export function getTeamMatches(teamId: number): Match[] {
 export function getUpcoming(teamId: number, count: number): Match[] {
   return getTeamMatches(teamId)
     .filter((m) => !m.played && !isMatchPast(m))
+    .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, count);
 }
 

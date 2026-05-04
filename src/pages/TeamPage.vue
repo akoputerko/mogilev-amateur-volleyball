@@ -410,12 +410,20 @@ const matchBreakdown = [
 ];
 
 const filteredMatches = computed(() =>
-  allMatches.filter((m) => {
-    if (!showPast.value && (m.played || isMatchPast(m))) return false;
-    if (filter.value === "home") return m.homeId === teamId;
-    if (filter.value === "away") return m.awayId === teamId;
-    return true;
-  }),
+  allMatches
+    .filter((m) => {
+      if (!showPast.value && (m.played || isMatchPast(m))) return false;
+      if (filter.value === "home") return m.homeId === teamId;
+      if (filter.value === "away") return m.awayId === teamId;
+      return true;
+    })
+    .sort((a, b) => {
+      const aPlayed = a.played || isMatchPast(a);
+      const bPlayed = b.played || isMatchPast(b);
+      if (aPlayed && bPlayed) return b.date.localeCompare(a.date);
+      if (!aPlayed && !bPlayed) return a.date.localeCompare(b.date);
+      return aPlayed ? -1 : 1;
+    }),
 );
 
 const remainingCount = computed(() =>

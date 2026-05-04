@@ -151,7 +151,9 @@ const props = defineProps<{ standing: TeamStanding }>();
 defineEmits<{ close: [] }>();
 
 const teamMatches = computed(() =>
-  getTeamMatches(props.standing.team.id).filter((m) => m.played),
+  getTeamMatches(props.standing.team.id)
+    .filter((m) => m.played)
+    .sort((a, b) => b.date.localeCompare(a.date)),
 );
 const upcoming = computed(() => getUpcoming(props.standing.team.id, 3));
 const streak = computed(() => getStreaks(props.standing.team.id));
