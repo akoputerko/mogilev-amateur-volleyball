@@ -186,6 +186,15 @@ export const matchResults: Record<number, ResultEntry> = {
         ],
     },
 
+    // --- Тур 8 ---
+    33: { // Серволюкс - Dream team
+        setScores: [
+            {home: 26, away: 28},
+            {home: 16, away: 25},
+            {home: 25, away: 19},
+        ],
+    },
+
     // --- Тур 7 ---
     17: { // Макиато - Могилевгражданпроект
         setScores: [
@@ -220,6 +229,75 @@ export const matchResults: Record<number, ResultEntry> = {
             {home: 25, away: 22},
             {home: 21, away: 25},
             {home: 19, away: 25},
+        ],
+    },
+
+    // --- Тур 8 (продолжение) ---
+    29: { // Dream team - Макиато
+        setScores: [
+            {home: 25, away: 16},
+            {home: 12, away: 25},
+            {home: 25, away: 20},
+        ],
+    },
+    30: { // Сетка 37 - Серволюкс
+        setScores: [
+            {home: 25, away: 9},
+            {home: 25, away: 13},
+            {home: 17, away: 25},
+        ],
+    },
+    31: { // Отцы и дети - Могилевгражданпроект
+        setScores: [
+            {home: 25, away: 22},
+            {home: 25, away: 15},
+            {home: 25, away: 20},
+        ],
+    },
+
+    // --- Тур 9 ---
+    34: { // Могилевгражданпроект - Сетка 37
+        setScores: [
+            {home: 22, away: 25},
+            {home: 26, away: 24},
+            {home: 25, away: 21},
+        ],
+    },
+    35: { // Могилевгипрозем - Отцы и дети
+        setScores: [
+            {home: 17, away: 25},
+            {home: 12, away: 25},
+            {home: 18, away: 25},
+        ],
+    },
+    36: { // Макиато - 33
+        setScores: [
+            {home: 25, away: 21},
+            {home: 27, away: 25},
+            {home: 25, away: 18},
+        ],
+    },
+
+    // --- Тур 10 ---
+    37: { // Сетка 37 - Макиато
+        setScores: [
+            {home: 21, away: 25},
+            {home: 17, away: 25},
+            {home: 23, away: 25},
+        ],
+    },
+    38: { // Отцы и дети - Серволюкс
+        setScores: [
+            {home: 25, away: 16},
+            {home: 25, away: 12},
+            {home: 20, away: 25},
+        ],
+    },
+    39: { // Могилевгражданпроект - 33
+        setScores: [
+            {home: 25, away: 17},
+            {home: 25, away: 18},
+            {home: 25, away: 23},
         ],
     },
 };
