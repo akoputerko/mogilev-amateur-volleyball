@@ -451,11 +451,11 @@ export const rawSchedule: RawGameweek[] = [
                 id: 42,
                 home: "Могилевгипрозем",
                 away: "Серволюкс",
-                hall: "Спутник",
-                address: "ул. Якубовского, 20",
-                day: "Воскресенье",
-                time: "10:30-12:00",
-                date: "10.05.2026"
+                hall: "МГУ Кулешова",
+                address: "ул. Космонавтов, 1",
+                day: "Вторник",
+                time: "19:00-21:00",
+                date: "05.05.2026"
             },
             {
                 id: 43,
@@ -475,16 +475,6 @@ export const rawSchedule: RawGameweek[] = [
                 address: "ул. Вокзальная",
                 day: "Среда",
                 time: "17:30-20:00",
-                date: "06.05.2026"
-            },
-            {
-                id: 40,
-                home: "Dream team",
-                away: "Могилевгипрозем",
-                hall: "СШ 27",
-                address: "ул. Якубовского, 15",
-                day: "Среда",
-                time: "18:00-20:00",
                 date: "06.05.2026"
             },
         ]
@@ -520,16 +510,6 @@ export const rawSchedule: RawGameweek[] = [
                 day: "Суббота",
                 time: "16:00-18:00",
                 date: "16.05.2026"
-            },
-            {
-                id: 48,
-                home: "Dream team",
-                away: "Отцы и дети",
-                hall: "Спутник",
-                address: "ул. Якубовского, 20",
-                day: "Пятница",
-                time: "20:30-22:30",
-                date: "15.05.2026"
             },
         ]
     },
@@ -585,6 +565,16 @@ export const rawSchedule: RawGameweek[] = [
                 time: "18:00-20:00",
                 date: "22.05.2026"
             },
+            {
+                id: 48,
+                home: "Dream team",
+                away: "Отцы и дети",
+                hall: "Спутник",
+                address: "ул. Якубовского, 20",
+                day: "Понедельник",
+                time: "20:45-22:45",
+                date: "18.05.2026"
+            },
         ]
     },
     {
@@ -628,6 +618,16 @@ export const rawSchedule: RawGameweek[] = [
                 day: "Среда",
                 time: "18:00-20:00",
                 date: "27.05.2026"
+            },
+            {
+                id: 40,
+                home: "Dream team",
+                away: "Могилевгипрозем",
+                hall: "ФОК Орловского",
+                address: "ул. Орловского, 24а",
+                day: "ПЕРЕНОС",
+                time: "20:00-22:00",
+                date: "01.06.2026"
             },
         ]
     },
