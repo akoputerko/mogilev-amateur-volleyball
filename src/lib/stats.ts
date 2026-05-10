@@ -1,4 +1,4 @@
-import { matches } from "@/data/league";
+import { matches, type Match } from "@/data/league";
 import { getTeamMatches, calcStandingsFromMatches } from "@/lib/standings";
 
 export interface Streak {
@@ -7,8 +7,11 @@ export interface Streak {
   longestLoss: number;
 }
 
-export function getStreaks(teamId: number): Streak {
-  const played = getTeamMatches(teamId).filter((m) => m.played);
+export function getStreaks(teamId: number, matchList?: Match[]): Streak {
+  const teamMatches = matchList
+    ? matchList.filter((m) => m.homeId === teamId || m.awayId === teamId)
+    : getTeamMatches(teamId);
+  const played = teamMatches.filter((m) => m.played);
   if (played.length === 0) return { current: null, longestWin: 0, longestLoss: 0 };
 
   let longestWin = 0, longestLoss = 0;
@@ -44,8 +47,11 @@ export interface SetStat {
   avgConceded: number;
 }
 
-export function getSetPerformance(teamId: number): SetStat[] {
-  const played = getTeamMatches(teamId).filter((m) => m.played);
+export function getSetPerformance(teamId: number, matchList?: Match[]): SetStat[] {
+  const teamMatches = matchList
+    ? matchList.filter((m) => m.homeId === teamId || m.awayId === teamId)
+    : getTeamMatches(teamId);
+  const played = teamMatches.filter((m) => m.played);
 
   const stats = [
     { setNum: 1 as const, won: 0, lost: 0, totalScored: 0, totalConceded: 0 },
@@ -80,13 +86,14 @@ export interface PositionEntry {
   position: number;
 }
 
-export function getPositionHistory(teamId: number): PositionEntry[] {
-  const playedGws = [...new Set(matches.filter((m) => m.played).map((m) => m.gameweek))].sort(
+export function getPositionHistory(teamId: number, matchList?: Match[]): PositionEntry[] {
+  const allMatches = matchList ?? matches;
+  const playedGws = [...new Set(allMatches.filter((m) => m.played).map((m) => m.gameweek))].sort(
     (a, b) => a - b,
   );
 
   return playedGws.map((gw) => {
-    const subset = matches.filter((m) => m.gameweek <= gw);
+    const subset = allMatches.filter((m) => m.gameweek <= gw);
     const standings = calcStandingsFromMatches(subset);
     const pos = standings.findIndex((s) => s.team.id === teamId) + 1;
     return { gameweek: gw, position: pos };
@@ -101,8 +108,11 @@ export interface ComebackStats {
   totalDecisive: number;
 }
 
-export function getComebackStats(teamId: number): ComebackStats {
-  const played = getTeamMatches(teamId).filter((m) => m.played);
+export function getComebackStats(teamId: number, matchList?: Match[]): ComebackStats {
+  const teamMatches = matchList
+    ? matchList.filter((m) => m.homeId === teamId || m.awayId === teamId)
+    : getTeamMatches(teamId);
+  const played = teamMatches.filter((m) => m.played);
   let comebacks = 0, blownLeads = 0, thirdSetWon = 0, thirdSetLost = 0, totalDecisive = 0;
 
   for (const m of played) {
@@ -136,8 +146,11 @@ export interface ScoringPatterns {
   avgMargin: number;
 }
 
-export function getScoringPatterns(teamId: number): ScoringPatterns {
-  const played = getTeamMatches(teamId).filter((m) => m.played);
+export function getScoringPatterns(teamId: number, matchList?: Match[]): ScoringPatterns {
+  const teamMatches = matchList
+    ? matchList.filter((m) => m.homeId === teamId || m.awayId === teamId)
+    : getTeamMatches(teamId);
+  const played = teamMatches.filter((m) => m.played);
   let closeSets = 0, dominantSets = 0, totalMargin = 0;
   const totalSets = played.length * 3;
 
@@ -162,9 +175,12 @@ export interface FormEntry {
   won: boolean;
 }
 
-export function getForm(teamId: number, n: number): FormEntry[] {
+export function getForm(teamId: number, n: number, matchList?: Match[]): FormEntry[] {
   if (n <= 0) return [];
-  const played = getTeamMatches(teamId).filter((m) => m.played);
+  const teamMatches = matchList
+    ? matchList.filter((m) => m.homeId === teamId || m.awayId === teamId)
+    : getTeamMatches(teamId);
+  const played = teamMatches.filter((m) => m.played);
   return played.slice(-n).map((m) => {
     const r = m.result!;
     const won = m.homeId === teamId ? r.setsHome > r.setsAway : r.setsAway > r.setsHome;
@@ -179,8 +195,11 @@ export interface AvgSetScore {
   avgConcededLost: number;
 }
 
-export function getAvgSetScore(teamId: number): AvgSetScore {
-  const played = getTeamMatches(teamId).filter((m) => m.played);
+export function getAvgSetScore(teamId: number, matchList?: Match[]): AvgSetScore {
+  const teamMatches = matchList
+    ? matchList.filter((m) => m.homeId === teamId || m.awayId === teamId)
+    : getTeamMatches(teamId);
+  const played = teamMatches.filter((m) => m.played);
   let wonScored = 0, wonConceded = 0, wonCount = 0;
   let lostScored = 0, lostConceded = 0, lostCount = 0;
 

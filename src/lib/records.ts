@@ -1,4 +1,4 @@
-import { matches, getTeam } from "@/data/league";
+import { matches, getTeam, type Match } from "@/data/league";
 
 export interface LeagueRecord {
   label: string;
@@ -7,8 +7,8 @@ export interface LeagueRecord {
   teamId?: number;
 }
 
-export function getLeagueRecords(): LeagueRecord[] {
-  const played = matches.filter((m) => m.played && m.result);
+export function getLeagueRecords(matchList?: Match[]): LeagueRecord[] {
+  const played = (matchList ?? matches).filter((m) => m.played && m.result);
   if (played.length === 0) return [];
 
   const records: LeagueRecord[] = [];
