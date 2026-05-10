@@ -300,4 +300,34 @@ export const matchResults: Record<number, ResultEntry> = {
             {home: 25, away: 23},
         ],
     },
+
+    // --- Тур 11 ---
+    41: { // Могилевгражданпроект - Макиато
+        setScores: [
+            {home: 26, away: 24},
+            {home: 18, away: 25},
+            {home: 23, away: 25},
+        ],
+    },
+    42: { // Могилевгипрозем - Серволюкс
+        setScores: [
+            {home: 25, away: 15},
+            {home: 25, away: 16},
+            {home: 25, away: 19},
+        ],
+    },
+    43: { // 33 - Dream team
+        setScores: [
+            {home: 19, away: 25},
+            {home: 25, away: 19},
+            {home: 22, away: 25},
+        ],
+    },
+    44: { // Отцы и дети - Сетка 37
+        setScores: [
+            {home: 25, away: 19},
+            {home: 25, away: 18},
+            {home: 27, away: 25},
+        ],
+    },
 };
